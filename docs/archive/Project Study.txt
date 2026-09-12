@@ -1,0 +1,74 @@
+Works:
+
+1. See the Valid papers and say it to Vishnu and Neha
+2. Make the feasibility report fr every functionality of HELPS
+3. Create a folder for RL and AD store all the study materials in there
+4. Start reading for RL
+5. Write down all the companies that you got till now and create the meta wrt to you
+
+
+HELPS Notes:
+1. GSD - Ground Sampling Distance
+2. Ortho-Rectification
+Orthorectification uses a Digital Elevation Model (DEM) to compensate for terrain. In areas with tall buildings, an additional Digital Surface Model (DSM) (which includes buildings and vegetation) can further improve accuracy.
+
+
+Entire pipeline from the satellite to the final land detection:
+Step 1: What does the satellite actually see?
+- It captures an image like a camera but the satellite records much more than the normal image.
+For every image it also stores
+
+Satellite position (GPS)
+Satellite orientation (roll, pitch, yaw)
+Camera focal length
+Pixel size of the sensor
+Time of capture
+Viewing angle
+
+This is called the sensor model.
+
+Step 2: Why is Raw image wrong 
+With Change in the position and angle of the satellite image, the object under the image get distorted - This is called relief displacement
+This problem is solved by Orthorectification
+
+Step 3: Orthorectification:
+Orthorectification removes the distortions and answers where the point is actually located on earth
+we pixel(500,500) along with this we need Latitude, Longitude, Elevation
+For the above things we need, Camera Geometry, Satellite position, terrain height (Comes from DEM)
+
+DEM: Digital Elevation model - Its a division of a location into a grid which holds a number stating the height above the sea level
+
+DSM: Digital Surface model
+
+NDVI: Normalized Difference Vegetation Index : a simple map tool that measures plant health using light
+Dense forest      0.8
+Grass             0.5
+Bare soil         0.1
+Road             -0.1
+Water            -0.3
+
+```
+Spectrometry for urban area remote sensing—Development and analysis of a spectral library
+Unmixing-based Sentinel-2 downscaling for urban land cover mapping
+High-resolution building and road detection from Sentinel-2
+```
+
+Satellite imagery
+DEM (Digital Elevation Model) 
+DSM (Digital Surface Model) 
+GIS (Geographic Information System) 
+
+Together, these can absolutely identify candidate landing areas, but they cannot guarantee that a location is safe to land. They are excellent for screening and ranking potential sites.
+
+Limitations:
+difficult or impossible to detect reliably:
+Thin power lines
+Temporary vehicles
+People
+Loose debris
+Recently erected structures
+Ground firmness (e.g., mud beneath dry-looking soil)
+Weather conditions at landing time
+
+
+https://share.google/aimode/n3wcxNRhi4TqJVAVX

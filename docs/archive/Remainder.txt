@@ -1,0 +1,37 @@
+             RAW GEOSPATIAL DATA
+                    │
+          ┌───────┼──────────┐
+          ↓          ↓         	       ↓
+         DEM       Satellite          GIS
+          │          │          	   │
+          └──────────┼──────────┘
+                     ↓
+          	Candidate Terrain
+                     ↓
+          	Terrain Characterization
+                     ↓
+             	Slope Analysis
+                     ↓
+          	Operational Zones
+                     ↓
+         	Terrain Knowledge DB
+                     │
+                     │
+     ────────────┼────────────
+                     │
+              HELICOPTER INPUT
+                     ↓
+          Nearby Zone Retrieval
+                     ↓
+          Operational Constraints
+                     ↓
+          Landing Footprint Check
+                     ↓
+           Mission-Aware Ranking
+                     ↓
+        EXPLAINABLE TOP-K OPTIONS
+
+
+1. Proper and valid scoring system
+2. Build a proof that things work - create metrics for each module and functionality to observe its working
+3. 

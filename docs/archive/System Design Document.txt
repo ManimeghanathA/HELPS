@@ -1,0 +1,113 @@
+System Design Document:
+
+Cover page:
+Helps
+Helicopter Emergency Landing Place Suggestion System
+System Deign Document
+
+Index - detailed
+
+Terminology and definitions
+
+Chapter 1: Problem Understanding
+- Why emergency landing is difficult.
+- Why existing systems aren't enough.
+- Why terrain understanding matters.
+- Project objectives.
+- Scope.
+- Limitations.
+- (more if there are any)
+
+Chapter 2: Design Philosophy
+- What is the whole point of the project we are building
+- How are we creating a helicopter independent knowledge system, understanding the confidentiality part of the organization
+- why terrain first
+- why helicopter-independent database
+- why and how pilot remains decision maker
+- what are we giving to the pilot at the end,
+- how is recommendation filled with the complete proof instead of blind suggestion
+- How is the application adaptable to any time satellite data - creating a tool if it works it can work on any land and on any time and hence may have potential to convert it into real time
+
+
+Chapter 3: System Architecture:
+we have 2 huge parts 
+i) Terrain Knowledge Generation Pipeline:
+ii) Helicopter Landing Recommendation Pipeline
+[ i will create the architecture diagram for both of the parts]
+iii) Integration of both the parts: How helicopter queries reaches the Database we create 
+
+Chapter 4: Terrain Knowledge Generation Pipeline
+Module 1: Data Acquisition
+we talk about goals, inputs, outputs, "algorithm", tools, challenges, limitations, Future Improvements
+Module 2: Candidate Terrain Identification:
+goals, inputs, "algorithm" (How are we doing it in detail), outputs(what are we storing in the database), tools, challenges, limitations, Future improvements
+Module 3: Terrain Characterization:
+Answering the question/features that we should have about that terrain - goal, features that we are extracting, algorithm(how), tools, challenges, limitations, Future Improvements
+Module 4: Slope Analysis and Operational Zone Generation
+Important part, how is slope being analysed, inputs, algorithms, outputs,  tools, challenges, limitations, Future Improvements
+Module 5: Operational Zone Environment analysis
+goals, inputs, outputs, "algorithm", tools, challenges, limitations, Future Improvements
+
+Chapter 5: Terrain Knowledge Database
+Storage Strategy
+database.
+Tables and their scheme and metadata.
+Relations.
+Keys.
+Stored attributes with the datatypes.
+Why each table exists.
+Why and how we normalized it.
+How operational zones relate to terrain objects.
+
+Chapter 6: Helicopter Landing Recommendation Pipeline
+Module 1: Helicopter Inputs
+Module 2: Possible terrain location retrieval based on the helicopter coordinates (top k nearest to the helicopter coordinates)
+Module 3: Finding the whether and wind conditions from the sorted locations - filter out the not suitable ones (find the proximity between the sorted locations and find the global whether instead of finding the whether and wind conditions for the near locations, acting smart and reducing the duplicates)
+Module 4: Slope Matching
+Module 5: Landing zone validation with the area and computing approach score
+Module 6: Ranking based on the given requirement and mission context
+•	Medical evacuation → prioritize road accessibility. 
+•	Engine failure → prioritize immediate safety. 
+•	Fuel emergency → prioritize proximity. 
+Module 7: Recommendation coordinates distance and with the proofs and computed results
+
+
+```
+Each module will answer the same set of questions:
+
+Purpose – Why does this module exist?
+Inputs – What data does it require?
+Outputs – What does it produce?
+Methodology – How will it work? Which algorithms or existing tools will we use? Where will we build our own logic?
+Data Structures – What exactly gets stored, and in what form?
+Challenges & Edge Cases – What can go wrong? How do we handle it?
+Validation – How do we verify that this module is working correctly?
+Limitations & Future Improvements – What are we deliberately not solving in Version 1?
+Module Outcome and summary
+
+```
+
+Chapter 7: Functionalities:
+List the Functionalities and  For each functionalities we will answer Purpose
+Inputs
+Outputs
+Mathematical Representation
+Algorithm
+Storage
+Complexity
+Edge Cases
+Validation
+
+Chapter 8: Development Road Map:
+Division of work into phases 
+Phase 1: Data Collection and acquisition
+Phase 2: Implement Candidate Terrain Extraction
+phase 3: Terrain Characterization
+phase 4: Operational Zone Generation
+Phase 5: Database
+Phase 6: Landing recommendation Engine
+Phase 7: Testing 
+Phase 8: Front end and interface
+
+Chapter 9: Limitations
+Chapter 10: Future Scope

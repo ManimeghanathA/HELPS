@@ -1,0 +1,642 @@
+[
+  {
+    "action": "archive",
+    "source": "scripts\\extract_bhadra_ntca.py",
+    "destination": "scripts\\archive\\extract_bhadra_ntca.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\fetch_bhadra_aoi.py",
+    "destination": "scripts\\archive\\fetch_bhadra_aoi.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\restriction_engine.py",
+    "destination": "scripts\\archive\\restriction_engine.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\acquisition\\download_bhadra_osm.py",
+    "destination": "scripts\\archive\\acquisition\\download_bhadra_osm.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\acquisition\\download_bhadra_overture_buildings.py",
+    "destination": "scripts\\archive\\acquisition\\download_bhadra_overture_buildings.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\acquisition\\download_bhadra_sentinel.py",
+    "destination": "scripts\\archive\\acquisition\\download_bhadra_sentinel.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\acquisition\\retry_bhadra_osm_missing.py",
+    "destination": "scripts\\archive\\acquisition\\retry_bhadra_osm_missing.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\acquisition\\search_bhadra_sentinel.py",
+    "destination": "scripts\\archive\\acquisition\\search_bhadra_sentinel.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\acquisition\\test_cdse_auth.py",
+    "destination": "scripts\\archive\\acquisition\\test_cdse_auth.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\DEBUG\\bhadra_boundary_comparison.html",
+    "destination": "scripts\\archive\\DEBUG\\bhadra_boundary_comparison.html"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\DEBUG\\bhadra_map.html",
+    "destination": "scripts\\archive\\DEBUG\\bhadra_map.html"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\DEBUG\\compare_bhadra_points.py",
+    "destination": "scripts\\archive\\DEBUG\\compare_bhadra_points.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\DEBUG\\create_test_restriction.py",
+    "destination": "scripts\\archive\\DEBUG\\create_test_restriction.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\DEBUG\\find_bhadra_eastern_section.py",
+    "destination": "scripts\\archive\\DEBUG\\find_bhadra_eastern_section.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\DEBUG\\inspect_ntca_kml.py",
+    "destination": "scripts\\archive\\DEBUG\\inspect_ntca_kml.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\DEBUG\\ntca_bhadra_validation.html",
+    "destination": "scripts\\archive\\DEBUG\\ntca_bhadra_validation.html"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\DEBUG\\view_bhadra_aoi.py",
+    "destination": "scripts\\archive\\DEBUG\\view_bhadra_aoi.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\DEBUG\\view_bhadra_map.py",
+    "destination": "scripts\\archive\\DEBUG\\view_bhadra_map.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\DEBUG\\view_ntca_validation.py",
+    "destination": "scripts\\archive\\DEBUG\\view_ntca_validation.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\preprocessing\\inspect_bhadra_aoi.py",
+    "destination": "scripts\\archive\\preprocessing\\inspect_bhadra_aoi.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\preprocessing\\inspect_bhadra_dem.py",
+    "destination": "scripts\\archive\\preprocessing\\inspect_bhadra_dem.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\preprocessing\\inspect_bhadra_sentinel.py",
+    "destination": "scripts\\archive\\preprocessing\\inspect_bhadra_sentinel.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\preprocessing\\prepare_bhadra_dem.py",
+    "destination": "scripts\\archive\\preprocessing\\prepare_bhadra_dem.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\preprocessing\\prepare_bhadra_sentinel.py",
+    "destination": "scripts\\archive\\preprocessing\\prepare_bhadra_sentinel.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\analyze_open_land_indices.py",
+    "destination": "scripts\\archive\\processing\\analyze_open_land_indices.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\apply_overture_building_filter.py",
+    "destination": "scripts\\archive\\processing\\apply_overture_building_filter.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\osm_obstacle_filter.py",
+    "destination": "scripts\\archive\\processing\\osm_obstacle_filter.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\run_building_subtraction.py",
+    "destination": "scripts\\archive\\processing\\run_building_subtraction.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\run_candidate_geometry_filter.py",
+    "destination": "scripts\\archive\\processing\\run_candidate_geometry_filter.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\run_candidate_polygonization.py",
+    "destination": "scripts\\archive\\processing\\run_candidate_polygonization.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\run_clearance_analysis.py",
+    "destination": "scripts\\archive\\processing\\run_clearance_analysis.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\run_maximum_clearance.py",
+    "destination": "scripts\\archive\\processing\\run_maximum_clearance.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\run_open_land_detection.py",
+    "destination": "scripts\\archive\\processing\\run_open_land_detection.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\run_operational_zone_generation.py",
+    "destination": "scripts\\archive\\processing\\run_operational_zone_generation.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\run_osm_empty_land_filter.py",
+    "destination": "scripts\\archive\\processing\\run_osm_empty_land_filter.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\processing\\run_possible_open_detection_v2.py",
+    "destination": "scripts\\archive\\processing\\run_possible_open_detection_v2.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\test\\inspect_bhadra_components.py",
+    "destination": "scripts\\archive\\test\\inspect_bhadra_components.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\test\\validate_bhadra_boundary.py",
+    "destination": "scripts\\archive\\test\\validate_bhadra_boundary.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\test\\validate_ntca_bhadra.py",
+    "destination": "scripts\\archive\\test\\validate_ntca_bhadra.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\validation\\analyze_missed_cloud_spectra.py",
+    "destination": "scripts\\archive\\validation\\analyze_missed_cloud_spectra.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\validation\\audit_candidate_open_lands.py",
+    "destination": "scripts\\archive\\validation\\audit_candidate_open_lands.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\validation\\audit_cloud_fringe_candidates.py",
+    "destination": "scripts\\archive\\validation\\audit_cloud_fringe_candidates.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\validation\\audit_final_open_land_zones.py",
+    "destination": "scripts\\archive\\validation\\audit_final_open_land_zones.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\validation\\audit_overture_building_removal.py",
+    "destination": "scripts\\archive\\validation\\audit_overture_building_removal.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\validation\\inspect_bhadra_osm.py",
+    "destination": "scripts\\archive\\validation\\inspect_bhadra_osm.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\validation\\inspect_overture_in_open_candidates.py",
+    "destination": "scripts\\archive\\validation\\inspect_overture_in_open_candidates.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\validation\\run_cloud_unknown_audit.py",
+    "destination": "scripts\\archive\\validation\\run_cloud_unknown_audit.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\validation\\summarize_relevant_overture_buildings.py",
+    "destination": "scripts\\archive\\validation\\summarize_relevant_overture_buildings.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\validation\\visualize_cloud_candidate_diagnostic.py",
+    "destination": "scripts\\archive\\validation\\visualize_cloud_candidate_diagnostic.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\validation\\visualize_rejection_reasons.py",
+    "destination": "scripts\\archive\\validation\\visualize_rejection_reasons.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\visualization\\compare_open_land_v1_v2.py",
+    "destination": "scripts\\archive\\visualization\\compare_open_land_v1_v2.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\visualization\\create_bhadra_rgb.py",
+    "destination": "scripts\\archive\\visualization\\create_bhadra_rgb.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\visualization\\create_empty_land_overlay.py",
+    "destination": "scripts\\archive\\visualization\\create_empty_land_overlay.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\visualization\\create_open_land_overlay.py",
+    "destination": "scripts\\archive\\visualization\\create_open_land_overlay.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\visualization\\create_overture_building_overlay.py",
+    "destination": "scripts\\archive\\visualization\\create_overture_building_overlay.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\visualization\\create_refined_empty_land_overlay.py",
+    "destination": "scripts\\archive\\visualization\\create_refined_empty_land_overlay.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\visualization\\view_bhadra.html",
+    "destination": "scripts\\archive\\visualization\\view_bhadra.html"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\visualization\\view_bhadra.py",
+    "destination": "scripts\\archive\\visualization\\view_bhadra.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\visualization\\visualize_building_cleaned_open_land.py",
+    "destination": "scripts\\archive\\visualization\\visualize_building_cleaned_open_land.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\visualization\\visualize_final_candidate_borders.py",
+    "destination": "scripts\\archive\\visualization\\visualize_final_candidate_borders.py"
+  },
+  {
+    "action": "archive",
+    "source": "scripts\\visualization\\visualize_final_open_land_zones.py",
+    "destination": "scripts\\archive\\visualization\\visualize_final_open_land_zones.py"
+  },
+  {
+    "action": "archive",
+    "source": "tests/test_osm_obstacle_filter.py",
+    "destination": "scripts/archive/tests/test_osm_obstacle_filter.py"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_entire_region.qmd",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_entire_region.qmd"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_invalid_region.geojson",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_invalid_region.geojson"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_invalid_region.qmd",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_invalid_region.qmd"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_official_boundary_reference.geojson",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_official_boundary_reference.geojson"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_official_georeferenced.tif",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_official_georeferenced.tif"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_official_map.jpg",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_official_map.jpg"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_valid_region_1.geojson",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_valid_region_1.geojson"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_valid_region_1.qmd",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_valid_region_1.qmd"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_valid_region_2.geojson",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_valid_region_2.geojson"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_valid_region_2.qmd",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_valid_region_2.qmd"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_valid_region.geojson",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_valid_region.geojson"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\bhadra_valid_region.qmd",
+    "destination": "data\\raw\\Bhadra\\archive\\bhadra_valid_region.qmd"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\PA_TR_Corridor_Final.kml",
+    "destination": "data\\raw\\Bhadra\\archive\\PA_TR_Corridor_Final.kml"
+  },
+  {
+    "action": "archive",
+    "source": "data\\raw\\Bhadra\\Screenshot 2026-08-17 164049.png",
+    "destination": "data\\raw\\Bhadra\\archive\\Screenshot 2026-08-17 164049.png"
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\Baseline_1.png",
+    "destination": null
+  },
+  {
+    "action": "archive",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_candidate_max_clearance.gpkg",
+    "destination": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\archive\\bhadra_candidate_max_clearance.gpkg"
+  },
+  {
+    "action": "archive",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_candidate_open_lands.gpkg",
+    "destination": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\archive\\bhadra_candidate_open_lands.gpkg"
+  },
+  {
+    "action": "archive",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_clearance_analysis.gpkg",
+    "destination": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\archive\\bhadra_clearance_analysis.gpkg"
+  },
+  {
+    "action": "archive",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_cloud_candidate_diagnostic_zooms.png",
+    "destination": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\archive\\bhadra_cloud_candidate_diagnostic_zooms.png"
+  },
+  {
+    "action": "archive",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_cloud_candidate_diagnostic.png",
+    "destination": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\archive\\bhadra_cloud_candidate_diagnostic.png"
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_empty_land_mask_osm_overture.tif",
+    "destination": null
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_empty_land_mask.tif",
+    "destination": null
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_empty_land_overlay.png",
+    "destination": null
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_final_candidate_borders.png",
+    "destination": null
+  },
+  {
+    "action": "archive",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_open_components_buildings_removed.gpkg",
+    "destination": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\archive\\bhadra_open_components_buildings_removed.gpkg"
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_open_land_before_after_buildings.png",
+    "destination": null
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_open_mask.tif",
+    "destination": null
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_osm_obstacle_mask.tif",
+    "destination": null
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_overture_building_mask.tif",
+    "destination": null
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_overture_building_overlay.png",
+    "destination": null
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_refined_empty_land_overlay.png",
+    "destination": null
+  },
+  {
+    "action": "archive",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_scl.tif.aux.xml",
+    "destination": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\archive\\bhadra_scl.tif.aux.xml"
+  },
+  {
+    "action": "archive",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_sentinel_open_components.gpkg",
+    "destination": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\archive\\bhadra_sentinel_open_components.gpkg"
+  },
+  {
+    "action": "archive",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_spectral.tif.aux.xml",
+    "destination": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\archive\\bhadra_spectral.tif.aux.xml"
+  },
+  {
+    "action": "delete-generated",
+    "source": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_v1_v2_comparison.png",
+    "destination": null
+  },
+  {
+    "action": "archive",
+    "source": "data/processed/Bhadra/buildings/bhadra_overture_buildings_bbox.geojson",
+    "destination": "data/processed/Bhadra/buildings/archive/bhadra_overture_buildings_bbox.geojson"
+  },
+  {
+    "action": "archive",
+    "source": "data/processed/Bhadra/buildings/bhadra_overture_buildings_bbox.geojson.state",
+    "destination": "data/processed/Bhadra/buildings/archive/bhadra_overture_buildings_bbox.geojson.state"
+  },
+  {
+    "action": "archive",
+    "source": "data/processed/Bhadra/dem/bhadra_srtm_clipped.tif",
+    "destination": "data/processed/Bhadra/dem/archive/bhadra_srtm_clipped.tif"
+  },
+  {
+    "action": "archive",
+    "source": "docs/1st week in HAL.pdf",
+    "destination": "docs/archive/1st week in HAL.pdf"
+  },
+  {
+    "action": "archive",
+    "source": "docs/2nd week in HAL.pdf",
+    "destination": "docs/archive/2nd week in HAL.pdf"
+  },
+  {
+    "action": "archive",
+    "source": "docs/HAL Projects.txt",
+    "destination": "docs/archive/HAL Projects.txt"
+  },
+  {
+    "action": "archive",
+    "source": "docs/HELPS Notes.docx",
+    "destination": "docs/archive/HELPS Notes.docx"
+  },
+  {
+    "action": "archive",
+    "source": "docs/HELPS_Combined_Literature_Review_IEEE.docx",
+    "destination": "docs/archive/HELPS_Combined_Literature_Review_IEEE.docx"
+  },
+  {
+    "action": "archive",
+    "source": "docs/HELPS_Knowledge.docx",
+    "destination": "docs/archive/HELPS_Knowledge.docx"
+  },
+  {
+    "action": "archive",
+    "source": "docs/HELPS_Literature_Review.pdf",
+    "destination": "docs/archive/HELPS_Literature_Review.pdf"
+  },
+  {
+    "action": "archive",
+    "source": "docs/HELPS_System Design Document.docx",
+    "destination": "docs/archive/HELPS_System Design Document.docx"
+  },
+  {
+    "action": "archive",
+    "source": "docs/HELPS_System Design Document.pdf",
+    "destination": "docs/archive/HELPS_System Design Document.pdf"
+  },
+  {
+    "action": "archive",
+    "source": "docs/HELPSs Conceptual Architecture.docx",
+    "destination": "docs/archive/HELPSs Conceptual Architecture.docx"
+  },
+  {
+    "action": "archive",
+    "source": "docs/HELPSs Conceptual Architecture.pdf",
+    "destination": "docs/archive/HELPSs Conceptual Architecture.pdf"
+  },
+  {
+    "action": "archive",
+    "source": "docs/Project Study.txt",
+    "destination": "docs/archive/Project Study.txt"
+  },
+  {
+    "action": "archive",
+    "source": "docs/Remainder.txt",
+    "destination": "docs/archive/Remainder.txt"
+  },
+  {
+    "action": "archive",
+    "source": "docs/Research on AI in Aerospace.docx",
+    "destination": "docs/archive/Research on AI in Aerospace.docx"
+  },
+  {
+    "action": "archive",
+    "source": "docs/System Design Document.txt",
+    "destination": "docs/archive/System Design Document.txt"
+  },
+  {
+    "action": "archive",
+    "source": "docs/Works.pdf",
+    "destination": "docs/archive/Works.pdf"
+  },
+  {
+    "action": "archive",
+    "source": "PAPERS",
+    "destination": "docs/archive/PAPERS"
+  },
+  {
+    "action": "archive",
+    "source": "Bhadra_boundry.qgz",
+    "destination": "archive/Bhadra_boundry.qgz"
+  },
+  {
+    "action": "archive",
+    "source": "HELPS.txt",
+    "destination": "archive/HELPS.txt"
+  },
+  {
+    "action": "archive",
+    "source": "project context.txt",
+    "destination": "archive/project context.txt"
+  },
+  {
+    "action": "archive",
+    "source": "Screenshot 2026-07-28 001235.png",
+    "destination": "archive/Screenshot 2026-07-28 001235.png"
+  },
+  {
+    "action": "archive",
+    "source": "Screenshot 2026-07-28 001802.png",
+    "destination": "archive/Screenshot 2026-07-28 001802.png"
+  },
+  {
+    "action": "archive",
+    "source": "Vishnu_Annotation_Preparation.qgz",
+    "destination": "archive/Vishnu_Annotation_Preparation.qgz"
+  },
+  {
+    "action": "archive",
+    "source": "Vishnu_Annotation_Sample_01.qgz",
+    "destination": "archive/Vishnu_Annotation_Sample_01.qgz"
+  },
+  {
+    "action": "archive",
+    "source": "Vishnu_Annotation_Package_2026-06-01",
+    "destination": "data/validation/archive/Vishnu_Annotation_Package_2026-06-01"
+  },
+  {
+    "action": "archive",
+    "source": "Vishnu_Annotation_Package_2026-06-01.zip",
+    "destination": "data/validation/archive/Vishnu_Annotation_Package_2026-06-01.zip"
+  },
+  {
+    "action": "relocate-cache",
+    "source": "cache",
+    "destination": "data/cache/osmnx"
+  },
+  {
+    "action": "archive",
+    "source": "data/processed/Bhadra/buildings/bhadra_overture_buildings_in_possible_open.geojson",
+    "destination": "data/processed/Bhadra/buildings/archive/bhadra_overture_buildings_in_possible_open.geojson"
+  }
+]

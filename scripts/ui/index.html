@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HELPSs | Open Terrain</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<header><div><strong>HELPSs</strong><span class="division">/</span><span>Open Terrain</span></div><span class="local">LOCAL WORKSPACE</span></header>
+<main>
+<aside>
+<h1>New analysis</h1>
+<form id="form">
+<label for="file">Area of interest</label><input type="file" id="file" accept=".geojson,.json" required>
+<label for="name">AOI name</label><input id="name" placeholder="Bhadra" maxlength="60" required>
+<label for="date">Sentinel observation date</label><input type="date" id="date" value="2026-06-01" required>
+<button id="run" type="submit"><span aria-hidden="true">&#9654;</span> Run analysis</button>
+<p id="error" role="alert"></p>
+</form>
+<div class="history"><h2>Previous analyses</h2><div id="history"></div></div>
+<footer>Possible open terrain<br><span>Single-date Sentinel-2 L2A</span></footer>
+</aside>
+<section class="workspace">
+<div class="heading"><div><p class="eyebrow">ANALYSIS RESULTS</p><h2 id="title">Bhadra <span>June 1, 2026</span></h2></div><span id="status" class="badge">Reference result</span></div>
+<div class="metrics"><div><span>Final polygons</span><strong id="count">4,130</strong></div><div><span>Candidate area</span><strong id="area">88.824 <small>km&#178;</small></strong></div><div><span>Validation</span><strong id="audit">Reference</strong></div></div>
+<div class="mapbar"><span><i></i> Candidate boundaries</span><div class="downloads" id="downloads" hidden><a id="png" download>PNG</a><a id="geojson" download>GeoJSON</a><a id="gpkg" download>GeoPackage</a><a id="summary" download>Results</a></div></div>
+<div class="map"><img id="map" src="/baseline.png" alt="Candidate open-land polygon boundaries over Bhadra Sentinel imagery"><p id="noimage" hidden>No image available</p></div>
+<details id="progress"><summary>Run log <span id="logstatus">Ready</span></summary><pre id="log" aria-live="polite">No active run.</pre></details>
+</section>
+</main><script src="/app.js"></script></body></html>

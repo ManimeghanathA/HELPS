@@ -1,0 +1,23 @@
+{
+  "open_pixels": 1163689,
+  "unknown_pixels": 1154896,
+  "aoi_pixels": 11073317,
+  "open_components": 19697,
+  "building_cleaned_fragments": 26828,
+  "parent_candidates": 5210,
+  "raw_operational_zones": 4898,
+  "geometry_passed_zones": 4131,
+  "final_zones": 4130,
+  "final_area_km2": 88.82400129370326,
+  "audits": {
+    "unknown_overlap_pixels": 0,
+    "cloud_overlap_pixels": 0,
+    "zone_overlap_pairs": 0,
+    "building_overlap_m2": 3.635291310105963e-07,
+    "valid_geometries": true,
+    "thresholds_passed": true,
+    "unique_ids": true,
+    "stored_areas_consistent": true,
+    "passed": true
+  }
+}

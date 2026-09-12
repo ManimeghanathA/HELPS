@@ -1,0 +1,162 @@
+
+1. ALH Dhruv (Advanced Light Helicopter).
+Overall Length: 15.90 m
+Overall Height: 4.98 m
+Fuselage Width: 13.20 m (including wingspan/rotors)
+Main Rotor Diameter: 13.20 m
+Max Takeoff Weight (MTOW): 5,500 kg (Mk-III) / 5,800 kg (Mk-IV Weaponized "Rudra")
+
+2. LCH Prachand (Light Combat Helicopter)
+Overall Length: 15.80 m
+Overall Height: 4.70 m
+Fuselage Wingspan: 4.60 m
+Main Rotor Diameter: 13.20 m
+Max Takeoff Weight (MTOW): 5,800 kg
+
+3. LUH (Light Utility Helicopter)
+Overall Length: 11.49 m
+Overall Height: 3.38 m (to the top of the tailfin)
+Overall Width: 2.38 m
+Main Rotor Diameter: 11.60 m
+Max Takeoff Weight (MTOW): 3,150 kg
+
+4. Chetak (Alouette III)
+Overall Length: 12.82 m
+Overall Height: 2.97 m
+Overall Width: 2.59 m
+Main Rotor Diameter: 11.02 m
+Max Takeoff Weight (MTOW): 2,200 kg
+
+5. Cheetah (Lama SA 315B) & Cheetal
+Overall Length: 12.92 m
+Overall Height: 3.09 m
+Overall Width: 2.38 m
+Main Rotor Diameter: 11.02 m
+Max Takeoff Weight (MTOW): 1,950 kg
+
+6. IMRH (Indian Multi-Role Helicopter)
+Projected Length: 25.16 m
+Projected Height: 6.22 m
+Projected Fuselage Width: 4.74 m
+Main Rotor Diameter: 21.20 m (5-blade composite rotor)
+Max Takeoff Weight (MTOW): 13,000 kg
+
+
+important prompts
+
+HELPSs - Helicopter Emergency landing place suggestion system
+I'm trying to build an prototype for this project, where first i want to take in satellite data and other required data of a specific location as a proof of concept and then extract features which are really necessary for deciding the landing of a helicopter and then store them in a database as the user selects the helicopter or enters the information about the helicopter manually, then we sort the locations as per the helicopter specifications, and list top k locations with the score
+
+Project Objectives
+
+The system aims to:
+
+Analyze large geographic regions automatically.
+Identify candidate emergency landing locations.
+Extract terrain, surface, and obstacle information.
+Evaluate locations against helicopter-specific constraints.
+Rank landing zones based on operational suitability.
+Provide explainable recommendations with risk factors.
+
+Core Design Philosophy
+
+The system does not make decisions on behalf of the pilot.
+
+Instead, it provides:
+
+Decision Support
+
+rather than:
+
+Decision Making
+
+Output recommendations are accompanied by:
+
+Supporting factors
+Risk factors
+Terrain information
+Suitability scores
+
+allowing the pilot to retain final authority.
+
+Study Area
+
+Version 1 Development Region:
+
+Bhadra Reservoir
++
+Bhadra Tiger Reserve
+Karnataka, India
+
+Reason for Selection:
+
+Dense forest regions
+Water bodies
+Hilly terrain
+Remote operating environment
+Open grassland patches
+Suitable for demonstrating emergency landing challenges
+
+Now here is the pipeline and architecture
+                    RAW DATA
+                        │
+                        ▼
+ ┌──────────────────────────────────────┐
+ │        Data Acquisition Layer        │
+ └──────────────────────────────────────┘
+                        │
+      ┌─────────────────┼──────────────────┐
+      │                 │                  │
+      ▼                 ▼                  ▼
+
+ DEM Data       Satellite Imagery      GIS Data
+(Elevation)      (Sentinel-2)         (OSM)
+
+      │                 │                  │
+      └─────────────────┼──────────────────┘
+                        │
+                        ▼
+
+ ┌──────────────────────────────────────┐
+ │      Feature Extraction Layer        │
+ └──────────────────────────────────────┘
+
+                        │
+
+       Terrain Features Extraction
+       Surface Features Extraction
+       Obstacle Features Extraction
+       Accessibility Features
+
+                        │
+                        ▼
+
+ ┌──────────────────────────────────────┐
+ │ Candidate Landing Zone Generator     │
+ └──────────────────────────────────────┘
+
+                        │
+                        ▼
+
+      Landing Zone Intelligence Database
+
+                        │
+                        ▼
+
+ ┌──────────────────────────────────────┐
+ │ Aircraft Evaluation Engine           │
+ └──────────────────────────────────────┘
+
+                        │
+                        ▼
+
+ ┌──────────────────────────────────────┐
+ │ Suitability Scoring Engine           │
+ └──────────────────────────────────────┘
+
+                        │
+                        ▼
+
+              Ranked Landing Zones
+
+Here is the whole context about the project we are building, lets start building the project slowly please

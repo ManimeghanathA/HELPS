@@ -1,0 +1,11 @@
+HELPS:
+Commands to run the pipeline:
+python -m scripts.processing.run_possible_open_detection_v2
+python -m scripts.processing.run_candidate_polygonization
+python -m scripts.processing.run_building_subtraction
+python -m scripts.processing.run_candidate_geometry_filter
+python -m scripts.processing.run_operational_zone_generation
+
+python -m scripts.validation.run_cloud_unknown_audit
+python -m scripts.validation.audit_final_open_land_zones
+python -m scripts.visualization.visualize_final_open_land_zones
