@@ -1,22 +1,4 @@
-.env
-helps_env/
 __pycache__/
 *.py[cod]
-.pytest_cache/
-cache/
-data/inputs/*
-data/runs
-data/validation
-!data/raw/
-data/raw/*
-!data/raw/Bhadra/
-data/processed/*
-data/raw/Bhadra/*
-!data/raw/Bhadra/bhadra_entire_region.geojson
-*.log
-# Historical source code and documentation remain tracked.
-!scripts/archive/
-!docs/results/
-
-docs/archive/
-archive/
+.env
+.venv/

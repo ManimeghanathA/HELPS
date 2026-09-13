@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HELPS Weather Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div class="eyebrow"><span class="status-dot"></span> HELPS / WEATHER ACQUISITION</div>
+      <h1>HELPS</h1>
+      <p class="intro">Input coordinates to know location conditions.</p>
+    </header>
+
+    <section class="mission-board" aria-label="Landing spot search">
+      <section class="observation-panel" aria-labelledby="observation-title">
+        <div class="observation-heading">
+          <div>
+            <span class="section-kicker">01 / WEATHER ACQUISITION</span>
+            <h2 id="observation-title">Ready to scan</h2>
+          </div>
+          <span class="ready-badge"><i></i> READY</span>
+        </div>
+        <p class="observation-intro">Enter a location and observation time to retrieve historical weather conditions.</p>
+        <div class="observation-visual" aria-hidden="true">
+          <div class="observation-crosshair"><i></i><b></b><em></em></div>
+          <span class="observation-orbit observation-orbit--outer"></span>
+          <span class="observation-orbit observation-orbit--inner"></span>
+        </div>
+        <div class="observation-meta">
+          <div><span>LOCATION</span><strong>Latitude / Longitude</strong></div>
+          <div><span>TIME</span><strong>UTC observation</strong></div>
+          <div><span>SOURCE</span><strong>Open-Meteo</strong></div>
+        </div>
+        <div class="observation-get">
+          <span class="section-kicker">WHAT YOU'LL GET</span>
+          <p>Wind <i>·</i> Temperature <i>·</i> Visibility <i>·</i> Rain <i>·</i> Wind profile <i>·</i> Source &amp; method</p>
+        </div>
+      </section>
+
+      <div class="radar-panel">
+        <div class="radar-heading">
+          <div>
+            <span class="section-kicker">01 / Landing scan</span>
+            <h2>Possible landing spots</h2>
+          </div>
+          <div class="radar-live"><span class="radar-live-dot"></span> MOCK FEED</div>
+        </div>
+        <div class="radar-wrap">
+          <div class="radar" id="radar" aria-label="Radar display of possible landing spots">
+            <div class="radar-sweep"></div>
+            <div class="radar-cross radar-cross--horizontal"></div>
+            <div class="radar-cross radar-cross--vertical"></div>
+            <div class="radar-ring radar-ring--outer"></div>
+            <div class="radar-ring radar-ring--middle"></div>
+            <div class="radar-ring radar-ring--inner"></div>
+            <div class="radar-center" id="radar-center"><span></span><b>QUERY</b></div>
+            <div class="landing-spot landing-spot--one" tabindex="0"><span></span><b>A-01</b><div class="spot-detail"><strong>A-01 / Landable</strong><small>Clear approach</small><small>Surface: open field</small><small>Confidence: 92%</small></div></div>
+            <div class="landing-spot landing-spot--two" tabindex="0"><span></span><b>A-02</b><div class="spot-detail"><strong>A-02 / Landable</strong><small>Low obstruction risk</small><small>Surface: compact soil</small><small>Confidence: 86%</small></div></div>
+            <div class="landing-spot landing-spot--three" tabindex="0"><span></span><b>B-01</b><div class="spot-detail"><strong>B-01 / Review</strong><small>Wind exposure flagged</small><small>Surface: grass</small><small>Confidence: 68%</small></div></div>
+            <div class="landing-spot landing-spot--four" tabindex="0"><span></span><b>B-02</b><div class="spot-detail"><strong>B-02 / Landable</strong><small>Wide clear area</small><small>Surface: hardstand</small><small>Confidence: 89%</small></div></div>
+            <div class="landing-spot landing-spot--five" tabindex="0"><span></span><b>C-01</b><div class="spot-detail"><strong>C-01 / Review</strong><small>Terrain data pending</small><small>Surface: unknown</small><small>Confidence: 51%</small></div></div>
+            <div class="radar-scale"><span>2 km</span><i></i><span>5 km</span><i></i><span>10 km</span></div>
+          </div>
+        </div>
+        <div class="radar-legend"><span><i class="legend-dot legend-dot--query"></i> Query point</span><span><i class="legend-dot legend-dot--spot"></i> Candidate site</span><span><i class="legend-line"></i> 10 km scan radius</span></div>
+      </div>
+
+      <aside class="query-panel" aria-labelledby="query-title">
+      <div class="panel-heading">
+        <div>
+            <span class="section-kicker">02 / Query</span>
+          <h2 id="query-title">Set the observation point</h2>
+        </div>
+        <span class="api-badge">OPEN-METEO</span>
+      </div>
+      <form id="weather-form">
+        <label>
+          <span>Longitude</span>
+          <input id="longitude" name="longitude" type="number" min="-180" max="180" step="any" placeholder="79.1559" required>
+          <small>-180 to 180 degrees</small>
+        </label>
+        <label>
+          <span>Latitude</span>
+          <input id="latitude" name="latitude" type="number" min="-90" max="90" step="any" placeholder="12.9698" required>
+          <small>-90 to 90 degrees</small>
+        </label>
+        <label>
+          <span>Time (UTC)</span>
+          <input id="timestamp" name="timestamp" type="datetime-local" min="1000-01-01T00:00" max="9999-12-31T23:59" required>
+          <small>Hourly source, interpolated when needed</small>
+        </label>
+        <button type="submit" id="submit-button"><span>Fetch conditions</span><strong>↗</strong></button>
+      </form>
+        <p class="form-error" id="form-error" role="alert"></p>
+        <div class="query-note"><span class="note-mark">i</span><p>Landing spots are placeholder positions for now. The backend will supply verified sites and their safety status.</p></div>
+      </aside>
+
+    <section class="loading" id="loading" aria-live="polite"><span></span> Querying the atmosphere...</section>
+
+    <section class="results" id="results" aria-live="polite" hidden>
+      <div class="result-header">
+        <div>
+          <span class="section-kicker">03 / Records</span>
+          <h2 id="result-location">Weather record</h2>
+          <p id="result-time" class="mono"></p>
+        </div>
+        <div class="daylight-chip" id="daylight-chip"><span class="sun-mark">◐</span><span id="daylight-value">--</span></div>
+      </div>
+
+      <div class="metric-grid">
+        <article class="metric-card metric-card--wind">
+          <div class="metric-label">Wind speed</div><div class="metric-value"><span id="wind-speed">--</span><small> kt</small></div>
+          <div class="metric-foot">Gust <b id="wind-gust">--</b> kt</div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-label">Temperature</div><div class="metric-value"><span id="temperature">--</span><small> °C</small></div>
+          <div class="metric-foot">Cloud cover <b id="cloud-cover">--</b>%</div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-label">Visibility</div><div class="metric-value"><span id="visibility">--</span><small> m</small></div>
+          <div class="metric-foot">Pressure <b id="pressure">--</b> hPa</div>
+        </article>
+        <article class="metric-card metric-card--rain">
+          <div class="metric-label">Rain / current hour</div><div class="metric-value"><span id="current-rain">--</span><small> mm</small></div>
+          <div class="metric-foot">Last 24 hours <b id="daily-rain">--</b> mm</div>
+        </article>
+      </div>
+
+      <div class="detail-grid">
+        <article class="detail-card">
+          <div class="detail-title"><span class="icon">↝</span><h3>Wind profile</h3></div>
+          <dl><div><dt>Direction</dt><dd><span id="wind-direction">--</span>°</dd></div><div><dt>Observation</dt><dd id="observation-time">--</dd></div></dl>
+        </article>
+        <article class="detail-card">
+          <div class="detail-title"><span class="icon">◎</span><h3>Source & method</h3></div>
+          <dl><div><dt>Model</dt><dd id="model">--</dd></div><div><dt>Interpolation</dt><dd id="interpolation">--</dd></div></dl>
+        </article>
+      </div>
+      <p class="retrieved" id="retrieved">--</p>
+    </section>
+    </section>
+
+    <footer>Visibility is model-derived. Precipitation is indicative when interpolated.</footer>
+  </main>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
