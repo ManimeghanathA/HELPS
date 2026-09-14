@@ -22,7 +22,7 @@ def test_haversine_distance_and_bearing():
 def test_landing_engine_indexing():
     engine = LandingZoneEngine()
     assert engine.total_zones > 0
-    assert engine.total_zones == 4130
+    assert engine.total_zones == 8275
 
 def test_landing_engine_query_and_suitability():
     engine = LandingZoneEngine()

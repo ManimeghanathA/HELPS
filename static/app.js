@@ -81,15 +81,9 @@ window.addEventListener('pointermove', (e) => {
   }
 }, { passive: true });
 
-// Set default timestamp to current UTC time if empty
+// Set default timestamp to the June 1, 2026 satellite baseline pass
 if (!timestampInput.value) {
-  const now = new Date();
-  const year = now.getUTCFullYear();
-  const month = String(now.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(now.getUTCDate()).padStart(2, '0');
-  const hours = String(now.getUTCHours()).padStart(2, '0');
-  const minutes = String(now.getUTCMinutes()).padStart(2, '0');
-  timestampInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+  timestampInput.value = '2026-06-01T12:00';
 }
 
 const setText = (id, value, suffix = '') => {
@@ -114,20 +108,168 @@ const formatDist = (km) => {
 };
 
 const validateTimestamp = () => {
+  if (!timestampInput) return true;
   const value = timestampInput.value;
   const valid = !value || /^(?:[1-9]\d{3})-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value);
-  timestampInput.setCustomValidity(valid ? '' : 'The year must contain exactly 4 digits.');
+  if (typeof timestampInput.setCustomValidity === 'function') {
+    timestampInput.setCustomValidity(valid ? '' : 'The year must contain exactly 4 digits.');
+  }
   return valid;
 };
 
-timestampInput.addEventListener('input', validateTimestamp);
-timestampInput.addEventListener('change', validateTimestamp);
+timestampInput?.addEventListener('input', validateTimestamp);
+timestampInput?.addEventListener('change', validateTimestamp);
+
+// ----------------------------------------------------
+// Interactive Satellite Map of India & Operational Boundaries
+// ----------------------------------------------------
+let satelliteMap = null;
+let regionsLayerGroup = null;
+let currentQueryMarker = null;
+
+const initSatelliteMap = async () => {
+  const mapElement = document.querySelector('#india-satellite-map');
+  if (!mapElement || typeof L === 'undefined') return;
+
+  // Initialize Map centered on Southern/Central India (Karnataka Focus)
+  satelliteMap = L.map('india-satellite-map', {
+    center: [14.50, 76.50],
+    zoom: 7,
+    minZoom: 4,
+    maxZoom: 16,
+    zoomControl: false,
+    attributionControl: false
+  });
+
+  // Custom Zoom Control top-right
+  L.control.zoom({ position: 'topright' }).addTo(satelliteMap);
+
+  // Satellite Imagery Layer (ESRI World Imagery)
+  const esriSatellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 18,
+    attribution: 'Esri Satellite'
+  }).addTo(satelliteMap);
+
+  // CartoDB Dark Labels layer overlay for crisp geographical names
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+    maxZoom: 18,
+    subdomains: 'abcd',
+    opacity: 0.8
+  }).addTo(satelliteMap);
+
+  regionsLayerGroup = L.layerGroup().addTo(satelliteMap);
+
+  // Fetch real GeoJSON operational region boundaries from Flask endpoint
+  try {
+    const res = await fetch('/api/operational-regions');
+    if (!res.ok) throw new Error('Failed to load operational regions');
+    const geojsonData = await res.json();
+
+    const statusStyles = {
+      ready: {
+        color: '#22c55e',
+        fillColor: '#16a34a',
+        fillOpacity: 0.28,
+        weight: 2.5,
+        dashArray: null
+      },
+      in_progress: {
+        color: '#eab308',
+        fillColor: '#ca8a04',
+        fillOpacity: 0.22,
+        weight: 2,
+        dashArray: '6, 6'
+      },
+      under_consideration: {
+        color: '#ef4444',
+        fillColor: '#dc2626',
+        fillOpacity: 0.18,
+        weight: 2,
+        dashArray: '4, 4'
+      }
+    };
+
+    const geojsonLayer = L.geoJSON(geojsonData, {
+      style: (feature) => {
+        const status = feature.properties.status || 'under_consideration';
+        return statusStyles[status] || statusStyles.under_consideration;
+      },
+      onEachFeature: (feature, layer) => {
+        const props = feature.properties;
+        const popupContent = `
+          <div style="font-family:'Courier Prime',monospace; padding:2px;">
+            <h4 style="color:${props.color}; margin:0 0 6px 0; font-size:12px; text-transform:uppercase;">${props.name}</h4>
+            <p style="margin:2px 0; font-size:11px;"><strong>Status:</strong> <span style="color:${props.color}; font-weight:700;">${props.status_label}</span></p>
+            <p style="margin:2px 0; font-size:11px;"><strong>Sites Available:</strong> ${props.sites_count > 0 ? props.sites_count.toLocaleString() + ' Verified Zones' : 'Pipeline Processing'}</p>
+            <p style="margin:4px 0 8px 0; font-size:10px; color:#cbd5e1; line-height:1.3;">${props.description}</p>
+            ${props.status === 'ready' ? `<button type="button" class="region-popup-action" data-lat="${props.center[0]}" data-lon="${props.center[1]}">Select &amp; Scan Region &nearr;</button>` : `<span style="font-size:10px; color:#94a3b8; font-style:italic;">Data acquisition in progress</span>`}
+          </div>
+        `;
+        layer.bindPopup(popupContent, { maxWidth: 280 });
+
+        layer.on('mouseover', function () {
+          this.setStyle({
+            weight: 3.5,
+            fillOpacity: 0.45
+          });
+          const focusEl = document.querySelector('#active-sector-name');
+          const statusEl = document.querySelector('#active-sector-status');
+          if (focusEl) focusEl.textContent = props.name;
+          if (statusEl) {
+            statusEl.textContent = props.status_label;
+            statusEl.style.color = props.color;
+          }
+        });
+
+        layer.on('mouseout', function () {
+          const status = props.status || 'under_consideration';
+          this.setStyle(statusStyles[status]);
+        });
+
+        layer.on('click', function () {
+          if (props.center) {
+            document.querySelector('#latitude').value = props.center[0];
+            document.querySelector('#longitude').value = props.center[1];
+          }
+        });
+      }
+    }).addTo(regionsLayerGroup);
+
+    // Focus map by default on the entire South India peninsula
+    satelliteMap.setView([13.0, 77.5], 6);
+  } catch (err) {
+    console.error('Error rendering operational regions on satellite map:', err);
+    satelliteMap.setView([13.0, 77.5], 6);
+  }
+};
+
+// Initialize Satellite Map on DOM Ready
+document.addEventListener('DOMContentLoaded', () => {
+  initSatelliteMap();
+});
+
+// Delegate click from region popup action buttons
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.region-popup-action');
+  if (btn) {
+    const lat = btn.getAttribute('data-lat');
+    const lon = btn.getAttribute('data-lon');
+    if (lat && lon) {
+      document.querySelector('#latitude').value = lat;
+      document.querySelector('#longitude').value = lon;
+      form.dispatchEvent(new Event('submit', { cancelable: true }));
+    }
+  }
+});
 
 // Preset region chips
 document.querySelectorAll('.preset-chip').forEach((chip) => {
-  chip.addEventListener('click', () => {
-    document.querySelector('#latitude').value = chip.getAttribute('data-lat');
-    document.querySelector('#longitude').value = chip.getAttribute('data-lon');
+  chip.addEventListener('click', (e) => {
+    e.preventDefault();
+    const lat = parseFloat(chip.getAttribute('data-lat'));
+    const lon = parseFloat(chip.getAttribute('data-lon'));
+    document.querySelector('#latitude').value = lat;
+    document.querySelector('#longitude').value = lon;
     form.dispatchEvent(new Event('submit', { cancelable: true }));
   });
 });
@@ -414,8 +556,6 @@ form.addEventListener('submit', async (event) => {
     errorMessage.textContent = 'Enter a valid UTC time with a 4-digit year.';
     return;
   }
-  results.hidden = true;
-  missionBoard.classList.remove('has-results');
   loading.classList.add('is-visible');
   submitButton.disabled = true;
 
@@ -482,6 +622,7 @@ form.addEventListener('submit', async (event) => {
     // Render Landing Zones with Responsive Adaptive Zoom
     applyRadarZoom(selectedRangeMode);
     renderLocationsList();
+    renderTacticalMapSpots(data);
 
     results.hidden = false;
     missionBoard.classList.add('has-results');
@@ -492,3 +633,273 @@ form.addEventListener('submit', async (event) => {
     submitButton.disabled = false;
   }
 });
+
+// Return to Satellite Overview / Landing Page
+const returnToLandingPage = () => {
+  missionBoard.classList.remove('has-results');
+  results.hidden = true;
+  loading.classList.remove('is-visible');
+  if (errorMessage) errorMessage.textContent = '';
+  
+  if (satelliteMap) {
+    setTimeout(() => {
+      satelliteMap.invalidateSize();
+      satelliteMap.setView([13.0, 77.5], 6);
+    }, 100);
+  }
+};
+
+document.querySelector('#top-back-to-map-btn')?.addEventListener('click', returnToLandingPage);
+document.querySelector('#radar-back-to-map-btn')?.addEventListener('click', returnToLandingPage);
+document.querySelector('#results-back-to-map-btn')?.addEventListener('click', returnToLandingPage);
+document.querySelectorAll('.back-to-map-btn').forEach(btn => btn.addEventListener('click', returnToLandingPage));
+
+// ----------------------------------------------------
+// Tactical Geospatial Map (Result Page View 2)
+// ----------------------------------------------------
+let tacticalMap = null;
+let tacticalQueryMarker = null;
+let tacticalSpotsLayer = null;
+let tacticalRadiusCircle = null;
+
+const initTacticalMap = () => {
+  const mapElement = document.querySelector('#tactical-satellite-map');
+  if (!mapElement || typeof L === 'undefined' || tacticalMap) return;
+
+  tacticalMap = L.map('tactical-satellite-map', {
+    center: [13.78, 75.66],
+    zoom: 13,
+    minZoom: 6,
+    maxZoom: 18,
+    zoomControl: true,
+    attributionControl: false
+  });
+
+  // Esri World Imagery (Satellite)
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 18,
+    attribution: 'Esri Satellite'
+  }).addTo(tacticalMap);
+
+  // CartoDB Labels overlay
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+    maxZoom: 18,
+    subdomains: 'abcd',
+    opacity: 0.8
+  }).addTo(tacticalMap);
+
+  tacticalSpotsLayer = L.layerGroup().addTo(tacticalMap);
+};
+
+// Render landing spots on the Tactical Satellite Map
+const renderTacticalMapSpots = (data) => {
+  if (!tacticalMap) {
+    initTacticalMap();
+  }
+  if (!tacticalMap || !tacticalSpotsLayer) return;
+
+  tacticalSpotsLayer.clearLayers();
+
+  const queryLat = parseFloat(data.location.latitude);
+  const queryLon = parseFloat(data.location.longitude);
+
+  if (isNaN(queryLat) || isNaN(queryLon)) return;
+
+  // Custom icon for the query center point
+  const queryCenterIcon = L.divIcon({
+    className: 'custom-query-marker',
+    html: `<div style="
+      width: 18px;
+      height: 18px;
+      background: #ff5252;
+      border: 2.5px solid #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(255, 82, 82, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    "><div style="width: 4px; height: 4px; background: #ffffff; border-radius: 50%;"></div></div>`,
+    iconSize: [18, 18],
+    iconAnchor: [9, 9]
+  });
+
+  tacticalQueryMarker = L.marker([queryLat, queryLon], { icon: queryCenterIcon })
+    .bindPopup(`
+      <div style="font-family:'Courier Prime',monospace; padding:4px;">
+        <h4 style="margin:0 0 4px; color:#ff5252; font-size:12px; text-transform:uppercase;">QUERY POINT</h4>
+        <p style="margin:2px 0; font-size:11px;"><strong>Coordinates:</strong> ${queryLat.toFixed(4)}°, ${queryLon.toFixed(4)}°</p>
+        <p style="margin:2px 0; font-size:11px;"><strong>Weather:</strong> ${data.temperature_c}°C · Wind ${data.wind.speed_kt} kt (${data.wind.direction_deg}°)</p>
+      </div>
+    `)
+    .addTo(tacticalSpotsLayer);
+
+  // Active Radius Circle (e.g. 10km search radius)
+  const radiusMeters = 10000;
+  tacticalRadiusCircle = L.circle([queryLat, queryLon], {
+    radius: radiusMeters,
+    color: '#38bdf8',
+    weight: 1.5,
+    dashArray: '5, 5',
+    fillColor: '#0284c7',
+    fillOpacity: 0.05
+  }).addTo(tacticalSpotsLayer);
+
+  const spots = data.landing_zones?.spots || [];
+  const statusColors = {
+    optimal: '#84cc16',
+    caution: '#f59e0b',
+    warning: '#ef4444'
+  };
+
+  const spotMarkers = [];
+
+  spots.forEach((spot) => {
+    const lat = spot.latitude != null ? spot.latitude : spot.center_lat;
+    const lon = spot.longitude != null ? spot.longitude : spot.center_lon;
+    if (lat == null || lon == null) return;
+
+    const shortName = shortZoneName(spot.zone_id);
+    const suitability = spot.suitability || {};
+    const statusCode = suitability.status_code || 'optimal';
+    const color = statusColors[statusCode] || '#84cc16';
+    const rank = spot.rank || 1;
+
+    const popupHtml = `
+      <div style="font-family:'Courier Prime',monospace; padding:4px; max-width:260px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px solid #334155; padding-bottom:4px;">
+          <strong style="color:${color}; font-size:12px;">#${rank} ${spot.zone_id}</strong>
+          <span style="background:${color}; color:#0b141a; padding:1px 6px; border-radius:2px; font-size:10px; font-weight:700;">${suitability.score}% MATCH</span>
+        </div>
+        <p style="margin:3px 0; font-size:11px;"><strong>Status:</strong> <span style="color:${color}; font-weight:700;">${suitability.status || 'Landable Area'}</span></p>
+        <p style="margin:3px 0; font-size:11px;"><strong>Distance:</strong> ${spot.distance_km} km (${spot.bearing_deg}° ${spot.compass})</p>
+        <p style="margin:3px 0; font-size:11px;"><strong>Clearance:</strong> ⌀${spot.max_clear_diameter_m} m (${spot.clearance_label || 'Safe'})</p>
+        <p style="margin:3px 0; font-size:11px;"><strong>Usable Area:</strong> ${spot.area_m2.toLocaleString()} m²</p>
+        <p style="margin:3px 0; font-size:11px;"><strong>Dimensions:</strong> ${spot.length_m} m × ${spot.width_m} m</p>
+        <p style="margin:3px 0; font-size:11px;"><strong>Slope:</strong> ${spot.slope_deg != null ? spot.slope_deg + '°' : '--'}</p>
+        <p style="margin:6px 0 0; font-size:10px; color:#cbd5e1; line-height:1.3; font-style:italic;">${suitability.briefing || suitability.rationale || ''}</p>
+      </div>
+    `;
+
+    const onZoneSelect = () => {
+      document.querySelectorAll('.location-card.is-active').forEach(el => el.classList.remove('is-active'));
+      const card = document.querySelector(`#card-${spot.zone_id}`);
+      if (card) {
+        card.classList.add('is-active');
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    };
+
+    // 1. Draw Exact Landable Area Polygon from annotations if available, or fall back to subtle bounds
+    let polyLayer = null;
+
+    if (spot.polygon && Array.isArray(spot.polygon) && spot.polygon.length > 2) {
+      polyLayer = L.polygon(spot.polygon, {
+        color: color,
+        weight: 2.5,
+        fillColor: color,
+        fillOpacity: 0.35,
+      });
+      polyLayer.bindPopup(popupHtml);
+      polyLayer.on('click', onZoneSelect);
+      polyLayer.on('mouseover', function() {
+        this.setStyle({ weight: 4, fillOpacity: 0.6 });
+      });
+      polyLayer.on('mouseout', function() {
+        this.setStyle({ weight: 2.5, fillOpacity: 0.35 });
+      });
+      polyLayer.addTo(tacticalSpotsLayer);
+      spotMarkers.push(polyLayer);
+    } else if (spot.bbox && Array.isArray(spot.bbox) && spot.bbox.length === 4) {
+      // Fallback only if raw polygon vertices are missing
+      const bounds = [[spot.bbox[0], spot.bbox[1]], [spot.bbox[2], spot.bbox[3]]];
+      polyLayer = L.rectangle(bounds, {
+        color: color,
+        weight: 2,
+        fillColor: color,
+        fillOpacity: 0.35
+      });
+      polyLayer.bindPopup(popupHtml);
+      polyLayer.on('click', onZoneSelect);
+      polyLayer.addTo(tacticalSpotsLayer);
+      spotMarkers.push(polyLayer);
+    }
+
+    // 2. Compact Badge Tag Marker placed directly on the landing zone center
+    const labelLat = lat;
+    const labelLon = lon;
+    const badgeIcon = L.divIcon({
+      className: 'custom-spot-marker',
+      html: `
+        <div style="
+          background: ${color};
+          color: #0b141a;
+          font-family: 'Courier Prime', monospace;
+          font-weight: 700;
+          font-size: 11px;
+          padding: 2px 6px;
+          border-radius: 3px;
+          border: 1.5px solid #ffffff;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+          white-space: nowrap;
+          transform: translate(-50%, -50%);
+          cursor: pointer;
+        ">#${rank} ${shortName}</div>
+      `,
+      iconSize: [0, 0]
+    });
+
+    const labelMarker = L.marker([labelLat, labelLon], { icon: badgeIcon });
+    labelMarker.bindPopup(popupHtml);
+    labelMarker.on('click', onZoneSelect);
+    labelMarker.addTo(tacticalSpotsLayer);
+    spotMarkers.push(labelMarker);
+  });
+
+  // Zoom bounds to include query point and spots
+  if (spotMarkers.length > 0) {
+    const group = L.featureGroup([tacticalQueryMarker, ...spotMarkers]);
+    tacticalMap.fitBounds(group.getBounds(), { padding: [40, 40], maxZoom: 15 });
+  } else {
+    tacticalMap.setView([queryLat, queryLon], 13);
+  }
+};
+
+// View Switcher (Radar View vs Map View) Tab Event Handlers
+const viewTabRadar = document.querySelector('#view-tab-radar');
+const viewTabMap = document.querySelector('#view-tab-map');
+const tacticalRadarView = document.querySelector('#tactical-radar-view');
+const tacticalMapView = document.querySelector('#tactical-map-view');
+const visualizerTitle = document.querySelector('#tactical-view-title');
+
+const switchVisualizerView = (view) => {
+  if (view === 'radar') {
+    viewTabRadar?.classList.add('is-active');
+    viewTabMap?.classList.remove('is-active');
+    if (tacticalRadarView) tacticalRadarView.style.display = 'flex';
+    if (tacticalMapView) tacticalMapView.style.display = 'none';
+    if (visualizerTitle) visualizerTitle.textContent = 'Landing Zone Scan';
+  } else {
+    viewTabMap?.classList.add('is-active');
+    viewTabRadar?.classList.remove('is-active');
+    if (tacticalRadarView) tacticalRadarView.style.display = 'none';
+    if (tacticalMapView) tacticalMapView.style.display = 'flex';
+    if (visualizerTitle) visualizerTitle.textContent = 'Tactical Geospatial Map';
+
+    if (!tacticalMap) {
+      initTacticalMap();
+    }
+    setTimeout(() => {
+      if (tacticalMap) {
+        tacticalMap.invalidateSize();
+        if (currentWeatherData) {
+          renderTacticalMapSpots(currentWeatherData);
+        }
+      }
+    }, 80);
+  }
+};
+
+viewTabRadar?.addEventListener('click', () => switchVisualizerView('radar'));
+viewTabMap?.addEventListener('click', () => switchVisualizerView('map'));
+
+

@@ -107,6 +107,56 @@ def parse_gpkg_point(blob: bytes) -> Optional[Tuple[float, float]]:
     return None
 
 
+def parse_gpkg_polygon_and_bbox(blob: bytes) -> Tuple[Optional[List[float]], Optional[List[List[float]]]]:
+    """Extract (bbox [lat_min, lon_min, lat_max, lon_max], exterior_polygon_coords [[lat, lon], ...]) from a GeoPackage geometry blob."""
+    if not blob or len(blob) < 8:
+        return None, None
+    flags = blob[3]
+    envelope_type = (flags >> 1) & 0x07
+    header_len = 8
+    bbox = None
+    if envelope_type == 1:
+        minx, maxx, miny, maxy = struct.unpack('<dddd', blob[8:40])
+        lat_min, lon_min = utm_to_latlon(minx, miny, zone=43, northern=True)
+        lat_max, lon_max = utm_to_latlon(maxx, maxy, zone=43, northern=True)
+        bbox = [round(lat_min, 6), round(lon_min, 6), round(lat_max, 6), round(lon_max, 6)]
+        header_len += 32
+    elif envelope_type in (2, 3):
+        header_len += 48
+    elif envelope_type == 4:
+        header_len += 64
+
+    wkb = blob[header_len:]
+    if len(wkb) < 9:
+        return bbox, None
+
+    wkb_order = "<" if wkb[0] == 1 else ">"
+    geom_type = struct.unpack(f"{wkb_order}I", wkb[1:5])[0]
+    polygon_coords = []
+
+    if geom_type % 1000 == 3:  # Polygon
+        num_rings = struct.unpack(f"{wkb_order}I", wkb[5:9])[0]
+        offset = 9
+        if num_rings > 0 and offset + 4 <= len(wkb):
+            num_pts = struct.unpack(f"{wkb_order}I", wkb[offset:offset+4])[0]
+            offset += 4
+            for _ in range(num_pts):
+                if offset + 16 > len(wkb):
+                    break
+                x, y = struct.unpack(f"{wkb_order}dd", wkb[offset:offset+16])
+                offset += 16
+                lat, lon = utm_to_latlon(x, y, zone=43, northern=True)
+                polygon_coords.append([round(lat, 6), round(lon, 6)])
+
+    # If bbox wasn't in envelope header, compute it from polygon points if available
+    if not bbox and polygon_coords:
+        lats = [pt[0] for pt in polygon_coords]
+        lons = [pt[1] for pt in polygon_coords]
+        bbox = [round(min(lats), 6), round(min(lons), 6), round(max(lats), 6), round(max(lons), 6)]
+
+    return bbox, (polygon_coords if polygon_coords else None)
+
+
 def haversine_distance_and_bearing(lat1: float, lon1: float, lat2: float, lon2: float) -> Tuple[float, float]:
     """Compute distance in km and bearing in degrees (0..360)."""
     phi1 = math.radians(lat1)
@@ -158,27 +208,28 @@ class LandingZoneEngine:
                 cursor = conn.cursor()
 
                 query = """
-                SELECT f.zone_id, f.parent_candidate_id, f.zone_number,
+                SELECT f.zone_id, f.parent_candidate_id,
                        f.area_m2, f.length_m, f.width_m, f.max_clear_radius_m, f.max_clear_diameter_m,
-                       m.geom
+                       m.geom AS center_geom, f.geom AS poly_geom
                 FROM final_open_land_zones f
                 LEFT JOIN maximum_clearance_centers m
-                  ON f.parent_candidate_id = m.parent_candidate_id
-                 AND f.zone_number = m.zone_number
+                  ON f.zone_id = m.zone_id
                 """
                 cursor.execute(query)
                 rows = cursor.fetchall()
 
                 for row in rows:
-                    (zone_id, parent_id, zone_no, area_m2, length_m, width_m,
-                     clear_r, clear_d, geom_blob) = row
+                    (zone_id, parent_id, area_m2, length_m, width_m,
+                     clear_r, clear_d, center_geom_blob, poly_geom_blob) = row
 
-                    pt = parse_gpkg_point(geom_blob)
+                    pt = parse_gpkg_point(center_geom_blob)
                     if not pt:
                         continue
 
                     easting, northing = pt
                     lat, lon = utm_to_latlon(easting, northing, zone=43, northern=True)
+
+                    bbox, polygon_coords = parse_gpkg_polygon_and_bbox(poly_geom_blob)
 
                     # Estimate ground slope profile from clearance & dimensions
                     # Zones in flat open terrain have low slope (<4 deg), hillside zones have 6-10 deg
@@ -187,9 +238,10 @@ class LandingZoneEngine:
                     self.zones.append({
                         "zone_id": zone_id,
                         "parent_id": parent_id,
-                        "zone_number": zone_no,
                         "latitude": round(lat, 6),
                         "longitude": round(lon, 6),
+                        "bbox": bbox,
+                        "polygon": polygon_coords,
                         "easting": round(easting, 1),
                         "northing": round(northing, 1),
                         "area_m2": round(area_m2, 1),

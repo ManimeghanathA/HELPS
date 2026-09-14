@@ -16,8 +16,8 @@ def test_index_page(client):
     response = client.get("/")
     assert response.status_code == 200
     assert b"HELPS" in response.data
-    assert b"Tactical Radar" in response.data
-    assert b"Quick Region Presets" in response.data or b"preset-chip" in response.data
+    assert b"Operational Zone Boundaries" in response.data
+    assert b"india-satellite-map" in response.data
 
 def test_api_landing_zones_endpoint(client):
     payload = {
@@ -78,4 +78,20 @@ def test_helicopter_model_and_mission_ranking(client):
     assert data_luh["helicopter"]["id"] == "hal_luh"
     assert data_luh["helicopter"]["min_clear_diameter_m"] == 24.0
     assert data_luh["mission"]["id"] == "immediate_emergency"
+
+
+def test_api_operational_regions(client):
+    response = client.get("/api/operational-regions")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data["type"] == "FeatureCollection"
+    assert len(data["features"]) >= 3
+    # Check green, yellow, red statuses
+    statuses = [f["properties"]["status"] for f in data["features"]]
+    assert "ready" in statuses
+    assert "in_progress" in statuses
+    assert "under_consideration" in statuses
+    # Verify geometry polygons have coordinates
+    assert all(len(f["geometry"]["coordinates"][0]) > 3 for f in data["features"])
+
 

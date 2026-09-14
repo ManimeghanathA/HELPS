@@ -25,6 +25,103 @@ def index():
     return render_template("index.html")
 
 
+@app.get("/api/operational-regions")
+def operational_regions():
+    """Return operational region boundaries across India with user-specified status."""
+    import json
+    regions_file = Path(__file__).parent / "data" / "raw" / "Bhadra" / "bhadra_entire_region.geojson"
+    bhadra_coords = []
+    if regions_file.exists():
+        try:
+            with open(regions_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if data.get("features"):
+                    bhadra_coords = data["features"][0]["geometry"]["coordinates"]
+        except Exception:
+            pass
+
+    # Exact specified operational regions
+    features = [
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "bhadra_reserve",
+                "name": "Bhadra Wildlife Sanctuary & Tiger Reserve",
+                "state": "Karnataka",
+                "status": "ready",
+                "status_label": "DATA AVAILABLE (READY)",
+                "color": "#22c55e",
+                "sites_count": 8275,
+                "center": [13.6800, 75.6400],
+                "description": "Entire Bhadra operational territory. 8,275 verified candidate landing sites extracted from Sentinel-2 & DEM terrain pipelines ready for decision making."
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": bhadra_coords if bhadra_coords else [[[75.50, 13.35], [75.82, 13.35], [75.82, 13.82], [75.50, 13.82], [75.50, 13.35]]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "wayanad_district",
+                "name": "Wayanad Highland Sector",
+                "state": "Kerala",
+                "status": "in_progress",
+                "status_label": "IN PROGRESS (DATA PROCESSING)",
+                "color": "#eab308",
+                "sites_count": 620,
+                "center": [11.6854, 76.1320],
+                "description": "Wayanad terrain, slope assessment, and vegetation classification currently in progress."
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[[75.85, 11.50], [76.32, 11.52], [76.42, 11.88], [76.10, 12.02], [75.82, 11.78], [75.85, 11.50]]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "ladakh_region",
+                "name": "Ladakh High-Altitude Sector",
+                "state": "Ladakh",
+                "status": "under_consideration",
+                "status_label": "UNDER CONSIDERATION",
+                "color": "#ef4444",
+                "sites_count": 0,
+                "center": [34.1526, 77.5771],
+                "description": "High-altitude mountain landing sectors under airspace feasibility and density altitude clearance."
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[[76.80, 33.50], [78.60, 33.70], [78.90, 35.20], [77.10, 35.10], [76.80, 33.50]]]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "himalayas_sector",
+                "name": "Himalayas Mountain Range",
+                "state": "Himachal / Uttarakhand",
+                "status": "under_consideration",
+                "status_label": "UNDER CONSIDERATION",
+                "color": "#ef4444",
+                "sites_count": 0,
+                "center": [31.1048, 78.1700],
+                "description": "Extreme terrain Himalayan operational corridor under airspace and steep terrain evaluation."
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[[77.00, 30.50], [80.20, 29.80], [80.90, 31.40], [77.60, 32.60], [77.00, 30.50]]]
+            }
+        }
+    ]
+
+    return jsonify({
+        "type": "FeatureCollection",
+        "features": features
+    })
+
+
 @app.post("/api/weather")
 def weather():
     payload = request.get_json(silent=True) or {}
