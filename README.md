@@ -226,3 +226,7 @@ The local-data Bhadra pipeline has completed end to end. All 35 active tests pas
 A separate live acquisition check on a small Bhadra-area polygon successfully downloaded Sentinel spectral/SCL rasters, queried all seven OSM groups, and completed the Overture query (zero buildings in that small test area). The initial sandboxed request was blocked; the live check succeeded with network access enabled. The full Bhadra run reused existing data. The small acquisition-check files are retained under `data/archive/acquisition_smoke`.
 
 These outputs identify possible open terrain. They do not certify helicopter landing suitability: slope, surface strength, operational obstacles, permissions and helicopter-specific constraints are not yet evaluated. Residual thin-cloud contamination missed by single-date Sentinel SCL remains a documented limitation.
+
+\# HELPS Manual Annotations This branch contains the human-verified ground-truth annotations for the HELPS candidate landing regions. 
+
+## Recent Updates - Updated ground-truth GeoJSON annotation layers. - Standardized class labels: \`open\_land\`, \`forest\`, \`buildings\`, \`road\`, \`water\`, \`unknown\`.
