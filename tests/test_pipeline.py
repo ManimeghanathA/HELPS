@@ -8,7 +8,7 @@ from rasterio.transform import from_origin
 from shapely.geometry import box, mapping
 
 from scripts.pipeline.inputs import load_aoi, cache_key
-from scripts.pipeline.processing import process_inputs
+from scripts.pipeline.processing import audit, process_inputs
 from scripts.processing.building_subtraction import subtract_buildings
 
 
@@ -34,6 +34,48 @@ def test_reject_non_polygon_aoi(tmp_path):
 def test_buildings_can_remove_all_terrain():
     terrain = gpd.GeoDataFrame(geometry=[box(0, 0, 100, 100)], crs=32643)
     assert subtract_buildings(terrain, terrain).empty
+
+
+def test_final_audit_tolerates_submillimeter_building_slivers():
+    zone = box(0, 0, 40, 40)
+    zones = gpd.GeoDataFrame(
+        [{
+            'zone_id': 'test',
+            'area_m2': zone.area,
+            'max_clear_diameter_m': 40.0,
+            'geometry': zone,
+        }],
+        geometry='geometry',
+        crs=32643,
+    )
+    buildings = gpd.GeoDataFrame(geometry=[box(0, 0, 0.0000004, 40)], crs=32643)
+    state = np.ones((4, 4), dtype='uint8')
+    scl = np.full((4, 4), 5, dtype='uint8')
+
+    result = audit(zones, buildings, state, scl, from_origin(0, 40, 10, 10), lambda _: None)
+
+    assert result['building_overlap_m2'] > 1e-6
+    assert result['passed']
+
+
+def test_final_audit_rejects_meaningful_building_overlap():
+    zone = box(0, 0, 40, 40)
+    zones = gpd.GeoDataFrame(
+        [{
+            'zone_id': 'test',
+            'area_m2': zone.area,
+            'max_clear_diameter_m': 40.0,
+            'geometry': zone,
+        }],
+        geometry='geometry',
+        crs=32643,
+    )
+    buildings = gpd.GeoDataFrame(geometry=[box(0, 0, 0.01, 40)], crs=32643)
+    state = np.ones((4, 4), dtype='uint8')
+    scl = np.full((4, 4), 5, dtype='uint8')
+
+    with pytest.raises(ValueError, match='Final audit failed'):
+        audit(zones, buildings, state, scl, from_origin(0, 40, 10, 10), lambda _: None)
 
 
 @pytest.mark.parametrize('open_land', [True, False])

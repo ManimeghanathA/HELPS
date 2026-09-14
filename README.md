@@ -97,6 +97,51 @@ python -m scripts.pipeline.run_aoi_pipeline --aoi "data/raw/MyArea/main_aoi.geoj
 python -m scripts.pipeline.run_aoi_pipeline --aoi "C:\Users\manim\Downloads\aoi.geojson" --date 2026-06-01 --name Field_Check_01
 ```
 
+## Historical Bhadra Dates
+
+The Bhadra temporal-history workflow is handled by:
+
+```text
+scripts/pipeline/historical_dates.py
+```
+
+It runs the same validated AOI pipeline for each selected historical date, then publishes stable date-based outputs:
+
+```text
+data/raw/Sentinel2/<date>/
+  tiles/
+  spectral.tif
+  scl.tif
+
+data/processed/Bhadra/sentinel2/<date>/
+  bhadra_spectral.tif
+  bhadra_scl.tif
+  bhadra_possible_open_mask.tif
+  bhadra_final_open_land_zones.gpkg
+  bhadra_final_open_land_zones.geojson
+  bhadra_final_open_land_zones.png
+  bhadra_aoi_boundary.gpkg
+  bhadra_aoi_rgb_preview.png
+  summary.json
+  run.json
+  run.log
+  published_from_run.json
+```
+
+Run the selected low-cloud history dates with:
+
+```powershell
+python -m scripts.pipeline.historical_dates 2025-10-12 2025-12-11 2026-02-04 2026-03-26 2026-05-15 --skip-tests
+```
+
+The command skips dates that already have `published_from_run.json`, so accidental reruns do not redownload or reprocess completed dates. To intentionally rerun and republish a date, add `--force`:
+
+```powershell
+python -m scripts.pipeline.historical_dates 2026-05-15 --skip-tests --force
+```
+
+The UI also includes a historical-date scan that queries the Copernicus catalogue and reports the lowest metadata-cloud Sentinel-2 date per month. These catalogue percentages are only date-selection candidates; the accepted date still needs the full AOI pipeline and SCL-based audit.
+
 ## CDSE Credentials
 
 HELPSs uses the Copernicus Data Space Ecosystem Sentinel Hub Process API to fetch Sentinel-2 Level-2A imagery for a user-selected AOI and date. This happens in [scripts/pipeline/acquisition.py](scripts/pipeline/acquisition.py), inside the `sentinel(...)` function.
@@ -201,7 +246,7 @@ docs/
   cleanup-manifest.json
 data/
   raw/            Authoritative AOI, original Sentinel tiles and DEM sources
-  processed/      Retained Bhadra inputs and validated results
+  processed/      Retained Bhadra inputs, historical date folders and validated results
   inputs/         Geometry/date-keyed input manifests and downloaded data
   runs/           Independent run folders, final outputs and logs
   validation/     Manual annotations and validation packages

@@ -15,6 +15,8 @@ from scripts.processing.candidate_geometry_filter import measure_candidate_geome
 from scripts.processing.operational_zone_extraction import extract_operational_zones
 from scripts.processing.maximum_clearance import measure_maximum_clearance
 
+BUILDING_OVERLAP_TOLERANCE_M2 = 1e-4
+
 
 def polygons(frame):
     frame = frame.copy()
@@ -52,7 +54,8 @@ def audit(zones, buildings, state, scl, transform, log=print):
                   valid_geometries=valid, thresholds_passed=thresholds,
                   unique_ids=bool(zones.zone_id.is_unique), stored_areas_consistent=stored)
     result['passed'] = bool(not unknown and not clouds and not overlap_pairs and
-                            building_overlap <= 1e-6 and valid and thresholds and stored and result['unique_ids'])
+                            building_overlap <= BUILDING_OVERLAP_TOLERANCE_M2 and
+                            valid and thresholds and stored and result['unique_ids'])
     if not result['passed']:
         raise ValueError(f'Final audit failed: {result}')
     return result

@@ -66,6 +66,38 @@ $('form').onsubmit = async event => {
     $('log').textContent = 'Starting analysis...';
   } catch (e) { $('error').textContent = e.message; $('run').disabled = false; }
 };
+$('scan').onclick = async () => {
+  $('scan').disabled = true;
+  $('scanstatus').textContent = 'Scanning Copernicus catalogue...';
+  $('scanresults').replaceChildren();
+  try {
+    const response = await fetch('/api/historical-scan',{method:'POST'});
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error);
+    const rows = body.best_date_per_month || [];
+    if (!rows.length) {
+      $('scanstatus').textContent = 'No low-cloud dates found.';
+      return;
+    }
+    $('scanstatus').textContent = `Best monthly dates below ${body.maximum_cloud_percent}% cloud`;
+    for (const row of rows) {
+      const item = document.createElement('div');
+      item.className = 'scanrow';
+      const month = document.createElement('strong');
+      month.textContent = row.month;
+      const date = document.createElement('span');
+      date.textContent = row.date;
+      const cloud = document.createElement('small');
+      cloud.textContent = `${Number(row.cloud_cover).toFixed(2)}%`;
+      item.append(month,date,cloud);
+      $('scanresults').append(item);
+    }
+  } catch (e) {
+    $('scanstatus').textContent = e.message;
+  } finally {
+    $('scan').disabled = false;
+  }
+};
 let previous = 'idle';
 async function poll() {
   try {

@@ -12,6 +12,12 @@
 <button id="run" type="submit"><span aria-hidden="true">&#9654;</span> Run analysis</button>
 <p id="error" role="alert"></p>
 </form>
+<div class="scanner">
+<h2>Historical date scan</h2>
+<button id="scan" type="button"><span aria-hidden="true">&#9711;</span> Scan previous months</button>
+<p id="scanstatus">Finds each month’s lowest-cloud Sentinel-2 date before June 1.</p>
+<div id="scanresults"></div>
+</div>
 <div class="history"><h2>Previous analyses</h2><div id="history"></div></div>
 <footer>Possible open terrain<br><span>Single-date Sentinel-2 L2A</span></footer>
 </aside>

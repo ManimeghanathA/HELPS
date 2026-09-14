@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 from scripts.pipeline.inputs import ROOT, data_directory
 from scripts.pipeline.run_aoi_pipeline import run
+from scripts.search_historical_sentinel_dates import scan_historical_dates
 
 WEB = Path(__file__).parent
 LOCK = threading.Lock()
@@ -64,6 +65,11 @@ class Handler(BaseHTTPRequestHandler):
         self.send({'error':'Not found'}, code=404)
 
     def do_POST(self):
+        if self.path == '/api/historical-scan':
+            try:
+                return self.send(scan_historical_dates())
+            except Exception as exc:
+                return self.send({'error':str(exc)},code=500)
         if self.path != '/api/run':
             return self.send({'error':'Not found'},code=404)
         # Require a browser request from this same loopback origin.
