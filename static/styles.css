@@ -1746,13 +1746,13 @@ button.zoom-step-btn:hover {
 .tactical-map-wrapper {
   position: relative;
   width: 100%;
-  height: 520px;
-  min-height: 480px;
+  height: 560px;
+  min-height: 520px;
   margin-top: var(--s2);
   border: 1px solid var(--line);
-  border-radius: 2px;
+  border-radius: 4px;
   overflow: hidden;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.45);
 }
 
 [data-theme="dark"] .tactical-map-wrapper {
@@ -1762,7 +1762,7 @@ button.zoom-step-btn:hover {
 #tactical-satellite-map {
   width: 100%;
   height: 100%;
-  min-height: 480px;
+  min-height: 520px;
   background: #09121a;
   z-index: 1;
 }

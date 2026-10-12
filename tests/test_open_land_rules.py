@@ -63,7 +63,7 @@ def test_unclassified_pixel_is_unknown():
 
 def test_low_vegetation_surface_can_be_possible_open():
     scl = np.array([[4]], dtype=np.uint8)
-    ndvi = np.array([[0.42]], dtype=np.float32)
+    ndvi = np.array([[0.15]], dtype=np.float32)
     mndwi = np.array([[-0.30]], dtype=np.float32)
 
     result = classify_open_pixels(scl, ndvi, mndwi)

@@ -95,3 +95,12 @@ def test_api_operational_regions(client):
     assert all(len(f["geometry"]["coordinates"][0]) > 3 for f in data["features"])
 
 
+def test_api_reload_zones(client):
+    response = client.post("/api/reload-zones")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data["status"] == "reloaded"
+    assert "total_zones" in data
+    assert data["total_zones"] > 0
+
+

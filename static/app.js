@@ -619,10 +619,14 @@ form.addEventListener('submit', async (event) => {
       flightApproach.textContent = `Heading ${String(headwindHeading).padStart(3, '0')}° into ${String(windDir).padStart(3, '0')}° wind (${speed} kt)`;
     }
 
-    // Render Landing Zones with Responsive Adaptive Zoom
-    applyRadarZoom(selectedRangeMode);
+    // Render Landing Zones and Tactical Map
     renderLocationsList();
     renderTacticalMapSpots(data);
+    setTimeout(() => {
+      if (tacticalMap) {
+        tacticalMap.invalidateSize();
+      }
+    }, 100);
 
     results.hidden = false;
     missionBoard.classList.add('has-results');
@@ -654,13 +658,13 @@ document.querySelector('#radar-back-to-map-btn')?.addEventListener('click', retu
 document.querySelector('#results-back-to-map-btn')?.addEventListener('click', returnToLandingPage);
 document.querySelectorAll('.back-to-map-btn').forEach(btn => btn.addEventListener('click', returnToLandingPage));
 
-// ----------------------------------------------------
-// Tactical Geospatial Map (Result Page View 2)
-// ----------------------------------------------------
+// Tactical Satellite Map Setup (Result Page Map Visualizer)
 let tacticalMap = null;
 let tacticalQueryMarker = null;
 let tacticalSpotsLayer = null;
 let tacticalRadiusCircle = null;
+
+let allGpkgLayer = null;
 
 const initTacticalMap = () => {
   const mapElement = document.querySelector('#tactical-satellite-map');
@@ -672,21 +676,82 @@ const initTacticalMap = () => {
     minZoom: 6,
     maxZoom: 18,
     zoomControl: true,
+    scrollWheelZoom: true,
+    dragging: true,
     attributionControl: false
   });
 
-  // Esri World Imagery (Satellite)
+  // ESRI World Imagery High-Resolution Satellite Layer
   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     maxZoom: 18,
-    attribution: 'Esri Satellite'
+    attribution: 'Esri World Imagery'
   }).addTo(tacticalMap);
 
   // CartoDB Labels overlay
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
     maxZoom: 18,
     subdomains: 'abcd',
-    opacity: 0.8
+    opacity: 0.85
   }).addTo(tacticalMap);
+
+  // Layer for pipeline-generated landing zone annotations (from latest pipeline run)
+  pipelineAnnotationsLayer = L.geoJSON(null, {
+    style: {
+      color: '#10b981',
+      weight: 1.5,
+      fillColor: '#059669',
+      fillOpacity: 0.28
+    },
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties;
+      const clearD = p.max_clear_diameter_m != null ? Number(p.max_clear_diameter_m).toFixed(1) : '--';
+      const slope = p.slope_deg != null ? `${p.slope_deg}°` : 'Flat / Low';
+      layer.bindPopup(`
+        <div style="font-family:'Courier Prime',monospace; padding:4px; font-size:11px;">
+          <div style="color:#10b981; font-weight:700; margin-bottom:3px; border-bottom:1px solid #334155; padding-bottom:2px;">
+            PIPELINE ANNOTATION: ${p.zone_id}
+          </div>
+          <p style="margin:2px 0;"><strong>Usable Area:</strong> ${Math.round(p.area_m2).toLocaleString()} m²</p>
+          <p style="margin:2px 0;"><strong>Max Clearance:</strong> ⌀${clearD} m</p>
+          <p style="margin:2px 0;"><strong>Dimensions:</strong> ${p.length_m ? Number(p.length_m).toFixed(0) : '--'} m × ${p.width_m ? Number(p.width_m).toFixed(0) : '--'} m</p>
+          <p style="margin:2px 0;"><strong>Slope Profile:</strong> ${slope}</p>
+        </div>
+      `);
+      layer.on('mouseover', function () {
+        this.setStyle({ weight: 3, fillOpacity: 0.55 });
+      });
+      layer.on('mouseout', function () {
+        this.setStyle({ weight: 1.5, fillOpacity: 0.28 });
+      });
+    }
+  }).addTo(tacticalMap);
+
+  // Load pipeline-generated annotations asynchronously
+  fetch('/api/pipeline-zones')
+    .then(r => r.json())
+    .then(geojson => {
+      if (pipelineAnnotationsLayer && geojson.features) {
+        pipelineAnnotationsLayer.addData(geojson);
+        const countBadge = document.querySelector('#radar-live-text');
+        if (countBadge) {
+          countBadge.textContent = `${geojson.features.length.toLocaleString()} PIPELINE ANNOTATIONS`;
+        }
+      }
+    })
+    .catch(err => console.warn('Pipeline annotations overlay notice:', err));
+
+  // Retrieve latest run metadata if available
+  fetch('/api/pipeline-run-info')
+    .then(r => r.json())
+    .then(info => {
+      if (info && info.id) {
+        const titleEl = document.querySelector('#tactical-view-title');
+        if (titleEl) {
+          titleEl.textContent = `Tactical Pipeline Annotations (${info.name} · ${info.date})`;
+        }
+      }
+    })
+    .catch(err => console.warn('Run info notice:', err));
 
   tacticalSpotsLayer = L.layerGroup().addTo(tacticalMap);
 };
@@ -714,7 +779,7 @@ const renderTacticalMapSpots = (data) => {
       background: #ff5252;
       border: 2.5px solid #ffffff;
       border-radius: 50%;
-      box-shadow: 0 0 10px rgba(255, 82, 82, 0.9);
+      box-shadow: 0 0 12px rgba(255, 82, 82, 0.95);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -765,14 +830,14 @@ const renderTacticalMapSpots = (data) => {
     const rank = spot.rank || 1;
 
     const popupHtml = `
-      <div style="font-family:'Courier Prime',monospace; padding:4px; max-width:260px;">
+      <div style="font-family:'Courier Prime',monospace; padding:4px; max-width:270px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px solid #334155; padding-bottom:4px;">
           <strong style="color:${color}; font-size:12px;">#${rank} ${spot.zone_id}</strong>
           <span style="background:${color}; color:#0b141a; padding:1px 6px; border-radius:2px; font-size:10px; font-weight:700;">${suitability.score}% MATCH</span>
         </div>
         <p style="margin:3px 0; font-size:11px;"><strong>Status:</strong> <span style="color:${color}; font-weight:700;">${suitability.status || 'Landable Area'}</span></p>
         <p style="margin:3px 0; font-size:11px;"><strong>Distance:</strong> ${spot.distance_km} km (${spot.bearing_deg}° ${spot.compass})</p>
-        <p style="margin:3px 0; font-size:11px;"><strong>Clearance:</strong> ⌀${spot.max_clear_diameter_m} m (${spot.clearance_label || 'Safe'})</p>
+        <p style="margin:3px 0; font-size:11px;"><strong>Clearance:</strong> ⌀${spot.max_clear_diameter_m} m (${spot.clearance_grade || 'Safe'})</p>
         <p style="margin:3px 0; font-size:11px;"><strong>Usable Area:</strong> ${spot.area_m2.toLocaleString()} m²</p>
         <p style="margin:3px 0; font-size:11px;"><strong>Dimensions:</strong> ${spot.length_m} m × ${spot.width_m} m</p>
         <p style="margin:3px 0; font-size:11px;"><strong>Slope:</strong> ${spot.slope_deg != null ? spot.slope_deg + '°' : '--'}</p>
@@ -789,7 +854,7 @@ const renderTacticalMapSpots = (data) => {
       }
     };
 
-    // 1. Draw Exact Landable Area Polygon from annotations if available, or fall back to subtle bounds
+    // 1. Draw Exact Landable Area Polygon from GPKG annotations
     let polyLayer = null;
 
     if (spot.polygon && Array.isArray(spot.polygon) && spot.polygon.length > 2) {
@@ -797,26 +862,25 @@ const renderTacticalMapSpots = (data) => {
         color: color,
         weight: 2.5,
         fillColor: color,
-        fillOpacity: 0.35,
+        fillOpacity: 0.38,
       });
       polyLayer.bindPopup(popupHtml);
       polyLayer.on('click', onZoneSelect);
       polyLayer.on('mouseover', function() {
-        this.setStyle({ weight: 4, fillOpacity: 0.6 });
+        this.setStyle({ weight: 4, fillOpacity: 0.65 });
       });
       polyLayer.on('mouseout', function() {
-        this.setStyle({ weight: 2.5, fillOpacity: 0.35 });
+        this.setStyle({ weight: 2.5, fillOpacity: 0.38 });
       });
       polyLayer.addTo(tacticalSpotsLayer);
       spotMarkers.push(polyLayer);
     } else if (spot.bbox && Array.isArray(spot.bbox) && spot.bbox.length === 4) {
-      // Fallback only if raw polygon vertices are missing
       const bounds = [[spot.bbox[0], spot.bbox[1]], [spot.bbox[2], spot.bbox[3]]];
       polyLayer = L.rectangle(bounds, {
         color: color,
         weight: 2,
         fillColor: color,
-        fillOpacity: 0.35
+        fillOpacity: 0.38
       });
       polyLayer.bindPopup(popupHtml);
       polyLayer.on('click', onZoneSelect);
@@ -855,7 +919,14 @@ const renderTacticalMapSpots = (data) => {
     spotMarkers.push(labelMarker);
   });
 
-  // Zoom bounds to include query point and spots
+  // Update stats bar
+  if (spots.length > 0) {
+    const closest = spots[0];
+    if (radarSitesCount) radarSitesCount.textContent = `${spots.length} evaluated sites mapped in range`;
+    if (radarClosestSite) radarClosestSite.textContent = `Top Site: #${closest.rank} ${closest.distance_km} km ${closest.compass}`;
+  }
+
+  // Zoom bounds to include query point and spots smoothly
   if (spotMarkers.length > 0) {
     const group = L.featureGroup([tacticalQueryMarker, ...spotMarkers]);
     tacticalMap.fitBounds(group.getBounds(), { padding: [40, 40], maxZoom: 15 });
@@ -863,43 +934,5 @@ const renderTacticalMapSpots = (data) => {
     tacticalMap.setView([queryLat, queryLon], 13);
   }
 };
-
-// View Switcher (Radar View vs Map View) Tab Event Handlers
-const viewTabRadar = document.querySelector('#view-tab-radar');
-const viewTabMap = document.querySelector('#view-tab-map');
-const tacticalRadarView = document.querySelector('#tactical-radar-view');
-const tacticalMapView = document.querySelector('#tactical-map-view');
-const visualizerTitle = document.querySelector('#tactical-view-title');
-
-const switchVisualizerView = (view) => {
-  if (view === 'radar') {
-    viewTabRadar?.classList.add('is-active');
-    viewTabMap?.classList.remove('is-active');
-    if (tacticalRadarView) tacticalRadarView.style.display = 'flex';
-    if (tacticalMapView) tacticalMapView.style.display = 'none';
-    if (visualizerTitle) visualizerTitle.textContent = 'Landing Zone Scan';
-  } else {
-    viewTabMap?.classList.add('is-active');
-    viewTabRadar?.classList.remove('is-active');
-    if (tacticalRadarView) tacticalRadarView.style.display = 'none';
-    if (tacticalMapView) tacticalMapView.style.display = 'flex';
-    if (visualizerTitle) visualizerTitle.textContent = 'Tactical Geospatial Map';
-
-    if (!tacticalMap) {
-      initTacticalMap();
-    }
-    setTimeout(() => {
-      if (tacticalMap) {
-        tacticalMap.invalidateSize();
-        if (currentWeatherData) {
-          renderTacticalMapSpots(currentWeatherData);
-        }
-      }
-    }, 80);
-  }
-};
-
-viewTabRadar?.addEventListener('click', () => switchVisualizerView('radar'));
-viewTabMap?.addEventListener('click', () => switchVisualizerView('map'));
 
 

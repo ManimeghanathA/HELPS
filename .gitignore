@@ -2,3 +2,10 @@ __pycache__/
 *.py[cod]
 .env
 .venv/
+data/cache/
+data/inputs/
+data/runs/
+static/sentinel_tiles/
+static/*.tif
+static/bhadra_sentinel2_rgb.png
+test/

@@ -196,11 +196,24 @@ class LandingZoneEngine:
         self._load_datasets()
 
     def _load_datasets(self) -> None:
-        """Load and index all validated zones from the terrain database."""
+        """Load and index all validated zones from the latest pipeline run output (or canonical processed GPKG)."""
         self.zones = []
-        gpkg_files = list(self.data_root.glob("processed/**/sentinel2/**/bhadra_final_open_land_zones.gpkg"))
-        if not gpkg_files:
-            gpkg_files = list(self.data_root.glob("**/*final_open_land_zones.gpkg"))
+        runs_dir = self.data_root / "runs"
+        latest_run_gpkg = None
+        if runs_dir.exists():
+            for d in sorted([p for p in runs_dir.iterdir() if p.is_dir() and p.name != "archive"], key=lambda p: p.name, reverse=True):
+                gpkg = d / "final_zones.gpkg"
+                if gpkg.exists():
+                    latest_run_gpkg = gpkg
+                    break
+
+        target_gpkg = self.data_root / "processed" / "Bhadra" / "sentinel2" / "2026-06-01" / "bhadra_final_open_land_zones.gpkg"
+        if latest_run_gpkg:
+            gpkg_files = [latest_run_gpkg]
+        elif target_gpkg.exists():
+            gpkg_files = [target_gpkg]
+        else:
+            gpkg_files = list(self.data_root.glob("**/bhadra_final_open_land_zones.gpkg"))
 
         for gpkg_path in gpkg_files:
             try:

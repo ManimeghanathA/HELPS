@@ -50,7 +50,7 @@ def test_pipeline_synthetic(tmp_path, open_land):
     aoi = gpd.GeoDataFrame(geometry=[box(500000,1500000,500200,1500200)], crs=32643)
     buildings = gpd.GeoDataFrame(geometry=[], crs=32643)
     summary = process_inputs(tmp_path/'spectral.tif', tmp_path/'scl.tif',
-                             buildings, aoi, tmp_path/'result', 'test', lambda _: None)
+                             buildings, {}, aoi, tmp_path/'result', 'test', lambda _: None)
     assert summary['final_zones'] == (1 if open_land else 0)
     assert summary['audits']['passed']
     assert (tmp_path/'result'/'final_zones.png').exists()

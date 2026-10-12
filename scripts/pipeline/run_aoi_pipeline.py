@@ -1,7 +1,9 @@
 """CLI and UI entry point for validated single-date processing."""
 import argparse
 import json
+from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 import uuid
@@ -13,6 +15,55 @@ import pandas as pd
 from scripts.pipeline.acquisition import acquire, write_json
 from scripts.pipeline.inputs import ROOT, load_aoi, cache_key, data_directory
 from scripts.pipeline.processing import process_inputs
+
+# CHANGED: these OSM layers get subtracted as exclusions (in addition to buildings).
+# 'water' catches natural=water / waterway=* (rivers, canals, drains, ponds).
+# 'industrial' catches landuse=industrial/construction/quarry/landfill/farmyard.
+# Both are acquired into osm.gpkg by scripts/pipeline/acquisition.py but were
+# previously never read back out.
+EXCLUSION_LAYERS = ['water', 'industrial']
+
+
+def _read_osm_layer(path, layer, log):
+    """
+    Read one OSM layer out of osm.gpkg, tolerating GPKGs written before
+    this layer existed (older cached acquisitions). Returns an empty,
+    4326 GeoDataFrame instead of raising, so old caches don't hard-fail --
+    but note that this means the exclusion is silently skipped until the
+    AOI/date is re-acquired.
+    """
+    try:
+        frame = gpd.read_file(path, layer=layer)
+    except (ValueError, Exception) as exc:  # pyogrio/fiona raise different types per backend
+        log(f'WARNING: "{layer}" layer not found in osm.gpkg ({exc}); '
+            f'treating as empty. Delete this AOI/date under data/inputs/ and rerun '
+            f'to re-acquire it.')
+        return gpd.GeoDataFrame(geometry=[], crs=4326)
+    if frame.crs is None:
+        raise ValueError(f'{layer} layer has no CRS.')
+    return frame[['geometry']].to_crs(4326)
+
+
+def promote_to_canonical(run_output: Path, name: str, date: str, log=print) -> Path:
+    """
+    Copy freshly generated run GPKG to the canonical processed dataset location
+    read by LandingZoneEngine._load_datasets().
+    """
+    run_gpkg = run_output / 'final_zones.gpkg'
+    if not run_gpkg.exists():
+        raise FileNotFoundError(f'Run GPKG not found at {run_gpkg}')
+    canonical_dir = ROOT / 'data/processed' / name / 'sentinel2' / date
+    canonical_dir.mkdir(parents=True, exist_ok=True)
+    canonical_gpkg = canonical_dir / f'{name.lower()}_final_open_land_zones.gpkg'
+    try:
+        shutil.copy2(run_gpkg, canonical_gpkg)
+    except OSError:
+        temp_gpkg = canonical_gpkg.with_suffix('.tmp')
+        with open(run_gpkg, 'rb') as fsrc, open(temp_gpkg, 'wb') as fdst:
+            shutil.copyfileobj(fsrc, fdst)
+        temp_gpkg.replace(canonical_gpkg)
+    log(f'Promoted {run_gpkg} -> {canonical_gpkg}')
+    return canonical_gpkg
 
 
 def run(aoi_path, date, name='AOI', log=print, run_tests=True):
@@ -45,7 +96,10 @@ def run(aoi_path, date, name='AOI', log=print, run_tests=True):
                 raise ValueError(f'{kind} buildings have no CRS.')
             buildings.append(frame[['geometry']].to_crs(4326))
         merged = gpd.GeoDataFrame(pd.concat(buildings,ignore_index=True), geometry='geometry',crs=4326)
-        summary = process_inputs(paths['spectral'], paths['scl'], merged, aoi, output, name, record)
+        # NEW: read the water/industrial layers and pass them through as exclusions.
+        exclusions = {layer: _read_osm_layer(paths['osm'], layer, record) for layer in EXCLUSION_LAYERS}
+        summary = process_inputs(paths['spectral'], paths['scl'], merged, exclusions, aoi, output, name, record)
+        promote_to_canonical(output, name, date, record)
         status.update(status='complete', summary=summary, provenance=provenance)
         record(f'Complete: {output}')
     except Exception as exc:

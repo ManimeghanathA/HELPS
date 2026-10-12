@@ -19,10 +19,15 @@ from rasterio.merge import merge
 
 from scripts.pipeline.inputs import ROOT, cache_key, legacy_inputs, data_directory
 
+# CHANGED: added 'industrial' group. Bare industrial ground (yards, tank farms,
+# pavement, construction/quarry sites) has no building footprint to subtract and
+# is spectrally indistinguishable from bare soil, so it was previously never
+# excluded at all.
 GROUPS = {'buildings': {'building': True}, 'roads': {'highway': True},
           'railways': {'railway': True}, 'power': {'power': True},
           'man_made': {'man_made': True}, 'barriers': {'barrier': True},
-          'water': {'natural': 'water', 'waterway': True}}
+          'water': {'natural': 'water', 'waterway': True},
+          'industrial': {'landuse': ['industrial', 'construction', 'quarry', 'landfill', 'farmyard']}}
 
 
 def digest(path):
@@ -31,6 +36,15 @@ def digest(path):
         for chunk in iter(lambda: stream.read(1024*1024), b''):
             value.update(chunk)
     return value.hexdigest()
+
+
+def osm_complete(path):
+    try:
+        import fiona
+        existing_layers = fiona.listlayers(path)
+        return set(GROUPS) <= set(existing_layers)
+    except Exception:
+        return False
 
 
 def write_json(path, value):
@@ -156,12 +170,18 @@ def acquire(aoi, date, log=print):
         if recorded:
             path = ROOT/recorded['path']
             if path.exists() and digest(path) == recorded['sha256']:
-                paths[kind] = path
-                log(f'Reusing verified {kind}')
-                continue
+                if kind == 'osm' and not osm_complete(path):
+                    log('Cached osm.gpkg is missing required layers; re-acquiring')
+                else:
+                    paths[kind] = path
+                    log(f'Reusing verified {kind}')
+                    continue
         if not recorded and kind in legacy and legacy[kind].exists():
-            paths[kind] = legacy[kind]
-            log(f'Reusing existing Bhadra {kind}')
+            if kind == 'osm' and not osm_complete(legacy[kind]):
+                log('Legacy Bhadra osm.gpkg is missing required layers; re-acquiring')
+            else:
+                paths[kind] = legacy[kind]
+                log(f'Reusing existing Bhadra {kind}')
     def checkpoint():
         manifest['files'] = {k:{'path':str(p.relative_to(ROOT)), 'sha256':digest(p)} for k,p in paths.items()}
         manifest.setdefault('acquired_at', datetime.now(timezone.utc).isoformat())

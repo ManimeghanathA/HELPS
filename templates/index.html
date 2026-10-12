@@ -49,7 +49,7 @@
           <div class="map-legend-item">
             <span class="status-box status-box--green"></span>
             <strong>DATA AVAILABLE</strong>
-            <small>(Bhadra Reserve · 8,275 Sites)</small>
+            <small>(Bhadra Reserve · 2,694 Sites)</small>
           </div>
           <div class="map-legend-item">
             <span class="status-box status-box--yellow"></span>
@@ -72,7 +72,7 @@
 
         <div class="map-meta-footer">
           <div><span>SECTOR FOCUS</span><strong id="active-sector-name">Bhadra Reserve (Karnataka)</strong></div>
-          <div><span>BOUNDARY STATUS</span><strong id="active-sector-status" class="status-text--ready">8,275 Sites Ready</strong></div>
+          <div><span>BOUNDARY STATUS</span><strong id="active-sector-status" class="status-text--ready">2,694 Sites Ready</strong></div>
           <div><span>SATELLITE PASS</span><strong>June 1, 2026 · 10m S2/DEM</strong></div>
         </div>
       </section>
@@ -81,90 +81,27 @@
         <div class="radar-heading">
           <div>
             <span class="section-kicker">01 / Tactical Telemetry</span>
-            <h2 id="tactical-view-title">Landing Zone Scan</h2>
+            <h2 id="tactical-view-title">Tactical Landing Zones Map</h2>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <div class="view-switcher-group" role="tablist" aria-label="Visualizer Mode">
-              <button type="button" class="view-tab-btn is-active" id="view-tab-radar" data-view="radar" role="tab" aria-selected="true">Radar View</button>
-              <button type="button" class="view-tab-btn" id="view-tab-map" data-view="map" role="tab" aria-selected="false">Map View</button>
-            </div>
-            <div class="radar-live" id="radar-live-badge"><span class="radar-live-dot"></span> <span id="radar-live-text">GPKG TELEMETRY</span></div>
-          </div>
+          <div class="radar-live" id="radar-live-badge"><span class="radar-live-dot"></span> <span id="radar-live-text">2,694 PIPELINE ANNOTATIONS</span></div>
         </div>
         <div class="radar-stats-bar" id="radar-stats-bar">
           <span id="radar-sites-count">Awaiting query...</span>
           <span class="stats-sep">·</span>
-          <span id="radar-closest-site">Range: Auto</span>
+          <span id="radar-closest-site">Scroll &amp; Drag Active</span>
         </div>
 
-        <!-- View 1: Tactical Radar Visualizer -->
-        <div class="tactical-view-container" id="tactical-radar-view">
-          <div class="radar-controls">
-            <div class="radar-range-group">
-              <span class="radar-range-label">RADAR SCALE:</span>
-              <div class="radar-range-buttons">
-                <button type="button" class="range-btn is-active" data-range="auto">AUTO</button>
-                <button type="button" class="range-btn" data-range="1">1 km</button>
-                <button type="button" class="range-btn" data-range="2">2 km</button>
-                <button type="button" class="range-btn" data-range="5">5 km</button>
-                <button type="button" class="range-btn" data-range="10">10 km</button>
-              </div>
-            </div>
-            <div class="radar-zoom-steppers">
-              <button type="button" class="zoom-step-btn" id="zoom-in-btn" title="Zoom In" aria-label="Zoom in radar">+</button>
-              <button type="button" class="zoom-step-btn" id="zoom-out-btn" title="Zoom Out" aria-label="Zoom out radar">&minus;</button>
-            </div>
-          </div>
-
-          <div class="radar-wrap">
-            <div class="radar" id="radar" aria-label="Radar display of possible landing spots">
-              <div class="radar-sweep"></div>
-              <div class="radar-cross radar-cross--horizontal"></div>
-              <div class="radar-cross radar-cross--vertical"></div>
-              <div class="radar-ring radar-ring--outer"></div>
-              <div class="radar-ring radar-ring--middle"></div>
-              <div class="radar-ring radar-ring--inner"></div>
-              
-              <!-- Radar Cardinal Markers -->
-              <div class="radar-cardinal radar-cardinal--n">N</div>
-              <div class="radar-cardinal radar-cardinal--e">E</div>
-              <div class="radar-cardinal radar-cardinal--s">S</div>
-              <div class="radar-cardinal radar-cardinal--w">W</div>
-
-              <!-- Central Query Marker -->
-              <div class="radar-center" id="radar-center"><span></span><b>QUERY</b></div>
-
-              <!-- Dynamic Blips Container -->
-              <div id="radar-spots-container"></div>
-
-              <div class="radar-scale">
-                <span id="radar-scale-inner">0.25 km</span>
-                <i></i>
-                <span id="radar-scale-middle">0.50 km</span>
-                <i></i>
-                <span id="radar-scale-outer">1.00 km</span>
-              </div>
-            </div>
-          </div>
-          <div class="radar-legend">
-            <span><i class="legend-dot legend-dot--query"></i> Query point</span>
-            <span><i class="legend-dot legend-dot--optimal"></i> Optimal</span>
-            <span><i class="legend-dot legend-dot--caution"></i> Caution</span>
-            <span><i class="legend-dot legend-dot--warning"></i> Adverse</span>
-            <span><i class="legend-line"></i> <span id="radar-legend-radius">1.0 km scan diameter</span></span>
-          </div>
-        </div>
-
-        <!-- View 2: Tactical High-Resolution Satellite Map with Verified Zones & Query Point -->
-        <div class="tactical-view-container" id="tactical-map-view" style="display: none;">
+        <!-- Dedicated Tactical High-Resolution Satellite Map with Verified Pipeline Annotations & Query Point -->
+        <div class="tactical-view-container" id="tactical-map-view">
           <div class="tactical-map-wrapper">
             <div id="tactical-satellite-map" aria-label="High-resolution tactical landing sites map"></div>
           </div>
           <div class="map-view-legend">
             <span><i class="legend-dot legend-dot--query"></i> Query Position</span>
-            <span><i class="legend-dot legend-dot--optimal"></i> Optimal Landing Zone</span>
+            <span><i class="legend-dot legend-dot--optimal"></i> Pipeline Landing Annotation</span>
             <span><i class="legend-dot legend-dot--caution"></i> Caution Zone</span>
-            <span><i class="legend-dot legend-dot--warning"></i> Adverse Zone</span>
+            <span><i class="legend-dot legend-dot--warning"></i> Adverse / Narrow</span>
+            <span><i class="legend-line"></i> Fully Pan, Zoom &amp; Scrollable</span>
           </div>
         </div>
       </div>
