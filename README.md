@@ -21,6 +21,12 @@ The user has **accepted** the vision-assisted revision. The selected dataset in 
 
 `data/knowledge/registry.json` is the live authority; this README is a dated snapshot.
 
+### Download the complete resource backup
+
+The large resources are shared separately in the owner's [HELPS Google Drive folder](https://drive.google.com/drive/folders/1v3Eo60ZkBtCpT4d4eKRjjKsncMzzCZUc?usp=sharing). The owner is uploading the entire `data` folder, including the QGIS/vision directory now at **`data/probably_final.qgz/`**. It must contain the actual **`probably_final.gpkg`**, not just a project/styles file.
+
+For a different computer, follow the [complete Drive download and restoration guide](docs/restore-from-drive.md): clone this GitHub branch, download/restore `data`, verify checksums, relink mutable paths, configure local credentials and start HELPS. Drive is a backup/download source; the app uses local files and does not have a direct Drive API connection. Upload completeness and sharing permissions must be checked by the owner/recipient.
+
 Do not confuse different versions:
 
 - **2,484:** Neha's original calibrated June baseline, recovered and reproduced with pinned code and correct water/industrial context.
@@ -131,7 +137,7 @@ The teammate's [cv_ai_helps repository](https://github.com/Nehareddy1234/cv_ai_h
 - Classes: **1 water, 2 trees, 3 crops/grass/low vegetation, 4 bare/open/sparse, 5 roofs, 6 industrial, 7 roads, 8 uncertain/mixed**.
 - Reported **90.53%** block-holdout pixel agreement is scene-level interpreted-label agreement, not independent Bhadra-wide candidate accuracy. Roof/road acceptance partly depends on reference context. Only **317 roof-labelled features** exist in the final file; this is not a complete building inventory.
 
-`probably_final.qgz/` is an extracted directory with a QGIS project and external `probably_final.gpkg`, not embedded vector data. The **2,430,738,432-byte** EPSG:32643 GeoPackage contains `open_regions` (**112,283**, classes 3/4), `other_regions` (**648,748**, classes 1/2/5/6/7/8), and one boundary. There are **1,861 distinct batch IDs**. Earlier checkpoint counts were partial products.
+`data/probably_final.qgz/` is an extracted directory with a QGIS project and external `probably_final.gpkg`, not embedded vector data. It was originally root-level `probably_final.qgz/` and was subsequently moved into `data` by the owner for backup. The runner supports both layouts, preferring `data`. The **2,430,738,432-byte** EPSG:32643 GeoPackage contains `open_regions` (**112,283**, classes 3/4), `other_regions` (**648,748**, classes 1/2/5/6/7/8), and one boundary. There are **1,861 distinct batch IDs**. Earlier checkpoint counts were partial products.
 
 See [reviewed implementation](docs/reviews/2026-10-20/cv-integration-assessment.md) and [final-file audit](docs/reviews/2026-10-20/cv-final-geopackage-findings.md). Their dated findings distinguish initially missing data from the subsequently supplied file.
 
@@ -230,7 +236,7 @@ HELPSs/
   data/recovery/                       pinned baseline replays
   data/reviews/, validation/          local audits/tests/source review copies
   data/archive/                        preserved recovery/runtime/history
-  probably_final.qgz/                 pinned local vision/QGIS data
+  data/probably_final.qgz/            pinned local vision/QGIS data
   archive/                            earlier workspace material
 ```
 
@@ -311,4 +317,4 @@ Source, tests, docs, sanitized summaries and already tracked reference assets be
 
 Use [data assets](docs/data-assets-2026-10-21.json) for paths/sizes/checksums and [move records](docs/workspace-moves-2026-10-21.json) for organization. Git push does not back up ignored data; keep a separately verified copy.
 
-Further reading: [workspace](docs/workspace-organization.md), [inputs](docs/region-input-workflow.md), [elevation](docs/automatic-elevation.md), [baseline](docs/reviews/2026-10-18/neha-baseline-recovery.md), [vision findings](docs/reviews/2026-10-20/cv-final-geopackage-findings.md), [delivery](docs/reviews/2026-10-21-vision-refinement-delivery.md), [weather](docs/reference/weather-module.md).
+Further reading: [Drive restore guide](docs/restore-from-drive.md), [workspace](docs/workspace-organization.md), [inputs](docs/region-input-workflow.md), [elevation](docs/automatic-elevation.md), [baseline](docs/reviews/2026-10-18/neha-baseline-recovery.md), [vision findings](docs/reviews/2026-10-20/cv-final-geopackage-findings.md), [delivery](docs/reviews/2026-10-21-vision-refinement-delivery.md), [weather](docs/reference/weather-module.md).

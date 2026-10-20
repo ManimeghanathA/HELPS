@@ -187,7 +187,7 @@
       ]
     },
     {
-      "path": "probably_final.qgz/probably_final.gpkg",
+      "path": "data/probably_final.qgz/probably_final.gpkg",
       "bytes": 2430738432,
       "sha256": "575b980a4225eda768fd83fee29fbee2ae073bc8a578b8b256fb50290c14f634",
       "purposes": [
@@ -225,6 +225,24 @@
       "purposes": [
         "active terrain derivative"
       ]
+    },
+    {
+      "path": "data/probably_final.qgz/probably_final.qgs",
+      "bytes": 139429,
+      "sha256": "167de29bd3b5f7bf60e296935144ccc660ece4ed1c955994d3e33ad870f282f9",
+      "purposes": [
+        "QGIS project/styles accompanying supplied vision GeoPackage"
+      ]
+    },
+    {
+      "path": "data/probably_final.qgz/xljhOV_styles.db",
+      "bytes": 106496,
+      "sha256": "94b838b9d135e03e1616508f12f3015e7d0c5db32373329b9a9a079562c715fa",
+      "purposes": [
+        "QGIS project/styles accompanying supplied vision GeoPackage"
+      ]
     }
-  ]
+  ],
+  "drive_folder_url": "https://drive.google.com/drive/folders/1v3Eo60ZkBtCpT4d4eKRjjKsncMzzCZUc?usp=sharing",
+  "vision_layout_update": "Owner moved original probably_final.qgz directory into data on 2026-10-21; GeoPackage hash unchanged. Drive upload completeness/access not independently verified."
 }

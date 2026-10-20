@@ -6,6 +6,18 @@ from rasterio.transform import from_origin
 from shapely.geometry import box,Polygon
 
 
+def test_vision_source_uses_data_folder_and_supports_legacy_layout(tmp_path):
+    from scripts.knowledge.run_vision_refinement import vision_source_path
+    legacy=tmp_path/'probably_final.qgz/probably_final.gpkg'
+    current=tmp_path/'data/probably_final.qgz/probably_final.gpkg'
+    with pytest.raises(FileNotFoundError,match='probably_final.gpkg'):
+        vision_source_path(tmp_path)
+    legacy.parent.mkdir(parents=True);legacy.touch()
+    assert vision_source_path(tmp_path)==legacy
+    current.parent.mkdir(parents=True);current.touch()
+    assert vision_source_path(tmp_path)==current
+
+
 def test_strict_geometry_preserves_holes_and_rejects_narrow_fragments():
     from scripts.knowledge.vision_refinement import strict_parts
     obstacle=box(40,40,60,60);candidate=box(0,0,120,120).difference(obstacle)

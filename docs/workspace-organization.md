@@ -14,6 +14,8 @@ The latest organization moved only loose, non-runtime material:
 
 Every moved file was hashed before/after and recorded in [workspace-moves-2026-10-21.json](workspace-moves-2026-10-21.json). No files were deleted. The pinned `probably_final.qgz/` GeoPackage, accepted knowledge packages, raw/processed routing, source manifests and environment were not relocated.
 
+**Subsequent owner change, 21 October:** the owner moved the complete `probably_final.qgz/` directory into `data/probably_final.qgz/` so the Drive data upload includes it. The GeoPackage checksum was reverified. The refinement runner now prefers that location and supports the old root layout as a fallback. Immutable accepted-package provenance remains unchanged. The [Drive restoration guide](restore-from-drive.md) documents the sharing link, complete local layout, checksum verification and mutable path relocation for another computer.
+
 New ignore rules keep downloaded/generated local data, source-review caches, vision inputs and runtime files out of new commits. Existing tracked reference assets remain tracked; TIFFs retain Git LFS. [data-assets-2026-10-21.json](data-assets-2026-10-21.json) records matching paths, sizes and checksums for the accepted build's key assets. A clone requires separate data transfer; a Git push is not a backup of ignored datasets.
 
 Do not rerun the earlier one-time organizer to organize the current project. It predates newer knowledge/recommendation modules. The dated manifests document completed moves rather than a general cleanup command.

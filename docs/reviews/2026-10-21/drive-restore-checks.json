@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-21",
+  "vision_refinement_tests_passed": 10,
+  "restored_manifest_assets_verified": 28,
+  "vision_sha256_unchanged": true,
+  "vision_location": "data/probably_final.qgz/probably_final.gpkg",
+  "guide_examples": {
+    "compile": true,
+    "different_windows_root": true,
+    "backslash_source_path": true,
+    "mutable_backups": true,
+    "immutable_bytes_unchanged": true,
+    "idempotent_second_run": true,
+    "missing_active_package_rejected": true
+  },
+  "limitations": [
+    "Drive upload completeness and access not independently verified",
+    "Full second-computer installation not performed",
+    "Guide targets Windows; other operating systems need separate verification"
+  ]
+}

@@ -19,6 +19,14 @@ from .build import build_knowledge
 VISION_SHA256='575b980a4225eda768fd83fee29fbee2ae073bc8a578b8b256fb50290c14f634'
 
 
+def vision_source_path(root):
+    root=Path(root)
+    for relative in ('data/probably_final.qgz/probably_final.gpkg','probably_final.qgz/probably_final.gpkg'):
+        candidate=root/relative
+        if candidate.is_file():return candidate
+    raise FileNotFoundError('Restore data/probably_final.qgz/probably_final.gpkg from the data backup')
+
+
 def run(root,dataset_id,max_slope_deg,log=print):
     root=Path(root).resolve();managed=root/'data/knowledge'
     registry=json.loads((managed/'registry.json').read_text(encoding='utf-8'))
@@ -49,7 +57,7 @@ def run(root,dataset_id,max_slope_deg,log=print):
     prepared=prepare_terrain_rasters(asset(configuration['dem']),read_vector(asset(template['aoi'])),output/'preparation-terrain',30)
     slope_path=prepared.slope_path
     log('Preparing strict source-pinned CV refinement; current knowledge remains selected')
-    vision=VisionStore(root/'probably_final.qgz/probably_final.gpkg',VISION_SHA256)
+    vision=VisionStore(vision_source_path(root),VISION_SHA256)
     current=gpd.read_file(base_path,layer='terrain')
     source_stat=vision.path.stat()
     seed_dir=output/'refinement-input'
