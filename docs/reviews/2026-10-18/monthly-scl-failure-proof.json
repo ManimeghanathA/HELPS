@@ -1,0 +1,6 @@
+{
+  "success": false,
+  "http_status": 400,
+  "provider_error_code": "COMMON_BAD_PAYLOAD",
+  "provider_message": "Invalid request"
+}

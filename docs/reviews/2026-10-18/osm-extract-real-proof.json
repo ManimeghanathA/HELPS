@@ -1,0 +1,21 @@
+{
+  "building_counts": {
+    "earlier_overpass": 28,
+    "new_extract": 28
+  },
+  "identical_building_ids": true,
+  "building_symmetric_difference_m2": 0.0,
+  "roads_with_highway_tags": 1136,
+  "active_sha256": "0ded087336e671d5e7c1f2cb12ab84a62c94077055aff979ed79dfa86d02ebd9",
+  "layer_counts": {
+    "buildings": 28,
+    "roads": 1136,
+    "railways": 1,
+    "power": 128,
+    "man_made": 4,
+    "barriers": 4,
+    "water": 60,
+    "industrial": 5,
+    "facilities": 5
+  }
+}

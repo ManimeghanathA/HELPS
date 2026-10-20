@@ -1,0 +1,128 @@
+[
+  {
+    "source": "HELPS_Batches_0_to_100.zip",
+    "destination": "data\\raw\\vision\\batches\\HELPS_Batches_0_to_100.zip",
+    "bytes": 604724899,
+    "sha256": "32740cc1422b5be13ad22921a45f8697886c72e47285b6d05dbb9d61f90d1e7b"
+  },
+  {
+    "source": "HELPS_Batches_101_to_200.zip",
+    "destination": "data\\raw\\vision\\batches\\HELPS_Batches_101_to_200.zip",
+    "bytes": 609230855,
+    "sha256": "de23b33d3599007bfaad17781e82c3d52530b66d164811f1d75bbd0294ba28c0"
+  },
+  {
+    "source": "HELPS_Batches_201_to_300.zip",
+    "destination": "data\\raw\\vision\\batches\\HELPS_Batches_201_to_300.zip",
+    "bytes": 630650468,
+    "sha256": "f986368db5815f2b56c4201173a774a723b029088f16154c62d0df7cdbb65e97"
+  },
+  {
+    "source": "HELPS_Batches_301_to_400.zip",
+    "destination": "data\\raw\\vision\\batches\\HELPS_Batches_301_to_400.zip",
+    "bytes": 604966321,
+    "sha256": "1a99993890933289e41af407e11789238b7e4882f6b8175aeddc5426dfe6ffec"
+  },
+  {
+    "source": "HELPS_Batches_401_to_500.zip",
+    "destination": "data\\raw\\vision\\batches\\HELPS_Batches_401_to_500.zip",
+    "bytes": 557039123,
+    "sha256": "581c4061c78fab117cc4424475ae525c484e9bb6e2299c3fcde5d366df08ab95"
+  },
+  {
+    "source": "HELPS_Batches_501_to_537.zip",
+    "destination": "data\\raw\\vision\\batches\\HELPS_Batches_501_to_537.zip",
+    "bytes": 187420128,
+    "sha256": "e145a80a1e6bb7ea1f58655f838882de861061934e0e470ba1bd1c98a9d36b91"
+  },
+  {
+    "source": "changes.txt",
+    "destination": "docs\\requests\\frontend-changes-2026-10-17.txt",
+    "bytes": 1179,
+    "sha256": "89fd420387dd55e75e892e848573472e5bfb5f585a18a3665c9f21157b7aa56b"
+  },
+  {
+    "source": "docs\\Past Date AOI\\2025-10-12.png",
+    "destination": "data\\archive\\reference-exports\\Past Date AOI\\2025-10-12.png",
+    "bytes": 1041474,
+    "sha256": "8324e2acfeb3f889802cefe4f789b583fbc4be4225bc4709da3d12fb970d0778"
+  },
+  {
+    "source": "docs\\Past Date AOI\\2025-12-11.png",
+    "destination": "data\\archive\\reference-exports\\Past Date AOI\\2025-12-11.png",
+    "bytes": 1092565,
+    "sha256": "a44ed1f517749f2d59d55f6d1f8cc52b3bcc4e8701296fc8f1801eabed72fa01"
+  },
+  {
+    "source": "docs\\Past Date AOI\\2026-2-4.png",
+    "destination": "data\\archive\\reference-exports\\Past Date AOI\\2026-2-4.png",
+    "bytes": 1136323,
+    "sha256": "a78d4cfbfe2a126716e2ac141776e4c1f26acb51f899cb70e233a372d44bb61e"
+  },
+  {
+    "source": "docs\\Past Date AOI\\2026-3-26.png",
+    "destination": "data\\archive\\reference-exports\\Past Date AOI\\2026-3-26.png",
+    "bytes": 1154672,
+    "sha256": "7f1ce304c3623713ed344c9ada3d22c7909d9f7c07c42f86c468269059bdb2df"
+  },
+  {
+    "source": "docs\\Past Date AOI\\2026-5-15.png",
+    "destination": "data\\archive\\reference-exports\\Past Date AOI\\2026-5-15.png",
+    "bytes": 1142616,
+    "sha256": "f0ed961b2137dd3699744f1427fbbe7b40c37c8a8288656f9bc85be2e4a6eca8"
+  },
+  {
+    "source": "docs\\Past Date AOI\\2026-6-1.png",
+    "destination": "data\\archive\\reference-exports\\Past Date AOI\\2026-6-1.png",
+    "bytes": 1205742,
+    "sha256": "aab47e244a7e7b05d4ea16ca954cc2811c015d0e09ffd4135c4d8e84a108d407"
+  },
+  {
+    "source": "docs\\Past Date Polygons\\2025-10-12.png",
+    "destination": "data\\archive\\reference-exports\\Past Date Polygons\\2025-10-12.png",
+    "bytes": 1052681,
+    "sha256": "37fb8ab1bae3602e0150ee248deea3ab21b0f5b2eaf59acd3a7cbd58fe375387"
+  },
+  {
+    "source": "docs\\Past Date Polygons\\2025-12-11.png",
+    "destination": "data\\archive\\reference-exports\\Past Date Polygons\\2025-12-11.png",
+    "bytes": 1136667,
+    "sha256": "3cf263490089d74cf0e251f126682ba6ddeb2aec88dd2534854955eaaea737fd"
+  },
+  {
+    "source": "docs\\Past Date Polygons\\2026-2-4.png",
+    "destination": "data\\archive\\reference-exports\\Past Date Polygons\\2026-2-4.png",
+    "bytes": 1242072,
+    "sha256": "77ee35547198828f6ac924bdee8d02717446e1db7dec19aabbcc41e6b93c26c4"
+  },
+  {
+    "source": "docs\\Past Date Polygons\\2026-3-26.png",
+    "destination": "data\\archive\\reference-exports\\Past Date Polygons\\2026-3-26.png",
+    "bytes": 1322911,
+    "sha256": "996e86ff7773360d6607393cf2ec1cf6ef55d834e2303f2fdd09ca7db09aa17c"
+  },
+  {
+    "source": "docs\\Past Date Polygons\\2026-5-15.png",
+    "destination": "data\\archive\\reference-exports\\Past Date Polygons\\2026-5-15.png",
+    "bytes": 1225865,
+    "sha256": "e63dcce9c334c70eebb5afe63abc99ade6f2017552f7da87053cc28a8c7f2b2a"
+  },
+  {
+    "source": "docs\\Past Date Polygons\\2026-6-1.png",
+    "destination": "data\\archive\\reference-exports\\Past Date Polygons\\2026-6-1.png",
+    "bytes": 10997567,
+    "sha256": "7a026f80a90144fe4cfb9c730b5c6d28c9351c033f7849dc8e58e3b97da94b92"
+  },
+  {
+    "source": "docs\\Past Date AOI.zip",
+    "destination": "data\\archive\\reference-exports\\Past Date AOI.zip",
+    "bytes": 6769653,
+    "sha256": "f31ce941fedcc89627c624670011c471d0e0f68f895c35f14fd832972a0f806a"
+  },
+  {
+    "source": "docs\\Past Date Polygons.zip",
+    "destination": "data\\archive\\reference-exports\\Past Date Polygons.zip",
+    "bytes": 17771650,
+    "sha256": "a4658c3aa80099bea75ecec3770e9ef4f04ac0e02c275bcf7d18204356b826d5"
+  }
+]

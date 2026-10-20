@@ -1,0 +1,688 @@
+{
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "counts": {
+      "terrain": 2477,
+      "zones": 13150
+    },
+    "metadata": {
+      "build_spec": {
+        "aoi": {
+          "coverage_path": null,
+          "coverage_state": "supplied",
+          "crs": null,
+          "date": null,
+          "kind": "aoi",
+          "layer": null,
+          "metadata": {},
+          "path": "data\\raw\\Bhadra\\bhadra_entire_region.geojson",
+          "sha256": "6b6094b2d67ad78bba0a01a4c86cdb534df92bdcb7e98a94a2dc1eaeb84af62c",
+          "source_id": "bhadra-aoi",
+          "units": null
+        },
+        "dataset_id": "bhadra-v1-20260601-fabdem-20261013",
+        "date": "2026-06-01",
+        "dem": {
+          "coverage_path": null,
+          "coverage_state": "supplied",
+          "crs": null,
+          "date": null,
+          "kind": "dem",
+          "layer": null,
+          "metadata": {
+            "attribution": "University of Bristol / Fathom, forest and building removed Copernicus DEM",
+            "license": "CC BY-NC-SA 4.0",
+            "native_resolution": "1 arcsecond approximately 30m",
+            "product": "FABDEM v1-2",
+            "reference_date_status": "product edition known; per-cell observation dates unverified",
+            "source_url": "https://research-information.bris.ac.uk/en/datasets/fabdem-v1-2/",
+            "vertical_datum_status": "unknown"
+          },
+          "path": "..\\data\\raw\\DEM\\FABDEM_N13E075.tif",
+          "sha256": "a6d536e0b0e260efb99223e0b24498cf605275ad6800c0035dd61c7070230302",
+          "source_id": "fabdem-v1-2-n13e075",
+          "units": "m"
+        },
+        "output_dir": "data\\knowledge\\bhadra-v1-20260601-fabdem-20261013",
+        "parameters": {
+          "environment_radius_m": 200,
+          "metric_crs": "EPSG:32643",
+          "min_area_m2": 900,
+          "min_clear_diameter_m": 30,
+          "min_length_m": 30,
+          "min_width_m": 30,
+          "resolution_m": 30.0,
+          "slope_thresholds_deg": [
+            0,
+            2,
+            4,
+            6,
+            8,
+            10,
+            12,
+            15
+          ],
+          "water_line_buffer_m": 5,
+          "water_setback_m": 20
+        },
+        "region_id": "bhadra",
+        "retained_seed": {
+          "coverage_path": null,
+          "coverage_state": "supplied",
+          "crs": null,
+          "date": "2026-06-01",
+          "kind": "candidate_seed",
+          "layer": "final_open_land_zones",
+          "metadata": {
+            "provenance": "accepted previously calibrated geometry, not reconstructed raw connected components",
+            "source_revision": "236c34c"
+          },
+          "path": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_final_open_land_zones.gpkg",
+          "sha256": "66f45ebd2f4d107a3bc9739bc4bd6c0719e4fb6f0ac82b67a80b903d2fd8f9d1",
+          "source_id": "bhadra-retained-236c34c",
+          "units": null
+        },
+        "reviewed_exclusions": {
+          "coverage_path": null,
+          "coverage_state": "supplied",
+          "crs": null,
+          "date": "2026-10-13",
+          "kind": "vector",
+          "layer": null,
+          "metadata": {},
+          "path": "data\\raw\\Bhadra\\reviewed_exclusions.geojson",
+          "sha256": "7eea88815a026ad004e103a06c3141543420a263603b9e3f60b118b3da43d3af",
+          "source_id": "reviewed-quarantine-20261013",
+          "units": null
+        },
+        "source_mode": "retained",
+        "sources": {
+          "barriers": {
+            "coverage_path": null,
+            "coverage_state": "unknown",
+            "crs": null,
+            "date": null,
+            "kind": "osm",
+            "layer": "barriers",
+            "metadata": {
+              "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+              "date_status": "unknown acquisition/reference date"
+            },
+            "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+            "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+            "source_id": "osm-bhadra-barriers",
+            "units": null
+          },
+          "buildings": {
+            "coverage_path": null,
+            "coverage_state": "unknown",
+            "crs": null,
+            "date": null,
+            "kind": "buildings",
+            "layer": null,
+            "metadata": {
+              "coverage_limit": "mapped footprints only, not proof of absence",
+              "date_status": "unknown source edition",
+              "height_status": "unknown"
+            },
+            "path": "data\\processed\\Bhadra\\buildings\\bhadra_overture_buildings.geojson",
+            "sha256": "980788050f9dcccc4d0f85732d58d9749541af45cfa908baa7464ad9398a76bc",
+            "source_id": "overture-bhadra-buildings",
+            "units": null
+          },
+          "landcover": {
+            "coverage_path": null,
+            "coverage_state": "supplied",
+            "crs": null,
+            "date": "2021-01-01",
+            "kind": "landcover",
+            "layer": null,
+            "metadata": {
+              "attribution": "ESA WorldCover project 2021 v200",
+              "date_status": "annual 2021 product; exact day not applicable",
+              "license": "CC BY 4.0",
+              "limitation": "historical descriptive evidence, not current physical clearance",
+              "reference_year": 2021,
+              "source_url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N12E075_Map.tif"
+            },
+            "path": "data\\inputs\\45295356fafbdae35c06ddec\\2026-06-01\\landcover\\worldcover_2021_aligned.tif",
+            "sha256": "86d042b2b982b0cf75a20e5e3fc952404bb64fbfc772b0ea6c6965a4b735d919",
+            "source_id": "esa-worldcover-v200-2021",
+            "units": null
+          },
+          "man_made": {
+            "coverage_path": null,
+            "coverage_state": "unknown",
+            "crs": null,
+            "date": null,
+            "kind": "osm",
+            "layer": "man_made",
+            "metadata": {
+              "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+              "date_status": "unknown acquisition/reference date"
+            },
+            "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+            "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+            "source_id": "osm-bhadra-man_made",
+            "units": null
+          },
+          "osm_buildings": {
+            "coverage_path": null,
+            "coverage_state": "unknown",
+            "crs": null,
+            "date": null,
+            "kind": "osm",
+            "layer": "buildings",
+            "metadata": {
+              "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+              "date_status": "unknown acquisition/reference date"
+            },
+            "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+            "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+            "source_id": "osm-bhadra-osm_buildings",
+            "units": null
+          },
+          "power": {
+            "coverage_path": null,
+            "coverage_state": "unknown",
+            "crs": null,
+            "date": null,
+            "kind": "osm",
+            "layer": "power",
+            "metadata": {
+              "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+              "date_status": "unknown acquisition/reference date"
+            },
+            "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+            "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+            "source_id": "osm-bhadra-power",
+            "units": null
+          },
+          "roads": {
+            "coverage_path": null,
+            "coverage_state": "unknown",
+            "crs": null,
+            "date": null,
+            "kind": "osm",
+            "layer": "roads",
+            "metadata": {
+              "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+              "date_status": "unknown acquisition/reference date"
+            },
+            "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+            "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+            "source_id": "osm-bhadra-roads",
+            "units": null
+          },
+          "scl": {
+            "coverage_path": null,
+            "coverage_state": "supplied",
+            "crs": null,
+            "date": "2026-06-01",
+            "kind": "scl",
+            "layer": null,
+            "metadata": {
+              "native_resolution_m": 20,
+              "processing_resolution_m": 10
+            },
+            "path": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_scl.tif",
+            "sha256": "3d71416ff17bba92b22f4ea5fbd2fea94a6381db722a4e087dc6309c42e4a66d",
+            "source_id": "sentinel-scl-20260601",
+            "units": null
+          },
+          "spectral": {
+            "coverage_path": null,
+            "coverage_state": "supplied",
+            "crs": null,
+            "date": "2026-06-01",
+            "kind": "spectral",
+            "layer": null,
+            "metadata": {
+              "band_map": {
+                "blue": 1,
+                "green": 2,
+                "nir": 4,
+                "red": 3,
+                "swir": 5
+              },
+              "band_names": [
+                "B02",
+                "B03",
+                "B04",
+                "B08",
+                "B11",
+                "B12"
+              ],
+              "date_status": "supplied pipeline observation date",
+              "reflectance_scale": 10000
+            },
+            "path": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_spectral.tif",
+            "sha256": "06d304c9cfb6822e0cf32b03b65c21edf26db2f5849a5f25c1e894ed3e834e39",
+            "source_id": "sentinel-spectral-20260601",
+            "units": null
+          },
+          "water": {
+            "coverage_path": null,
+            "coverage_state": "unknown",
+            "crs": null,
+            "date": null,
+            "kind": "osm",
+            "layer": "water_polygons",
+            "metadata": {
+              "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+              "date_status": "unknown acquisition/reference date"
+            },
+            "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+            "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+            "source_id": "osm-bhadra-water",
+            "units": null
+          }
+        }
+      },
+      "counts": {
+        "terrain": 2477,
+        "zones": 13150
+      },
+      "crs": "EPSG:32643",
+      "dataset_id": "bhadra-v1-20260601-fabdem-20261013",
+      "date": "2026-06-01",
+      "raster_manifest": {
+        "aoi_derivative_valid_fraction": 1.0,
+        "aoi_elevation_valid_fraction": 1.0,
+        "attribution": "University of Bristol / Fathom, forest and building removed Copernicus DEM",
+        "crs": "EPSG:32643",
+        "derivative_halo_cells": 1,
+        "elevation_unit": "m",
+        "license": "CC BY-NC-SA 4.0",
+        "resolution_m": 30.0,
+        "roughness_method": "least-squares plane residual RMS 3x3",
+        "roughness_unit": "m",
+        "slope_method": "Horn 3x3",
+        "slope_unit": "degree",
+        "source": {
+          "crs": "EPSG:4326",
+          "nodata": -9999.0,
+          "resolution": [
+            0.0002777777777777778,
+            0.0002777777777777773
+          ],
+          "tags": {
+            "AREA_OR_POINT": "Point",
+            "CHANGELOG": "Version v1-2 replaces the underlying COPDEM-30 dataset with version 2021_1, and fixes alignment of COPDEM tiles above 50N and 50S (no change to FABDEM processing). Version v1-1 includes improved handling of tile boundaries in the post-processing, also change metadata to pixel is point",
+            "INSTITUTE": "University of Bristol and Fathom",
+            "LICENCE": "The FABDEM dataset is freely available for non-commercial use under a Creative Commons \"CC BY-NC-SA 4.0\" licence. For commercial use queries, please contact fabdem@fathom.global",
+            "OVERVIEW_RESAMPLING": "AVERAGE",
+            "TITLE": "FABDEM v1-2: Forests And Buildings removed CopernicusDEM"
+          }
+        },
+        "source_date": null,
+        "source_id": "fabdem-v1-2-n13e075",
+        "source_sha256": "a6d536e0b0e260efb99223e0b24498cf605275ad6800c0035dd61c7070230302",
+        "source_units": "m",
+        "vertical_datum": "unknown"
+      },
+      "rasters": {
+        "elevation": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\HELPS - draft\\data\\knowledge\\bhadra-v1-20260601-fabdem-20261013\\rasters\\elevation.tif",
+        "roughness": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\HELPS - draft\\data\\knowledge\\bhadra-v1-20260601-fabdem-20261013\\rasters\\roughness.tif",
+        "slope": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\HELPS - draft\\data\\knowledge\\bhadra-v1-20260601-fabdem-20261013\\rasters\\slope.tif",
+        "valid": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\HELPS - draft\\data\\knowledge\\bhadra-v1-20260601-fabdem-20261013\\rasters\\valid.tif"
+      },
+      "region_id": "bhadra",
+      "schema_version": 1,
+      "source_completeness": {
+        "buildings": "unknown",
+        "restrictions": "unknown",
+        "roads": "unknown",
+        "water": "unknown"
+      },
+      "source_fingerprint": "a3fa998f3b1fb9669cc03da6a08e76f662ca341003d99246763a6f8322ba2cfe"
+    }
+  },
+  "activation": {
+    "dataset_id": "bhadra-v1-20260601-fabdem-20261013",
+    "region_id": "bhadra",
+    "package_path": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\HELPS - draft\\data\\knowledge\\bhadra-v1-20260601-fabdem-20261013\\knowledge.gpkg",
+    "validation": {
+      "valid": true,
+      "errors": [],
+      "counts": {
+        "terrain": 2477,
+        "zones": 13150
+      },
+      "metadata": {
+        "build_spec": {
+          "aoi": {
+            "coverage_path": null,
+            "coverage_state": "supplied",
+            "crs": null,
+            "date": null,
+            "kind": "aoi",
+            "layer": null,
+            "metadata": {},
+            "path": "data\\raw\\Bhadra\\bhadra_entire_region.geojson",
+            "sha256": "6b6094b2d67ad78bba0a01a4c86cdb534df92bdcb7e98a94a2dc1eaeb84af62c",
+            "source_id": "bhadra-aoi",
+            "units": null
+          },
+          "dataset_id": "bhadra-v1-20260601-fabdem-20261013",
+          "date": "2026-06-01",
+          "dem": {
+            "coverage_path": null,
+            "coverage_state": "supplied",
+            "crs": null,
+            "date": null,
+            "kind": "dem",
+            "layer": null,
+            "metadata": {
+              "attribution": "University of Bristol / Fathom, forest and building removed Copernicus DEM",
+              "license": "CC BY-NC-SA 4.0",
+              "native_resolution": "1 arcsecond approximately 30m",
+              "product": "FABDEM v1-2",
+              "reference_date_status": "product edition known; per-cell observation dates unverified",
+              "source_url": "https://research-information.bris.ac.uk/en/datasets/fabdem-v1-2/",
+              "vertical_datum_status": "unknown"
+            },
+            "path": "..\\data\\raw\\DEM\\FABDEM_N13E075.tif",
+            "sha256": "a6d536e0b0e260efb99223e0b24498cf605275ad6800c0035dd61c7070230302",
+            "source_id": "fabdem-v1-2-n13e075",
+            "units": "m"
+          },
+          "output_dir": "data\\knowledge\\bhadra-v1-20260601-fabdem-20261013",
+          "parameters": {
+            "environment_radius_m": 200,
+            "metric_crs": "EPSG:32643",
+            "min_area_m2": 900,
+            "min_clear_diameter_m": 30,
+            "min_length_m": 30,
+            "min_width_m": 30,
+            "resolution_m": 30.0,
+            "slope_thresholds_deg": [
+              0,
+              2,
+              4,
+              6,
+              8,
+              10,
+              12,
+              15
+            ],
+            "water_line_buffer_m": 5,
+            "water_setback_m": 20
+          },
+          "region_id": "bhadra",
+          "retained_seed": {
+            "coverage_path": null,
+            "coverage_state": "supplied",
+            "crs": null,
+            "date": "2026-06-01",
+            "kind": "candidate_seed",
+            "layer": "final_open_land_zones",
+            "metadata": {
+              "provenance": "accepted previously calibrated geometry, not reconstructed raw connected components",
+              "source_revision": "236c34c"
+            },
+            "path": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_final_open_land_zones.gpkg",
+            "sha256": "66f45ebd2f4d107a3bc9739bc4bd6c0719e4fb6f0ac82b67a80b903d2fd8f9d1",
+            "source_id": "bhadra-retained-236c34c",
+            "units": null
+          },
+          "reviewed_exclusions": {
+            "coverage_path": null,
+            "coverage_state": "supplied",
+            "crs": null,
+            "date": "2026-10-13",
+            "kind": "vector",
+            "layer": null,
+            "metadata": {},
+            "path": "data\\raw\\Bhadra\\reviewed_exclusions.geojson",
+            "sha256": "7eea88815a026ad004e103a06c3141543420a263603b9e3f60b118b3da43d3af",
+            "source_id": "reviewed-quarantine-20261013",
+            "units": null
+          },
+          "source_mode": "retained",
+          "sources": {
+            "barriers": {
+              "coverage_path": null,
+              "coverage_state": "unknown",
+              "crs": null,
+              "date": null,
+              "kind": "osm",
+              "layer": "barriers",
+              "metadata": {
+                "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+                "date_status": "unknown acquisition/reference date"
+              },
+              "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+              "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+              "source_id": "osm-bhadra-barriers",
+              "units": null
+            },
+            "buildings": {
+              "coverage_path": null,
+              "coverage_state": "unknown",
+              "crs": null,
+              "date": null,
+              "kind": "buildings",
+              "layer": null,
+              "metadata": {
+                "coverage_limit": "mapped footprints only, not proof of absence",
+                "date_status": "unknown source edition",
+                "height_status": "unknown"
+              },
+              "path": "data\\processed\\Bhadra\\buildings\\bhadra_overture_buildings.geojson",
+              "sha256": "980788050f9dcccc4d0f85732d58d9749541af45cfa908baa7464ad9398a76bc",
+              "source_id": "overture-bhadra-buildings",
+              "units": null
+            },
+            "landcover": {
+              "coverage_path": null,
+              "coverage_state": "supplied",
+              "crs": null,
+              "date": "2021-01-01",
+              "kind": "landcover",
+              "layer": null,
+              "metadata": {
+                "attribution": "ESA WorldCover project 2021 v200",
+                "date_status": "annual 2021 product; exact day not applicable",
+                "license": "CC BY 4.0",
+                "limitation": "historical descriptive evidence, not current physical clearance",
+                "reference_year": 2021,
+                "source_url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N12E075_Map.tif"
+              },
+              "path": "data\\inputs\\45295356fafbdae35c06ddec\\2026-06-01\\landcover\\worldcover_2021_aligned.tif",
+              "sha256": "86d042b2b982b0cf75a20e5e3fc952404bb64fbfc772b0ea6c6965a4b735d919",
+              "source_id": "esa-worldcover-v200-2021",
+              "units": null
+            },
+            "man_made": {
+              "coverage_path": null,
+              "coverage_state": "unknown",
+              "crs": null,
+              "date": null,
+              "kind": "osm",
+              "layer": "man_made",
+              "metadata": {
+                "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+                "date_status": "unknown acquisition/reference date"
+              },
+              "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+              "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+              "source_id": "osm-bhadra-man_made",
+              "units": null
+            },
+            "osm_buildings": {
+              "coverage_path": null,
+              "coverage_state": "unknown",
+              "crs": null,
+              "date": null,
+              "kind": "osm",
+              "layer": "buildings",
+              "metadata": {
+                "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+                "date_status": "unknown acquisition/reference date"
+              },
+              "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+              "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+              "source_id": "osm-bhadra-osm_buildings",
+              "units": null
+            },
+            "power": {
+              "coverage_path": null,
+              "coverage_state": "unknown",
+              "crs": null,
+              "date": null,
+              "kind": "osm",
+              "layer": "power",
+              "metadata": {
+                "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+                "date_status": "unknown acquisition/reference date"
+              },
+              "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+              "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+              "source_id": "osm-bhadra-power",
+              "units": null
+            },
+            "roads": {
+              "coverage_path": null,
+              "coverage_state": "unknown",
+              "crs": null,
+              "date": null,
+              "kind": "osm",
+              "layer": "roads",
+              "metadata": {
+                "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+                "date_status": "unknown acquisition/reference date"
+              },
+              "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+              "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+              "source_id": "osm-bhadra-roads",
+              "units": null
+            },
+            "scl": {
+              "coverage_path": null,
+              "coverage_state": "supplied",
+              "crs": null,
+              "date": "2026-06-01",
+              "kind": "scl",
+              "layer": null,
+              "metadata": {
+                "native_resolution_m": 20,
+                "processing_resolution_m": 10
+              },
+              "path": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_scl.tif",
+              "sha256": "3d71416ff17bba92b22f4ea5fbd2fea94a6381db722a4e087dc6309c42e4a66d",
+              "source_id": "sentinel-scl-20260601",
+              "units": null
+            },
+            "spectral": {
+              "coverage_path": null,
+              "coverage_state": "supplied",
+              "crs": null,
+              "date": "2026-06-01",
+              "kind": "spectral",
+              "layer": null,
+              "metadata": {
+                "band_map": {
+                  "blue": 1,
+                  "green": 2,
+                  "nir": 4,
+                  "red": 3,
+                  "swir": 5
+                },
+                "band_names": [
+                  "B02",
+                  "B03",
+                  "B04",
+                  "B08",
+                  "B11",
+                  "B12"
+                ],
+                "date_status": "supplied pipeline observation date",
+                "reflectance_scale": 10000
+              },
+              "path": "data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_spectral.tif",
+              "sha256": "06d304c9cfb6822e0cf32b03b65c21edf26db2f5849a5f25c1e894ed3e834e39",
+              "source_id": "sentinel-spectral-20260601",
+              "units": null
+            },
+            "water": {
+              "coverage_path": null,
+              "coverage_state": "unknown",
+              "crs": null,
+              "date": null,
+              "kind": "osm",
+              "layer": "water_polygons",
+              "metadata": {
+                "coverage_limit": "mapped features only; unmapped obstacles remain unknown",
+                "date_status": "unknown acquisition/reference date"
+              },
+              "path": "data\\processed\\Bhadra\\osm\\bhadra_osm_context.gpkg",
+              "sha256": "6da04ad709604fa71ee95d22ccd6e540a78369c30746c999bff65f549250cf1b",
+              "source_id": "osm-bhadra-water",
+              "units": null
+            }
+          }
+        },
+        "counts": {
+          "terrain": 2477,
+          "zones": 13150
+        },
+        "crs": "EPSG:32643",
+        "dataset_id": "bhadra-v1-20260601-fabdem-20261013",
+        "date": "2026-06-01",
+        "raster_manifest": {
+          "aoi_derivative_valid_fraction": 1.0,
+          "aoi_elevation_valid_fraction": 1.0,
+          "attribution": "University of Bristol / Fathom, forest and building removed Copernicus DEM",
+          "crs": "EPSG:32643",
+          "derivative_halo_cells": 1,
+          "elevation_unit": "m",
+          "license": "CC BY-NC-SA 4.0",
+          "resolution_m": 30.0,
+          "roughness_method": "least-squares plane residual RMS 3x3",
+          "roughness_unit": "m",
+          "slope_method": "Horn 3x3",
+          "slope_unit": "degree",
+          "source": {
+            "crs": "EPSG:4326",
+            "nodata": -9999.0,
+            "resolution": [
+              0.0002777777777777778,
+              0.0002777777777777773
+            ],
+            "tags": {
+              "AREA_OR_POINT": "Point",
+              "CHANGELOG": "Version v1-2 replaces the underlying COPDEM-30 dataset with version 2021_1, and fixes alignment of COPDEM tiles above 50N and 50S (no change to FABDEM processing). Version v1-1 includes improved handling of tile boundaries in the post-processing, also change metadata to pixel is point",
+              "INSTITUTE": "University of Bristol and Fathom",
+              "LICENCE": "The FABDEM dataset is freely available for non-commercial use under a Creative Commons \"CC BY-NC-SA 4.0\" licence. For commercial use queries, please contact fabdem@fathom.global",
+              "OVERVIEW_RESAMPLING": "AVERAGE",
+              "TITLE": "FABDEM v1-2: Forests And Buildings removed CopernicusDEM"
+            }
+          },
+          "source_date": null,
+          "source_id": "fabdem-v1-2-n13e075",
+          "source_sha256": "a6d536e0b0e260efb99223e0b24498cf605275ad6800c0035dd61c7070230302",
+          "source_units": "m",
+          "vertical_datum": "unknown"
+        },
+        "rasters": {
+          "elevation": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\HELPS - draft\\data\\knowledge\\bhadra-v1-20260601-fabdem-20261013\\rasters\\elevation.tif",
+          "roughness": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\HELPS - draft\\data\\knowledge\\bhadra-v1-20260601-fabdem-20261013\\rasters\\roughness.tif",
+          "slope": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\HELPS - draft\\data\\knowledge\\bhadra-v1-20260601-fabdem-20261013\\rasters\\slope.tif",
+          "valid": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\HELPS - draft\\data\\knowledge\\bhadra-v1-20260601-fabdem-20261013\\rasters\\valid.tif"
+        },
+        "region_id": "bhadra",
+        "schema_version": 1,
+        "source_completeness": {
+          "buildings": "unknown",
+          "restrictions": "unknown",
+          "roads": "unknown",
+          "water": "unknown"
+        },
+        "source_fingerprint": "a3fa998f3b1fb9669cc03da6a08e76f662ca341003d99246763a6f8322ba2cfe"
+      }
+    }
+  },
+  "package_bytes": 201728000
+}

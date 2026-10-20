@@ -1,0 +1,2 @@
+const test=require('node:test'),assert=require('node:assert/strict');const {slopeColor,slopeBreaks}=require('../static/map_view.js');
+test('zero measured slope is distinct from absent and boundaries remain degrees',()=>{assert.notEqual(slopeColor(0),slopeColor(null));assert.deepEqual(slopeBreaks,[0,2,4,6,8,10,12,15]);assert.equal(slopeColor(2),slopeColor(1.99));assert.notEqual(slopeColor(2),slopeColor(2.01));});

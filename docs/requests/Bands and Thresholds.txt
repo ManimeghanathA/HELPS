@@ -1,0 +1,53 @@
+Bands and Thresholds 
+
+10m resolution:
+Band 2 (Blue): 490 nm — Used for atmospheric correction and land cover mapping.
+
+Band 3 (Green): 560 nm — Used for vegetation discrimination and water body mapping (essential for indices like MNDWI).
+
+Band 4 (Red): 665 nm — Used for vegetation mapping and identifying chlorophyll absorption (essential for NDVI).
+
+Band 8 (NIR - Near Infrared): 842 nm — Highly sensitive to vegetation biomass and moisture content (essential for NDVI).
+
+20m resolution
+Band 5 (Vegetation Red Edge 1): 705 nm — Tracks early vegetation stress and chlorophyll changes.
+
+Band 6 (Vegetation Red Edge 2): 740 nm — Used for calculating advanced vegetation status.
+
+Band 7 (Vegetation Red Edge 3): 783 nm — Provides deep insights into canopy structure and health.Band 8a (Narrow NIR): 865 nm — Used for specialized vegetation indices and atmospheric correction.
+
+Band 11 (SWIR 1): 1610 nm — Used for measuring soil and vegetation moisture, and detecting surface water (essential for MNDWI).
+
+Band 12 (SWIR 2): 2190 nm — Used for geology mapping, burn severity (like dNBR), and mineral identification.
+
+60m resolution
+
+Band 1 (Coastal Aerosol): 443 nm — Used for monitoring coastal waters, dust, and smoke.
+
+Band 9 (Water Vapour): 945 nm — Used for atmospheric water vapour correction.
+
+Band 10 (SWIR - Cirrus): 1375 nm — Exclusively used for cloud detection (specifically high, thin cirrus clouds).
+
+
+1. NDVI (Normalized Difference Vegetation Index) — Used to measure vegetation greenness and health:
+
+NDVI = B8 (NIR) - B4 (Red) / B8 (NIR) + B4 (Red)
+
+value - -1 to 1
+bare soil / rock - 0 to 0.1
+sparse vegetation - 0.1 to 0.3
+Dense Vegetation - 0.4 to 1
+
+2. NDWI - Normalized difference water index
+NDWI = B3 (Green) - B8 (NIR) / B3 (Green) + B8 (NIR)
+
+Thresholds: 
+Generally, values > 0 represent water bodies, while negative values represent soil and terrestrial vegetation.
+
+3. MNDWI (Modified Normalized Difference Water Index) 
+It improves upon the traditional NDWI because urban infrastructure (like concrete, asphalt, and rooftops) often reflects light in ways that mimic water bodies in the Green and Near-Infrared (NIR) spectrums. By replacing the NIR band with the Short-Wave Infrared (SWIR) band, MNDWI successfully separates water from urban background noise
+
+MNDWI = Green - SWIR/ Green + SWIR
+
+water bodies - 0.0 - 1.0
+urban land and vegetation- < 0.0

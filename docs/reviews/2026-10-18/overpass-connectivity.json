@@ -1,0 +1,24 @@
+[
+  {
+    "method": "POST",
+    "url": "https://overpass-api.de/api/interpreter",
+    "status": 502,
+    "elements": null,
+    "message": "# 502 Gateway Timeout\n\nThis Overpass API server is currently at capacity. All query workers are busy\nand the request queue is full.\n\n## What to do\n\nRetry your request using exponen",
+    "seconds": 0.58
+  },
+  {
+    "method": "GET",
+    "url": "https://overpass-api.de/api/interpreter",
+    "error": "ReadTimeout",
+    "seconds": 20.38
+  },
+  {
+    "method": "POST",
+    "url": "https://overpass.private.coffee/api/interpreter",
+    "status": 200,
+    "elements": 0,
+    "message": null,
+    "seconds": 5.7
+  }
+]

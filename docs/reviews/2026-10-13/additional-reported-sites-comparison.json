@@ -1,0 +1,123 @@
+{
+  "reported_dataset": "Neha baseline; Bhadra_ZONE prefix",
+  "experimental_dataset": "BhadraExp prefix; 191 candidates",
+  "named_sites": [
+    {
+      "source_zone_id": "Bhadra_ZONE_000078",
+      "baseline_area_m2": 1122.8907329321025,
+      "sampled_pixel_centres": 11,
+      "spectral_retained_centres": 3,
+      "landcover_retained_centres": 0,
+      "unknown_centres": 0,
+      "reference_2021_tree_centres": 0,
+      "reference_2021_built_up_centres": 11,
+      "new_overlap_area_m2": 0.0
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000079",
+      "baseline_area_m2": 1493.229878751326,
+      "sampled_pixel_centres": 15,
+      "spectral_retained_centres": 0,
+      "landcover_retained_centres": 0,
+      "unknown_centres": 0,
+      "reference_2021_tree_centres": 0,
+      "reference_2021_built_up_centres": 15,
+      "new_overlap_area_m2": 0.0
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000200",
+      "baseline_area_m2": 8442.147386546156,
+      "sampled_pixel_centres": 87,
+      "spectral_retained_centres": 6,
+      "landcover_retained_centres": 1,
+      "unknown_centres": 0,
+      "reference_2021_tree_centres": 0,
+      "reference_2021_built_up_centres": 36,
+      "new_overlap_area_m2": 0.0
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000209",
+      "baseline_area_m2": 1453.6871984220866,
+      "sampled_pixel_centres": 15,
+      "spectral_retained_centres": 0,
+      "landcover_retained_centres": 0,
+      "unknown_centres": 0,
+      "reference_2021_tree_centres": 0,
+      "reference_2021_built_up_centres": 0,
+      "new_overlap_area_m2": 0.0
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000240",
+      "baseline_area_m2": 1227.1346817621695,
+      "sampled_pixel_centres": 12,
+      "spectral_retained_centres": 0,
+      "landcover_retained_centres": 0,
+      "unknown_centres": 0,
+      "reference_2021_tree_centres": 0,
+      "reference_2021_built_up_centres": 12,
+      "new_overlap_area_m2": 0.0
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000529",
+      "baseline_area_m2": 1855.4398358455398,
+      "sampled_pixel_centres": 19,
+      "spectral_retained_centres": 10,
+      "landcover_retained_centres": 0,
+      "unknown_centres": 0,
+      "reference_2021_tree_centres": 15,
+      "reference_2021_built_up_centres": 4,
+      "new_overlap_area_m2": 0.0
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000532",
+      "baseline_area_m2": 1223.2028017687533,
+      "sampled_pixel_centres": 13,
+      "spectral_retained_centres": 2,
+      "landcover_retained_centres": 0,
+      "unknown_centres": 0,
+      "reference_2021_tree_centres": 3,
+      "reference_2021_built_up_centres": 3,
+      "new_overlap_area_m2": 0.0
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000647",
+      "baseline_area_m2": 19273.130295536557,
+      "sampled_pixel_centres": 197,
+      "spectral_retained_centres": 1,
+      "landcover_retained_centres": 0,
+      "unknown_centres": 0,
+      "reference_2021_tree_centres": 49,
+      "reference_2021_built_up_centres": 26,
+      "new_overlap_area_m2": 0.0
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000650",
+      "baseline_area_m2": 109221.70101468932,
+      "sampled_pixel_centres": 1100,
+      "spectral_retained_centres": 8,
+      "landcover_retained_centres": 5,
+      "unknown_centres": 0,
+      "reference_2021_tree_centres": 336,
+      "reference_2021_built_up_centres": 14,
+      "new_overlap_area_m2": 0.0
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000787",
+      "baseline_area_m2": 11168.31419605645,
+      "sampled_pixel_centres": 114,
+      "spectral_retained_centres": 39,
+      "landcover_retained_centres": 0,
+      "unknown_centres": 0,
+      "reference_2021_tree_centres": 71,
+      "reference_2021_built_up_centres": 0,
+      "new_overlap_area_m2": 0.0
+    }
+  ],
+  "range_1000_1500": {
+    "source_polygons": 501,
+    "no_experimental_overlap": 481,
+    "remaining_partial_overlap": 20
+  },
+  "accuracy_measured": false,
+  "note": "No overlap at these old reported geometries does not certify the remaining experimental sites. Promising rejected brown patches remain unverified."
+}

@@ -1,0 +1,49 @@
+{
+  "job_id": "7f4cf8106cfd4b029358f01813f7f7ed",
+  "dataset_id": "bhadra-20261012-623bdb28",
+  "status": "completed",
+  "review": {
+    "decision": "pending"
+  },
+  "validation_valid": true,
+  "counts": {
+    "terrain": 9,
+    "zones": 44,
+    "terrain_characteristics": 9,
+    "zone_environment": 44,
+    "temporal_observations": 318,
+    "temporal_aggregates": 53
+  },
+  "history_dates": [
+    "2025-10-12",
+    "2025-12-11",
+    "2026-02-04",
+    "2026-03-26",
+    "2026-05-15",
+    "2026-06-01"
+  ],
+  "preview_status": 200,
+  "preview_counts": {
+    "candidate_count": 9,
+    "dataset_id": "bhadra-20261012-623bdb28",
+    "date": "2026-10-12",
+    "enrichment_of": null,
+    "region_id": "bhadra",
+    "sha256": "fbbd44161ace7c40cf5c1364ffcd9a99dfdbeafffa96721583c06b1a3ba5561e",
+    "slope_zone_count": 44,
+    "total_area_m2": 24030.807976803422
+  },
+  "current_selected": {
+    "bhadra": "bhadra-v1-20260601-fabdem-20261013"
+  },
+  "active_sha256": "0ded087336e671d5e7c1f2cb12ab84a62c94077055aff979ed79dfa86d02ebd9",
+  "earlier_pending_enrichment_sha256": "8171ad24748ef12d24a10857fb76eca60679c25ae102a730b66e0711601513d0",
+  "rejected_same_date_status": 400,
+  "rejected_future_date_status": 400,
+  "source_reuse_messages": [
+    "sentinel: reusing processed input \u00b7 C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\data\\processed\\bhadra\\sentinel\\2026-10-12\\20261018T110718129062_a60050c5",
+    "osm: reusing processed input \u00b7 C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\data\\processed\\bhadra\\osm\\20261018T125805489322_fa579594",
+    "overture: reusing processed input \u00b7 C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\data\\processed\\bhadra\\overture\\20261018T050032035149_3fe9c230",
+    "landcover: reusing processed input \u00b7 C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\data\\processed\\bhadra\\landcover\\20261018T125807450396_b597743b"
+  ]
+}

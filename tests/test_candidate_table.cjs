@@ -1,0 +1,2 @@
+const test=require('node:test'),assert=require('node:assert/strict');const {pageRecords}=require('../static/workspace_state.js');
+test('bounded pages with stable numeric identity sorting and filtering',()=>{const rows=Array.from({length:150},(_,i)=>({terrain_id:i,area_m2:150-i}));const p=pageRecords(rows,{sort:'terrain_id',size:500});assert.equal(p.rows.length,100);assert.equal(p.rows[2].terrain_id,2);assert.equal(pageRecords(rows,{filter:'149'}).total,2);});

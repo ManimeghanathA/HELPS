@@ -1,0 +1,67 @@
+{
+  "active_package": "data\\knowledge\\bhadra-v1-20260601-fabdem-20261013\\knowledge.gpkg",
+  "active_sha256": "0ded087336e671d5e7c1f2cb12ab84a62c94077055aff979ed79dfa86d02ebd9",
+  "seed_sha256": "66f45ebd2f4d107a3bc9739bc4bd6c0719e4fb6f0ac82b67a80b903d2fd8f9d1",
+  "active_parent_count": 2477,
+  "seed_count": 2484,
+  "parent_geometries_compared": 2477,
+  "max_symmetric_difference_m2": 0.0,
+  "excluded_seed_ids": [
+    "Bhadra_ZONE_000020",
+    "Bhadra_ZONE_000056",
+    "Bhadra_ZONE_000095",
+    "Bhadra_ZONE_000211",
+    "Bhadra_ZONE_000283",
+    "Bhadra_ZONE_000304",
+    "Bhadra_ZONE_000874"
+  ],
+  "review_statuses": [
+    {
+      "source_zone_id": "Bhadra_ZONE_000874",
+      "status": "quarantined"
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000020",
+      "status": "quarantined"
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000056",
+      "status": "quarantined"
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000095",
+      "status": "quarantined"
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000211",
+      "status": "quarantined"
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000283",
+      "status": "quarantined"
+    },
+    {
+      "source_zone_id": "Bhadra_ZONE_000304",
+      "status": "quarantined"
+    }
+  ],
+  "cached_osm_layers": [
+    "buildings",
+    "roads",
+    "power",
+    "man_made",
+    "water_polygons",
+    "barriers"
+  ],
+  "active_has_temporal_tables": false,
+  "active_build_source_mode": "retained",
+  "missing_required_osm_layer_names": [
+    "facilities",
+    "industrial",
+    "water"
+  ],
+  "missing_hazard_groups_allowing_legacy_water_alias": [
+    "facilities",
+    "industrial"
+  ]
+}

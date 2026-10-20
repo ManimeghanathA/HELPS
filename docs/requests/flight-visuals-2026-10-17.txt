@@ -1,0 +1,12 @@
+1. Right now on selecting the, the current helicopter location, we have the location symbol right, change it to small helicopter logo and while viewing the result of the polygons, change the helicopter logo direction towards the polygons
+
+2. make the region outline to more darker green for all the maps
+
+3. add sun and moon on the first page of the HELPS make them move according to the time of the day and the theme should be dynamic according to the day or night, day - light theme , night dark theme and helicopter should face the moon or the sun accordingly, moon make it full moon 
+for sum, a slight shade of orange should from the sun fall on the helicopter and moon slight white light from the moon should fall on the helicopter 
+
+In dark theme change the minor color from magenta to lime green you used in the light theme
+
+4. Also loading animation, you made it as helicopter main rotors, but then they are funny, so make it more solid and rotational, have some good animation for the loading
+
+5. Also when i select the map, I only see Bhadra, its correct, but then have regions list as well but then faded away and only Bhadra should be active and selectable

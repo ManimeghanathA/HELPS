@@ -1,0 +1,567 @@
+[
+  {
+    "folder": "archive",
+    "files": 36,
+    "GiB": 1.428,
+    "children": [
+      {
+        "name": "(root files)",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "acquisition_smoke",
+        "files": 9,
+        "MiB": 0.22
+      },
+      {
+        "name": "recovery",
+        "files": 19,
+        "MiB": 1462.5
+      },
+      {
+        "name": "runtime",
+        "files": 8,
+        "MiB": 0.01
+      }
+    ]
+  },
+  {
+    "folder": "cache",
+    "files": 23,
+    "GiB": 0.008,
+    "children": [
+      {
+        "name": "(root files)",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "archive",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "elevation",
+        "files": 2,
+        "MiB": 0.0
+      },
+      {
+        "name": "osmnx",
+        "files": 19,
+        "MiB": 7.83
+      },
+      {
+        "name": "server",
+        "files": 2,
+        "MiB": 0.02
+      }
+    ]
+  },
+  {
+    "folder": "experiments",
+    "files": 12,
+    "GiB": 0.009,
+    "children": [
+      {
+        "name": "(root files)",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "bhadra_20261013T115403_74d894",
+        "files": 12,
+        "MiB": 9.44
+      }
+    ]
+  },
+  {
+    "folder": "inputs",
+    "files": 107,
+    "GiB": 2.277,
+    "children": [
+      {
+        "name": "(root files)",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "418b4f814d6d562c5595b0f1",
+        "files": 20,
+        "MiB": 466.5
+      },
+      {
+        "name": "45295356fafbdae35c06ddec",
+        "files": 6,
+        "MiB": 3.5
+      },
+      {
+        "name": "593216bba71c5b63a230bb0c",
+        "files": 20,
+        "MiB": 469.36
+      },
+      {
+        "name": "6afd84b6d5a5db0973666b43",
+        "files": 20,
+        "MiB": 459.04
+      },
+      {
+        "name": "archive",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "ceedd572fe1efa2ed30870df",
+        "files": 20,
+        "MiB": 471.72
+      },
+      {
+        "name": "fca067b0382be74425128439",
+        "files": 20,
+        "MiB": 461.9
+      },
+      {
+        "name": "fee9d669422585850e434f88",
+        "files": 1,
+        "MiB": 0.0
+      }
+    ]
+  },
+  {
+    "folder": "knowledge",
+    "files": 99,
+    "GiB": 0.846,
+    "children": [
+      {
+        "name": "(root files)",
+        "files": 3,
+        "MiB": 0.0
+      },
+      {
+        "name": "acceptance-invalid-dem-20261013",
+        "files": 2,
+        "MiB": 0.01
+      },
+      {
+        "name": "bhadra-temporal-580354150707",
+        "files": 2,
+        "MiB": 275.97
+      },
+      {
+        "name": "bhadra-v1-20260601-fabdem-20261013",
+        "files": 17,
+        "MiB": 576.6
+      },
+      {
+        "name": "history-cache",
+        "files": 10,
+        "MiB": 2.36
+      },
+      {
+        "name": "inventory-qa",
+        "files": 6,
+        "MiB": 0.0
+      },
+      {
+        "name": "jobs",
+        "files": 1,
+        "MiB": 0.04
+      },
+      {
+        "name": "monthly-cache",
+        "files": 48,
+        "MiB": 0.02
+      },
+      {
+        "name": "sources",
+        "files": 10,
+        "MiB": 11.63
+      }
+    ]
+  },
+  {
+    "folder": "processed",
+    "files": 99,
+    "GiB": 1.629,
+    "children": [
+      {
+        "name": "(root files)",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "Bhadra",
+        "files": 99,
+        "MiB": 1667.93
+      },
+      {
+        "name": "archive",
+        "files": 0,
+        "MiB": 0.0
+      }
+    ]
+  },
+  {
+    "folder": "raw",
+    "files": 104,
+    "GiB": 2.232,
+    "children": [
+      {
+        "name": "(root files)",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "Bhadra",
+        "files": 16,
+        "MiB": 41.83
+      },
+      {
+        "name": "DEM",
+        "files": 4,
+        "MiB": 119.6
+      },
+      {
+        "name": "OSM",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "Sentinel2",
+        "files": 84,
+        "MiB": 2124.46
+      },
+      {
+        "name": "archive",
+        "files": 0,
+        "MiB": 0.0
+      }
+    ]
+  },
+  {
+    "folder": "runs",
+    "files": 82,
+    "GiB": 0.926,
+    "children": [
+      {
+        "name": "(root files)",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "20260912T190120_a0ad8015",
+        "files": 9,
+        "MiB": 113.39
+      },
+      {
+        "name": "20260912T193903_6a265faf",
+        "files": 9,
+        "MiB": 113.58
+      },
+      {
+        "name": "20260914T081100_93b8fed9",
+        "files": 3,
+        "MiB": 0.03
+      },
+      {
+        "name": "20260914T081128_73fea336",
+        "files": 9,
+        "MiB": 23.35
+      },
+      {
+        "name": "20260914T082735_f71b9794",
+        "files": 5,
+        "MiB": 22.1
+      },
+      {
+        "name": "20260914T084112_b0f6040b",
+        "files": 9,
+        "MiB": 65.75
+      },
+      {
+        "name": "20260914T084809_7de8f4a0",
+        "files": 3,
+        "MiB": 0.03
+      },
+      {
+        "name": "20260914T084959_e0051518",
+        "files": 9,
+        "MiB": 151.92
+      },
+      {
+        "name": "20260914T090512_5e6b8498",
+        "files": 5,
+        "MiB": 73.73
+      },
+      {
+        "name": "20260914T093117_f0943a8f",
+        "files": 9,
+        "MiB": 274.04
+      },
+      {
+        "name": "20260914T095123_cfccd5c1",
+        "files": 3,
+        "MiB": 0.03
+      },
+      {
+        "name": "20260914T100542_14474448",
+        "files": 9,
+        "MiB": 110.58
+      },
+      {
+        "name": "archive",
+        "files": 0,
+        "MiB": 0.0
+      }
+    ]
+  },
+  {
+    "folder": "uploads",
+    "files": 0,
+    "GiB": 0.0,
+    "children": [
+      {
+        "name": "(root files)",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "archive",
+        "files": 0,
+        "MiB": 0.0
+      }
+    ]
+  },
+  {
+    "folder": "validation",
+    "files": 4874,
+    "GiB": 0.415,
+    "children": [
+      {
+        "name": "(root files)",
+        "files": 5,
+        "MiB": 0.04
+      },
+      {
+        "name": "Bhadra",
+        "files": 9,
+        "MiB": 2.55
+      },
+      {
+        "name": "archive",
+        "files": 10,
+        "MiB": 280.07
+      },
+      {
+        "name": "audit-full-20261017",
+        "files": 537,
+        "MiB": 10.51
+      },
+      {
+        "name": "audit-green-20261017",
+        "files": 48,
+        "MiB": 0.74
+      },
+      {
+        "name": "audit-red-cloud-20261017",
+        "files": 24,
+        "MiB": 0.35
+      },
+      {
+        "name": "audit-red-cover-20261017",
+        "files": 6,
+        "MiB": 0.01
+      },
+      {
+        "name": "audit-regression-20261017",
+        "files": 331,
+        "MiB": 7.65
+      },
+      {
+        "name": "automatic-choice-final-20261018",
+        "files": 9,
+        "MiB": 0.01
+      },
+      {
+        "name": "context-date-green-20261018",
+        "files": 119,
+        "MiB": 3.0
+      },
+      {
+        "name": "context-date-red-20261018",
+        "files": 7,
+        "MiB": 0.01
+      },
+      {
+        "name": "dem-final-module-20261017",
+        "files": 53,
+        "MiB": 1.87
+      },
+      {
+        "name": "dem-green-20261017",
+        "files": 30,
+        "MiB": 1.02
+      },
+      {
+        "name": "dem-helper-interface-red-20261017",
+        "files": 1,
+        "MiB": 0.06
+      },
+      {
+        "name": "dem-helper-red-20261017",
+        "files": 1,
+        "MiB": 0.06
+      },
+      {
+        "name": "dem-provenance-green-20261017",
+        "files": 52,
+        "MiB": 1.81
+      },
+      {
+        "name": "dem-red-behavior-20261017",
+        "files": 2,
+        "MiB": 0.11
+      },
+      {
+        "name": "dem-tamper-red-20261017",
+        "files": 52,
+        "MiB": 1.81
+      },
+      {
+        "name": "enriched-slope-green-20261018",
+        "files": 70,
+        "MiB": 3.31
+      },
+      {
+        "name": "enriched-slope-red-20261018",
+        "files": 3,
+        "MiB": 0.09
+      },
+      {
+        "name": "enrichment-fullsuite",
+        "files": 254,
+        "MiB": 7.31
+      },
+      {
+        "name": "enrichment-green",
+        "files": 17,
+        "MiB": 1.47
+      },
+      {
+        "name": "enrichment-integration",
+        "files": 98,
+        "MiB": 5.3
+      },
+      {
+        "name": "enrichment-race",
+        "files": 21,
+        "MiB": 1.84
+      },
+      {
+        "name": "enrichment-red",
+        "files": 0,
+        "MiB": 0.0
+      },
+      {
+        "name": "history-normalized-red-20261017",
+        "files": 15,
+        "MiB": 0.21
+      },
+      {
+        "name": "history-red-20261017",
+        "files": 9,
+        "MiB": 0.01
+      },
+      {
+        "name": "inflight-green-20261018",
+        "files": 62,
+        "MiB": 2.78
+      },
+      {
+        "name": "knowledge-delivery-final-all-20261018",
+        "files": 681,
+        "MiB": 17.43
+      },
+      {
+        "name": "knowledge-delivery-full-20261017",
+        "files": 676,
+        "MiB": 17.43
+      },
+      {
+        "name": "knowledge-resume-final-20261018",
+        "files": 686,
+        "MiB": 17.53
+      },
+      {
+        "name": "pinning-red-20261017",
+        "files": 34,
+        "MiB": 0.43
+      },
+      {
+        "name": "review-atomic-red-20261017",
+        "files": 38,
+        "MiB": 2.77
+      },
+      {
+        "name": "review-final-20261017",
+        "files": 158,
+        "MiB": 4.35
+      },
+      {
+        "name": "review-finaltarget-20261017",
+        "files": 122,
+        "MiB": 5.48
+      },
+      {
+        "name": "review-green-20261017",
+        "files": 25,
+        "MiB": 1.85
+      },
+      {
+        "name": "review-history-integration-20261017",
+        "files": 63,
+        "MiB": 1.88
+      },
+      {
+        "name": "review-red-20261017",
+        "files": 20,
+        "MiB": 1.84
+      },
+      {
+        "name": "reviewer-delivery-followup-20261017",
+        "files": 54,
+        "MiB": 3.17
+      },
+      {
+        "name": "reviewer-delivery-second-20261017",
+        "files": 53,
+        "MiB": 1.87
+      },
+      {
+        "name": "reviewer-delivery-unique-20261017",
+        "files": 99,
+        "MiB": 5.56
+      },
+      {
+        "name": "temporal-query-final-20261018",
+        "files": 98,
+        "MiB": 5.31
+      },
+      {
+        "name": "temporal-ranking-final2",
+        "files": 19,
+        "MiB": 0.54
+      },
+      {
+        "name": "temporal-ranking-focused-final",
+        "files": 19,
+        "MiB": 0.54
+      },
+      {
+        "name": "temporal-ranking-suite",
+        "files": 184,
+        "MiB": 3.47
+      }
+    ]
+  }
+]

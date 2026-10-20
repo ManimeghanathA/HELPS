@@ -1,0 +1,52 @@
+{
+  "legacy_context": [
+    {
+      "path": "data\\inputs\\418b4f814d6d562c5595b0f1\\2026-02-04\\osm.gpkg",
+      "missing_required_layers": [
+        "facilities",
+        "industrial"
+      ]
+    },
+    {
+      "path": "data\\inputs\\45295356fafbdae35c06ddec\\2026-06-01\\osm.gpkg",
+      "missing_required_layers": [
+        "barriers",
+        "facilities",
+        "industrial",
+        "man_made",
+        "power",
+        "water"
+      ]
+    },
+    {
+      "path": "data\\inputs\\593216bba71c5b63a230bb0c\\2026-03-26\\osm.gpkg",
+      "missing_required_layers": [
+        "facilities",
+        "industrial"
+      ]
+    },
+    {
+      "path": "data\\inputs\\6afd84b6d5a5db0973666b43\\2025-10-12\\osm.gpkg",
+      "missing_required_layers": [
+        "facilities",
+        "industrial"
+      ]
+    },
+    {
+      "path": "data\\inputs\\ceedd572fe1efa2ed30870df\\2026-05-15\\osm.gpkg",
+      "missing_required_layers": [
+        "facilities",
+        "industrial"
+      ]
+    },
+    {
+      "path": "data\\inputs\\fca067b0382be74425128439\\2025-12-11\\osm.gpkg",
+      "missing_required_layers": [
+        "facilities",
+        "industrial"
+      ]
+    }
+  ],
+  "replay_performed": false,
+  "reason": "Current registered Bhadra OSM context lacks required layers. No provider acquisition or fresh June 1 replay was performed during migration."
+}

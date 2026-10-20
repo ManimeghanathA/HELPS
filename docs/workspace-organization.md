@@ -1,4 +1,40 @@
-# Workspace Organization
+# Canonical HELPS workspace
+
+## 21 October 2026 handover update
+
+The authoritative newcomer guide is now the root [README](../README.md). It covers the complete pipeline, original eight phases, version history, actual vision refinement, recommendation formula, temporal evidence and the remaining seasonal/vision integration problem.
+
+The live selected Bhadra package is now `bhadra-cv-20260601-313234b7`: 4,474 candidates and 25,931 slope subregions. The earlier June/enrichment packages remain preserved; statements below about the selection refer to their historical cleanup dates.
+
+The latest organization moved only loose, non-runtime material:
+
+- Six team batch ZIPs → `data/raw/vision/batches/`.
+- Root frontend change note → `docs/requests/frontend-changes-2026-10-17.txt`.
+- Old AOI/polygon PNG export directories and their ZIPs → `data/archive/reference-exports/`.
+
+Every moved file was hashed before/after and recorded in [workspace-moves-2026-10-21.json](workspace-moves-2026-10-21.json). No files were deleted. The pinned `probably_final.qgz/` GeoPackage, accepted knowledge packages, raw/processed routing, source manifests and environment were not relocated.
+
+New ignore rules keep downloaded/generated local data, source-review caches, vision inputs and runtime files out of new commits. Existing tracked reference assets remain tracked; TIFFs retain Git LFS. [data-assets-2026-10-21.json](data-assets-2026-10-21.json) records matching paths, sizes and checksums for the accepted build's key assets. A clone requires separate data transfer; a Git push is not a backup of ignored datasets.
+
+Do not rerun the earlier one-time organizer to organize the current project. It predates newer knowledge/recommendation modules. The dated manifests document completed moves rather than a general cleanup command.
+
+## Earlier consolidation
+
+As of 2026-10-17, the runnable application, pipeline, tests and environment are in the single HELPSs project root. Start with `launch.ps1`; the ordinary interface has Overview, Map, Candidates, Application and Build knowledge tabs. There is no second draft checkout or role-specific application entry.
+
+- `scripts/`, `templates/`, `static/`, `tests/`: current implementation.
+- `data/raw/`, `data/processed/`, `data/knowledge/`: raw inputs, dated scans and validated linked knowledge. Temporal dates and immutable package versions are scientific history, not duplicate working folders.
+- `docs/reports/`: original project reports and editorial notes.
+- `docs/requests/`: the supplied change list and threshold notes.
+- `docs/reviews/`: tests, review records and screenshots.
+- `data/archive/recovery/2026-10-17-unified/`: both Git bundles, original source snapshots, final source recovery, original data conflicts, and a SHA-256 migration manifest. The selected knowledge GeoPackage is unchanged.
+
+The existing `.env` remains local and ignored. One `.venv` is retained with its launchers relocated to this root. Generated test workspaces, duplicate environment and redundant draft files were removed after recovery and transfer checks. Historical observations and original user reports were retained.
+
+Published package provenance retains the original acquisition paths as historical evidence. Mutable registry/source routing and the reusable build example point to the canonical root. Do not manually edit a published GeoPackage or its hash-bearing source manifest; build and validate a new dated package through the workspace instead.
+
+## Earlier archive record
+
 
 The cleanup on 2026-09-13 archived 115 items, relocated the OSM request cache to `data/cache/osmnx`, and deleted 12 superseded generated masks/overlays. Exact source and destination paths are listed in [cleanup-manifest.json](cleanup-manifest.json). Generated Python bytecode and empty former script directories were also removed.
 

@@ -1,0 +1,230 @@
+[
+  {
+    "zone_id": "Bhadra_ZONE_000020",
+    "area_m2": 20310.157824805465,
+    "clear_diameter_m": 106.59869253419575,
+    "source_date": "2026-06-01",
+    "source_grid_m": 10,
+    "pixel_centres_inside": 207,
+    "scl_inside": {
+      "5": 207
+    },
+    "reclassified_states_inside": {
+      "1": 207
+    },
+    "ndvi_inside": {
+      "min": 0.19700483977794647,
+      "median": 0.27287158370018005,
+      "max": 0.46277180314064026
+    },
+    "mapped_obstacles": {
+      "osm_buildings": {
+        "within_100m_count": 0,
+        "intersection_area_m2": 0.0
+      },
+      "overture_buildings": {
+        "within_100m_count": 4,
+        "intersection_area_m2": 0.0
+      }
+    },
+    "available_osm_layers": [
+      "buildings",
+      "roads",
+      "power",
+      "man_made",
+      "water_polygons",
+      "barriers"
+    ],
+    "conservative_open_pixel_centres": 2
+  },
+  {
+    "zone_id": "Bhadra_ZONE_000056",
+    "area_m2": 26606.3791349509,
+    "clear_diameter_m": 121.02099931892008,
+    "source_date": "2026-06-01",
+    "source_grid_m": 10,
+    "pixel_centres_inside": 272,
+    "scl_inside": {
+      "5": 272
+    },
+    "reclassified_states_inside": {
+      "1": 272
+    },
+    "ndvi_inside": {
+      "min": 0.1724981665611267,
+      "median": 0.24528813362121582,
+      "max": 0.489117294549942
+    },
+    "mapped_obstacles": {
+      "osm_buildings": {
+        "within_100m_count": 0,
+        "intersection_area_m2": 0.0
+      },
+      "overture_buildings": {
+        "within_100m_count": 4,
+        "intersection_area_m2": 0.0
+      }
+    },
+    "available_osm_layers": [
+      "buildings",
+      "roads",
+      "power",
+      "man_made",
+      "water_polygons",
+      "barriers"
+    ],
+    "conservative_open_pixel_centres": 22
+  },
+  {
+    "zone_id": "Bhadra_ZONE_000095",
+    "area_m2": 9368.154724198796,
+    "clear_diameter_m": 53.215085571190144,
+    "source_date": "2026-06-01",
+    "source_grid_m": 10,
+    "pixel_centres_inside": 96,
+    "scl_inside": {
+      "5": 96
+    },
+    "reclassified_states_inside": {
+      "1": 96
+    },
+    "ndvi_inside": {
+      "min": 0.09288107603788376,
+      "median": 0.3065844774246216,
+      "max": 0.49613261222839355
+    },
+    "mapped_obstacles": {
+      "osm_buildings": {
+        "within_100m_count": 0,
+        "intersection_area_m2": 0.0
+      },
+      "overture_buildings": {
+        "within_100m_count": 13,
+        "intersection_area_m2": 3.5105827106256e-10
+      }
+    },
+    "available_osm_layers": [
+      "buildings",
+      "roads",
+      "power",
+      "man_made",
+      "water_polygons",
+      "barriers"
+    ],
+    "conservative_open_pixel_centres": 6
+  },
+  {
+    "zone_id": "Bhadra_ZONE_000211",
+    "area_m2": 4892.106857191088,
+    "clear_diameter_m": 46.59816389690346,
+    "source_date": "2026-06-01",
+    "source_grid_m": 10,
+    "pixel_centres_inside": 52,
+    "scl_inside": {
+      "5": 52
+    },
+    "reclassified_states_inside": {
+      "1": 52
+    },
+    "ndvi_inside": {
+      "min": 0.19894398748874664,
+      "median": 0.3166311979293823,
+      "max": 0.4627477526664734
+    },
+    "mapped_obstacles": {
+      "osm_buildings": {
+        "within_100m_count": 0,
+        "intersection_area_m2": 0.0
+      },
+      "overture_buildings": {
+        "within_100m_count": 0,
+        "intersection_area_m2": 0.0
+      }
+    },
+    "available_osm_layers": [
+      "buildings",
+      "roads",
+      "power",
+      "man_made",
+      "water_polygons",
+      "barriers"
+    ],
+    "conservative_open_pixel_centres": 1
+  },
+  {
+    "zone_id": "Bhadra_ZONE_000283",
+    "area_m2": 11328.66034851896,
+    "clear_diameter_m": 84.765625,
+    "source_date": "2026-06-01",
+    "source_grid_m": 10,
+    "pixel_centres_inside": 116,
+    "scl_inside": {
+      "5": 116
+    },
+    "reclassified_states_inside": {
+      "1": 116
+    },
+    "ndvi_inside": {
+      "min": 0.20924857258796692,
+      "median": 0.32717788219451904,
+      "max": 0.4756643772125244
+    },
+    "mapped_obstacles": {
+      "osm_buildings": {
+        "within_100m_count": 0,
+        "intersection_area_m2": 0.0
+      },
+      "overture_buildings": {
+        "within_100m_count": 35,
+        "intersection_area_m2": 0.0
+      }
+    },
+    "available_osm_layers": [
+      "buildings",
+      "roads",
+      "power",
+      "man_made",
+      "water_polygons",
+      "barriers"
+    ],
+    "conservative_open_pixel_centres": 0
+  },
+  {
+    "zone_id": "Bhadra_ZONE_000304",
+    "area_m2": 3411.885202716015,
+    "clear_diameter_m": 51.58616724157003,
+    "source_date": "2026-06-01",
+    "source_grid_m": 10,
+    "pixel_centres_inside": 36,
+    "scl_inside": {
+      "5": 36
+    },
+    "reclassified_states_inside": {
+      "1": 36
+    },
+    "ndvi_inside": {
+      "min": 0.1493605077266693,
+      "median": 0.27437329292297363,
+      "max": 0.4149766266345978
+    },
+    "mapped_obstacles": {
+      "osm_buildings": {
+        "within_100m_count": 0,
+        "intersection_area_m2": 0.0
+      },
+      "overture_buildings": {
+        "within_100m_count": 96,
+        "intersection_area_m2": 3.0112181357341145e-10
+      }
+    },
+    "available_osm_layers": [
+      "buildings",
+      "roads",
+      "power",
+      "man_made",
+      "water_polygons",
+      "barriers"
+    ],
+    "conservative_open_pixel_centres": 8
+  }
+]

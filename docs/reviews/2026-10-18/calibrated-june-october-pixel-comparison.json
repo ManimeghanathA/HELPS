@@ -1,0 +1,14 @@
+{
+  "2026-06-01": {
+    "calibrated_open_pixels_before_cloud_margin": 677471,
+    "calibrated_open_pixels_after_cloud_margin": 624431,
+    "scl_bare_pixels": 688092,
+    "scl_vegetated_pixels": 9075597
+  },
+  "2026-10-12": {
+    "calibrated_open_pixels_before_cloud_margin": 91040,
+    "calibrated_open_pixels_after_cloud_margin": 88138,
+    "scl_bare_pixels": 97108,
+    "scl_vegetated_pixels": 10139343
+  }
+}

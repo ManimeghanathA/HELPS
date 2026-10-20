@@ -40,7 +40,7 @@ MAX_CLOUD = 15.0
 START_DATE = date(2025, 6, 1)
 
 # Do NOT include June 1 itself.
-END_DATE = date(2026, 5, 31)
+END_DATE = date(2026, 9, 14)
 
 
 def month_key_for(record):

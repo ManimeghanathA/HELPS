@@ -1,0 +1,8 @@
+{
+  "calibrated_open_pixels_before_cloud_buffer": 91040,
+  "conservative_open_pixels_before_cloud_buffer": 6674,
+  "scl_bare_pixels": 97108,
+  "scl_vegetation_pixels": 10139343,
+  "possible_open_pixels": 6566,
+  "screened_open_pixels": 2156
+}

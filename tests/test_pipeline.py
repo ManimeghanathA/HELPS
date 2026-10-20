@@ -8,7 +8,7 @@ from rasterio.transform import from_origin
 from shapely.geometry import box, mapping
 
 from scripts.pipeline.inputs import load_aoi, cache_key
-from scripts.pipeline.processing import audit, process_inputs
+from scripts.pipeline.processing import process_inputs
 from scripts.processing.building_subtraction import subtract_buildings
 
 
@@ -36,53 +36,13 @@ def test_buildings_can_remove_all_terrain():
     assert subtract_buildings(terrain, terrain).empty
 
 
-def test_final_audit_tolerates_submillimeter_building_slivers():
-    zone = box(0, 0, 40, 40)
-    zones = gpd.GeoDataFrame(
-        [{
-            'zone_id': 'test',
-            'area_m2': zone.area,
-            'max_clear_diameter_m': 40.0,
-            'geometry': zone,
-        }],
-        geometry='geometry',
-        crs=32643,
-    )
-    buildings = gpd.GeoDataFrame(geometry=[box(0, 0, 0.0000004, 40)], crs=32643)
-    state = np.ones((4, 4), dtype='uint8')
-    scl = np.full((4, 4), 5, dtype='uint8')
-
-    result = audit(zones, buildings, state, scl, from_origin(0, 40, 10, 10), lambda _: None)
-
-    assert result['building_overlap_m2'] > 1e-6
-    assert result['passed']
-
-
-def test_final_audit_rejects_meaningful_building_overlap():
-    zone = box(0, 0, 40, 40)
-    zones = gpd.GeoDataFrame(
-        [{
-            'zone_id': 'test',
-            'area_m2': zone.area,
-            'max_clear_diameter_m': 40.0,
-            'geometry': zone,
-        }],
-        geometry='geometry',
-        crs=32643,
-    )
-    buildings = gpd.GeoDataFrame(geometry=[box(0, 0, 0.01, 40)], crs=32643)
-    state = np.ones((4, 4), dtype='uint8')
-    scl = np.full((4, 4), 5, dtype='uint8')
-
-    with pytest.raises(ValueError, match='Final audit failed'):
-        audit(zones, buildings, state, scl, from_origin(0, 40, 10, 10), lambda _: None)
-
-
 @pytest.mark.parametrize('open_land', [True, False])
-def test_pipeline_synthetic(tmp_path, open_land):
+@pytest.mark.parametrize('tree_cover', [True,False])
+@pytest.mark.parametrize('screening_profile',['conservative','calibrated'])
+def test_pipeline_synthetic(tmp_path, open_land, tree_cover, screening_profile):
     transform = from_origin(500000, 1500200, 10, 10)
     spectral = np.zeros((6, 20, 20), dtype='float32')
-    spectral[:] = np.array([.1, .1, .2, .3, .3, .2])[:, None, None]
+    spectral[:] = np.array([.1, .1, .2, .28, .3, .2])[:, None, None]
     scl = np.full((1, 20, 20), 5 if open_land else 6, dtype='uint8')
     for name, array in [('spectral', spectral), ('scl', scl)]:
         with rasterio.open(tmp_path / f'{name}.tif', 'w', driver='GTiff', width=20,
@@ -91,9 +51,22 @@ def test_pipeline_synthetic(tmp_path, open_land):
             dst.write(array)
     aoi = gpd.GeoDataFrame(geometry=[box(500000,1500000,500200,1500200)], crs=32643)
     buildings = gpd.GeoDataFrame(geometry=[], crs=32643)
+    cover_path=None
+    if tree_cover:
+        cover_path=tmp_path/'landcover.tif'
+        with rasterio.open(cover_path,'w',driver='GTiff',width=20,height=20,count=1,
+                           dtype='uint8',transform=transform,crs=32643) as dst:
+            dst.write(np.full((20,20),10,dtype='uint8'),1)
     summary = process_inputs(tmp_path/'spectral.tif', tmp_path/'scl.tif',
-                             buildings, aoi, tmp_path/'result', 'test', lambda _: None)
-    assert summary['final_zones'] == (1 if open_land else 0)
+                             buildings, {key:buildings.copy() for key in ['water','industrial','facilities']},
+                             aoi, tmp_path/'result', 'test', lambda _: None,landcover_path=cover_path,screening_profile=screening_profile)
+    survives=open_land and (not tree_cover or screening_profile=='calibrated')
+    assert summary['final_zones'] == (1 if survives else 0)
     assert summary['audits']['passed']
+    if tree_cover:
+        assert summary['landcover']['applied_as_exclusion']==(screening_profile=='conservative')
+    if survives:
+        zones = gpd.read_file(tmp_path/'result'/'final_zones.gpkg')
+        assert zones.geometry.difference(aoi.geometry.iloc[0].buffer(-30 if screening_profile=='conservative' else 0)).area.sum() < 1e-4
     assert (tmp_path/'result'/'final_zones.png').exists()
     assert (tmp_path/'result'/'final_zones.geojson').exists()

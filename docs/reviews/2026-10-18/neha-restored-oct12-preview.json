@@ -1,0 +1,410 @@
+{
+  "current": {
+    "counts": {
+      "terrain": 2477,
+      "zones": 13150
+    },
+    "dataset_id": "bhadra-v1-20260601-fabdem-20261013",
+    "date": "2026-06-01"
+  },
+  "decision": "pending",
+  "evidence_note": "Candidate terrain and mapped/DEM evidence; no claim of complete obstacle clearance.",
+  "job_id": "f140d25a355d46e389838e914bd7220b",
+  "parameters": {
+    "_history_sources": [
+      {
+        "bounds": [
+          553200.0,
+          1470790.0,
+          590420.0,
+          1528000.0
+        ],
+        "crs": "EPSG:32643",
+        "date": "2025-10-12",
+        "encoding": {
+          "not_open": 0,
+          "open": 1,
+          "unknown": 255
+        },
+        "height": 5721,
+        "license_status": "classification derived from Copernicus Sentinel-2; processing provenance retained",
+        "manifest_sha256": "90bf9d9dce8e4e25e43024eea1be26b29603f044b846806a31322c674ad42441",
+        "path": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\data\\processed\\Bhadra\\sentinel2\\2025-10-12\\bhadra_possible_open_mask.tif",
+        "provenance_state": "manifest_date_verified",
+        "scl_sha256": "12ad3de81c877cca068e2187d9d2f8294a8bcc8591d1c5d1bf6d49bf09a1d714",
+        "sha256": "06babcb4a87c59d20251db32c4b6961b41ba3cd4503cb498c87d736a1f1016ea",
+        "source_id": "original-bhadra-state-2025-10-12",
+        "source_links": {
+          "osm": {
+            "path": "data\\inputs\\6afd84b6d5a5db0973666b43\\2025-10-12\\osm.gpkg",
+            "sha256": "4f4a31c1adb8dd944b7bb47414cae032a167eaa77dcb7f152f3e4f3b025713f5"
+          },
+          "overture": {
+            "path": "data\\inputs\\6afd84b6d5a5db0973666b43\\2025-10-12\\overture.geojson",
+            "sha256": "1911c89af193810b14a52e538e1f06e0b871227762beb423045caed463aa9af1"
+          },
+          "scl": {
+            "path": "data\\inputs\\6afd84b6d5a5db0973666b43\\2025-10-12\\scl.tif",
+            "sha256": "12ad3de81c877cca068e2187d9d2f8294a8bcc8591d1c5d1bf6d49bf09a1d714"
+          },
+          "spectral": {
+            "path": "data\\inputs\\6afd84b6d5a5db0973666b43\\2025-10-12\\spectral.tif",
+            "sha256": "aee4b4f92221605d7d92e1495a93e446e576efcd5f31d0f8303fe0f8c66e841f"
+          }
+        },
+        "spectral_sha256": "aee4b4f92221605d7d92e1495a93e446e576efcd5f31d0f8303fe0f8c66e841f",
+        "status": "available",
+        "transform": [
+          10.0,
+          0.0,
+          553200.0,
+          0.0,
+          -10.0,
+          1528000.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "width": 3722
+      },
+      {
+        "bounds": [
+          553200.0,
+          1470790.0,
+          590420.0,
+          1528000.0
+        ],
+        "crs": "EPSG:32643",
+        "date": "2025-12-11",
+        "encoding": {
+          "not_open": 0,
+          "open": 1,
+          "unknown": 255
+        },
+        "height": 5721,
+        "license_status": "classification derived from Copernicus Sentinel-2; processing provenance retained",
+        "manifest_sha256": "b4eed7b2d000615c354c8b61ad1d1540dafdf93b78c88d7a501a56b19f42a266",
+        "path": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\data\\processed\\Bhadra\\sentinel2\\2025-12-11\\bhadra_possible_open_mask.tif",
+        "provenance_state": "manifest_date_verified",
+        "scl_sha256": "19f6039cb3d555d402a76aa411e3fd10418ac77f1055435a04c8ac99947ecae4",
+        "sha256": "a0442ea5acf156b7f8fb61dbdd8eff059ab38b481cd1f781f629897339ec5102",
+        "source_id": "original-bhadra-state-2025-12-11",
+        "source_links": {
+          "osm": {
+            "path": "data\\inputs\\fca067b0382be74425128439\\2025-12-11\\osm.gpkg",
+            "sha256": "8d7641b4cb2bb662667023b8405d8fd62fcf017456c2f4d582d8d49a50f655f1"
+          },
+          "overture": {
+            "path": "data\\inputs\\fca067b0382be74425128439\\2025-12-11\\overture.geojson",
+            "sha256": "1911c89af193810b14a52e538e1f06e0b871227762beb423045caed463aa9af1"
+          },
+          "scl": {
+            "path": "data\\inputs\\fca067b0382be74425128439\\2025-12-11\\scl.tif",
+            "sha256": "19f6039cb3d555d402a76aa411e3fd10418ac77f1055435a04c8ac99947ecae4"
+          },
+          "spectral": {
+            "path": "data\\inputs\\fca067b0382be74425128439\\2025-12-11\\spectral.tif",
+            "sha256": "faf31878f4cf502ee72f1fda67366766ba907ddf8f90a14330806f9ec5c93648"
+          }
+        },
+        "spectral_sha256": "faf31878f4cf502ee72f1fda67366766ba907ddf8f90a14330806f9ec5c93648",
+        "status": "available",
+        "transform": [
+          10.0,
+          0.0,
+          553200.0,
+          0.0,
+          -10.0,
+          1528000.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "width": 3722
+      },
+      {
+        "bounds": [
+          553200.0,
+          1470790.0,
+          590420.0,
+          1528000.0
+        ],
+        "crs": "EPSG:32643",
+        "date": "2026-02-04",
+        "encoding": {
+          "not_open": 0,
+          "open": 1,
+          "unknown": 255
+        },
+        "height": 5721,
+        "license_status": "classification derived from Copernicus Sentinel-2; processing provenance retained",
+        "manifest_sha256": "70fc77adaaef2c550df36b58cbb7d5699d0ade38676ef8af2115d15451f902ee",
+        "path": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\data\\processed\\Bhadra\\sentinel2\\2026-02-04\\bhadra_possible_open_mask.tif",
+        "provenance_state": "manifest_date_verified",
+        "scl_sha256": "e47e15dd89e6aa68b2728645ae459077c2f2ef79ba7c5463b88bdc62ecaf9222",
+        "sha256": "5f34ee3b6c6c1a90cba95980b3c1c16432374e5ba89671af74471c6afb496bfd",
+        "source_id": "original-bhadra-state-2026-02-04",
+        "source_links": {
+          "osm": {
+            "path": "data\\inputs\\418b4f814d6d562c5595b0f1\\2026-02-04\\osm.gpkg",
+            "sha256": "499a43d6c855f016361fcc5ffbf82e1930e29360cb7720aaf34b46c7a49cf41e"
+          },
+          "overture": {
+            "path": "data\\inputs\\418b4f814d6d562c5595b0f1\\2026-02-04\\overture.geojson",
+            "sha256": "1911c89af193810b14a52e538e1f06e0b871227762beb423045caed463aa9af1"
+          },
+          "scl": {
+            "path": "data\\inputs\\418b4f814d6d562c5595b0f1\\2026-02-04\\scl.tif",
+            "sha256": "e47e15dd89e6aa68b2728645ae459077c2f2ef79ba7c5463b88bdc62ecaf9222"
+          },
+          "spectral": {
+            "path": "data\\inputs\\418b4f814d6d562c5595b0f1\\2026-02-04\\spectral.tif",
+            "sha256": "0aa0ac4a3c7513d01ee1f145b2ab6da0761b5e2da0e37647f27a6ebb60339f3c"
+          }
+        },
+        "spectral_sha256": "0aa0ac4a3c7513d01ee1f145b2ab6da0761b5e2da0e37647f27a6ebb60339f3c",
+        "status": "available",
+        "transform": [
+          10.0,
+          0.0,
+          553200.0,
+          0.0,
+          -10.0,
+          1528000.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "width": 3722
+      },
+      {
+        "bounds": [
+          553200.0,
+          1470790.0,
+          590420.0,
+          1528000.0
+        ],
+        "crs": "EPSG:32643",
+        "date": "2026-03-26",
+        "encoding": {
+          "not_open": 0,
+          "open": 1,
+          "unknown": 255
+        },
+        "height": 5721,
+        "license_status": "classification derived from Copernicus Sentinel-2; processing provenance retained",
+        "manifest_sha256": "e134ad69c192182223d5ebe3bcae2918a2a0c89330480dda9b1a01b033ae6755",
+        "path": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\data\\processed\\Bhadra\\sentinel2\\2026-03-26\\bhadra_possible_open_mask.tif",
+        "provenance_state": "manifest_date_verified",
+        "scl_sha256": "91d857d697ddde56d4ed4f8b410b491e996d9920cf64cf4bb03c099a30ab120b",
+        "sha256": "8d2d553030e14bacf8c69b10a05628497b35b8f448f7449877479fbf79c37960",
+        "source_id": "original-bhadra-state-2026-03-26",
+        "source_links": {
+          "osm": {
+            "path": "data\\inputs\\593216bba71c5b63a230bb0c\\2026-03-26\\osm.gpkg",
+            "sha256": "bd06caadb1b13f2e8296e1e1b30d1fd3299c38bf3eeba61ed0a36a24ab26c189"
+          },
+          "overture": {
+            "path": "data\\inputs\\593216bba71c5b63a230bb0c\\2026-03-26\\overture.geojson",
+            "sha256": "1911c89af193810b14a52e538e1f06e0b871227762beb423045caed463aa9af1"
+          },
+          "scl": {
+            "path": "data\\inputs\\593216bba71c5b63a230bb0c\\2026-03-26\\scl.tif",
+            "sha256": "91d857d697ddde56d4ed4f8b410b491e996d9920cf64cf4bb03c099a30ab120b"
+          },
+          "spectral": {
+            "path": "data\\inputs\\593216bba71c5b63a230bb0c\\2026-03-26\\spectral.tif",
+            "sha256": "dbf98ccb73b6c3244fb0682269c4fa9b958e57c089cb5e140a073d04c4d8e8ca"
+          }
+        },
+        "spectral_sha256": "dbf98ccb73b6c3244fb0682269c4fa9b958e57c089cb5e140a073d04c4d8e8ca",
+        "status": "available",
+        "transform": [
+          10.0,
+          0.0,
+          553200.0,
+          0.0,
+          -10.0,
+          1528000.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "width": 3722
+      },
+      {
+        "bounds": [
+          553200.0,
+          1470790.0,
+          590420.0,
+          1528000.0
+        ],
+        "crs": "EPSG:32643",
+        "date": "2026-05-15",
+        "encoding": {
+          "not_open": 0,
+          "open": 1,
+          "unknown": 255
+        },
+        "height": 5721,
+        "license_status": "classification derived from Copernicus Sentinel-2; processing provenance retained",
+        "manifest_sha256": "196d255a98d46f9d3c0ae20f92259119e71cb2fc364f6e54a107296b03ab51a8",
+        "path": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\data\\processed\\Bhadra\\sentinel2\\2026-05-15\\bhadra_possible_open_mask.tif",
+        "provenance_state": "manifest_date_verified",
+        "scl_sha256": "c7a413f5b74ae60d58419122858fa19c5b8485b5c425c882763014bd39cdb564",
+        "sha256": "0929c857b6d00037fc34623860b767fcf1f36859705c51dd6510bc71e15e92ad",
+        "source_id": "original-bhadra-state-2026-05-15",
+        "source_links": {
+          "osm": {
+            "path": "data\\inputs\\ceedd572fe1efa2ed30870df\\2026-05-15\\osm.gpkg",
+            "sha256": "7916888c7827b79c64071f0caade27bccf788fb91c370e871aa991eba52efb6c"
+          },
+          "overture": {
+            "path": "data\\inputs\\ceedd572fe1efa2ed30870df\\2026-05-15\\overture.geojson",
+            "sha256": "1911c89af193810b14a52e538e1f06e0b871227762beb423045caed463aa9af1"
+          },
+          "scl": {
+            "path": "data\\inputs\\ceedd572fe1efa2ed30870df\\2026-05-15\\scl.tif",
+            "sha256": "c7a413f5b74ae60d58419122858fa19c5b8485b5c425c882763014bd39cdb564"
+          },
+          "spectral": {
+            "path": "data\\inputs\\ceedd572fe1efa2ed30870df\\2026-05-15\\spectral.tif",
+            "sha256": "576678a311a956d5f7ca69195b95ea37a7fb353cf64614ca9b1c2c58f7d56090"
+          }
+        },
+        "spectral_sha256": "576678a311a956d5f7ca69195b95ea37a7fb353cf64614ca9b1c2c58f7d56090",
+        "status": "available",
+        "transform": [
+          10.0,
+          0.0,
+          553200.0,
+          0.0,
+          -10.0,
+          1528000.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "width": 3722
+      },
+      {
+        "bounds": [
+          553200.0,
+          1470790.0,
+          590420.0,
+          1528000.0
+        ],
+        "crs": "EPSG:32643",
+        "date": "2026-06-01",
+        "encoding": {
+          "not_open": 0,
+          "open": 1,
+          "unknown": 255
+        },
+        "height": 5721,
+        "license_status": "classification derived from Copernicus Sentinel-2; processing provenance retained",
+        "manifest_sha256": null,
+        "path": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_possible_open_mask_v2.tif",
+        "provenance_state": "unknown",
+        "scl_sha256": "3d71416ff17bba92b22f4ea5fbd2fea94a6381db722a4e087dc6309c42e4a66d",
+        "sha256": "8cf6ffd698ae6a9602096ac3493c44143007f7e99be935b609fa7f8111e5cb29",
+        "source_id": "original-bhadra-state-2026-06-01",
+        "source_links": {},
+        "spectral_sha256": "06d304c9cfb6822e0cf32b03b65c21edf26db2f5849a5f25c1e894ed3e834e39",
+        "status": "available",
+        "transform": [
+          10.0,
+          0.0,
+          553200.0,
+          0.0,
+          -10.0,
+          1528000.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "width": 3722
+      }
+    ],
+    "environment_radius_m": 200,
+    "harmonize_history": true,
+    "min_area_m2": 900,
+    "min_clear_diameter_m": 30,
+    "min_length_m": 30,
+    "min_width_m": 30,
+    "refresh_obstacles": false,
+    "resolution_m": 30,
+    "screening_profile": "neha-236c34c",
+    "static_inputs_only": true
+  },
+  "proposed": {
+    "candidate_count": 577,
+    "dataset_id": "bhadra-20261012-f73274d5",
+    "date": "2026-10-12",
+    "enrichment_of": null,
+    "region_id": "bhadra",
+    "sha256": "c74d708cb0078bff785ac42282fd9a7e9c96f592d0b5649106a7f79e1b8ca048",
+    "slope_zone_count": 3243,
+    "total_area_m2": 2770178.560407324
+  },
+  "source_completeness": {
+    "buildings": "supplied",
+    "restrictions": "unknown",
+    "roads": "supplied",
+    "water": "supplied"
+  },
+  "temporal_summary": {
+    "entities_with_valid_history": 3820,
+    "history_dates": [
+      "2025-10-12",
+      "2025-12-11",
+      "2026-02-04",
+      "2026-03-26",
+      "2026-05-15",
+      "2026-06-01"
+    ],
+    "mean_valid_support": 0.9400073783932684,
+    "observation_count": 22920,
+    "source_limitations": [
+      {
+        "date": "2025-10-12",
+        "error": null,
+        "provenance_state": "reclassified_from_original_dated_sources",
+        "status": "available"
+      },
+      {
+        "date": "2025-12-11",
+        "error": null,
+        "provenance_state": "reclassified_from_original_dated_sources",
+        "status": "available"
+      },
+      {
+        "date": "2026-02-04",
+        "error": null,
+        "provenance_state": "reclassified_from_original_dated_sources",
+        "status": "available"
+      },
+      {
+        "date": "2026-03-26",
+        "error": null,
+        "provenance_state": "reclassified_from_original_dated_sources",
+        "status": "available"
+      },
+      {
+        "date": "2026-05-15",
+        "error": null,
+        "provenance_state": "reclassified_from_original_dated_sources",
+        "status": "available"
+      },
+      {
+        "date": "2026-06-01",
+        "error": null,
+        "provenance_state": "reclassified_from_original_dated_sources",
+        "status": "available"
+      }
+    ]
+  },
+  "validation": {
+    "valid": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-14",
+  "python": {
+    "command": "pytest tests -q --tb=short -p no:warnings",
+    "passed": 234,
+    "failed": 0,
+    "duration_s": 83.51
+  },
+  "javascript": {
+    "command": "node --test tests/*.cjs",
+    "passed": 34,
+    "failed": 0
+  },
+  "application_url": "http://127.0.0.1:8771/",
+  "current_bhadra_observation": "2026-06-01",
+  "note": "No newer full Bhadra observation was activated during tests; original and current sources preserved."
+}

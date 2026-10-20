@@ -1,0 +1,21 @@
+{
+  "stored_baseline_zones": 2484,
+  "live_quarantine_filtered_zones": 2483,
+  "reported_zone_present_in_live_map": false,
+  "reported_zone_pixel_centres": 514,
+  "previous_open_pixel_centres": 514,
+  "conservative_open_pixel_centres": 261,
+  "new_full_pipeline_regenerated": false,
+  "source_refresh_status": "failed: Overpass timeout/HTTP errors",
+  "accuracy_measured": false,
+  "verification": {
+    "python_tests_passed": 64,
+    "javascript_tests_passed": 4
+  },
+  "live_loaded_dataset_metadata": {
+    "landing_safety_certified": false,
+    "run_id": null,
+    "screening_profile": "legacy_unverified",
+    "status": "canonical_dataset"
+  }
+}

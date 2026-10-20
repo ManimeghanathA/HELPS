@@ -1,0 +1,183 @@
+{
+  "valid": true,
+  "parent_count": 3,
+  "child_count": 3,
+  "history_dates": [
+    "2025-10-12",
+    "2025-12-11",
+    "2026-02-04",
+    "2026-03-26",
+    "2026-05-15"
+  ],
+  "observation_rows": 30,
+  "duration_s": 80.93620729999384,
+  "current_registry_preserved": true,
+  "source_license": "Derived Copernicus Sentinel-2; dated original acquisition hashes verified",
+  "aggregates": [
+    {
+      "dataset_id": "small-area-history-20260601",
+      "entity_type": "terrain",
+      "entity_id": "Bhadra_ZONE_000001",
+      "history_dates": [
+        "2025-10-12",
+        "2025-12-11",
+        "2026-02-04",
+        "2026-03-26",
+        "2026-05-15"
+      ],
+      "history_date_count": 5,
+      "valid_history_count": 5,
+      "temporal_open_confidence": 0.4047219763437436,
+      "temporal_support": 0.8490466590525947,
+      "temporal_source_ids": [
+        "original-bhadra-state-2025-10-12",
+        "original-bhadra-state-2025-12-11",
+        "original-bhadra-state-2026-02-04",
+        "original-bhadra-state-2026-03-26",
+        "original-bhadra-state-2026-05-15"
+      ]
+    },
+    {
+      "dataset_id": "small-area-history-20260601",
+      "entity_type": "terrain",
+      "entity_id": "Bhadra_ZONE_000002",
+      "history_dates": [
+        "2025-10-12",
+        "2025-12-11",
+        "2026-02-04",
+        "2026-03-26",
+        "2026-05-15"
+      ],
+      "history_date_count": 5,
+      "valid_history_count": 5,
+      "temporal_open_confidence": 0.2994719050069254,
+      "temporal_support": 0.9999999999999966,
+      "temporal_source_ids": [
+        "original-bhadra-state-2025-10-12",
+        "original-bhadra-state-2025-12-11",
+        "original-bhadra-state-2026-02-04",
+        "original-bhadra-state-2026-03-26",
+        "original-bhadra-state-2026-05-15"
+      ]
+    },
+    {
+      "dataset_id": "small-area-history-20260601",
+      "entity_type": "terrain",
+      "entity_id": "Bhadra_ZONE_000003",
+      "history_dates": [
+        "2025-10-12",
+        "2025-12-11",
+        "2026-02-04",
+        "2026-03-26",
+        "2026-05-15"
+      ],
+      "history_date_count": 5,
+      "valid_history_count": 5,
+      "temporal_open_confidence": 0.8,
+      "temporal_support": 1.0,
+      "temporal_source_ids": [
+        "original-bhadra-state-2025-10-12",
+        "original-bhadra-state-2025-12-11",
+        "original-bhadra-state-2026-02-04",
+        "original-bhadra-state-2026-03-26",
+        "original-bhadra-state-2026-05-15"
+      ]
+    },
+    {
+      "dataset_id": "small-area-history-20260601",
+      "entity_type": "zones",
+      "entity_id": "bhadra-v1-20260601-fabdem-20261013:Bhadra_ZONE_000001:s6:b141256a5b4c4bc5",
+      "history_dates": [
+        "2025-10-12",
+        "2025-12-11",
+        "2026-02-04",
+        "2026-03-26",
+        "2026-05-15"
+      ],
+      "history_date_count": 5,
+      "valid_history_count": 5,
+      "temporal_open_confidence": 0.4047219763437435,
+      "temporal_support": 0.8490466590525954,
+      "temporal_source_ids": [
+        "original-bhadra-state-2025-10-12",
+        "original-bhadra-state-2025-12-11",
+        "original-bhadra-state-2026-02-04",
+        "original-bhadra-state-2026-03-26",
+        "original-bhadra-state-2026-05-15"
+      ]
+    },
+    {
+      "dataset_id": "small-area-history-20260601",
+      "entity_type": "zones",
+      "entity_id": "bhadra-v1-20260601-fabdem-20261013:Bhadra_ZONE_000002:s6:906e8f7d94125bd9",
+      "history_dates": [
+        "2025-10-12",
+        "2025-12-11",
+        "2026-02-04",
+        "2026-03-26",
+        "2026-05-15"
+      ],
+      "history_date_count": 5,
+      "valid_history_count": 5,
+      "temporal_open_confidence": 0.29947190500692533,
+      "temporal_support": 0.999999999999997,
+      "temporal_source_ids": [
+        "original-bhadra-state-2025-10-12",
+        "original-bhadra-state-2025-12-11",
+        "original-bhadra-state-2026-02-04",
+        "original-bhadra-state-2026-03-26",
+        "original-bhadra-state-2026-05-15"
+      ]
+    },
+    {
+      "dataset_id": "small-area-history-20260601",
+      "entity_type": "zones",
+      "entity_id": "bhadra-v1-20260601-fabdem-20261013:Bhadra_ZONE_000003:s6:575398fe2fbe01ae",
+      "history_dates": [
+        "2025-10-12",
+        "2025-12-11",
+        "2026-02-04",
+        "2026-03-26",
+        "2026-05-15"
+      ],
+      "history_date_count": 5,
+      "valid_history_count": 5,
+      "temporal_open_confidence": 0.7999999999999999,
+      "temporal_support": 0.9999999999999991,
+      "temporal_source_ids": [
+        "original-bhadra-state-2025-10-12",
+        "original-bhadra-state-2025-12-11",
+        "original-bhadra-state-2026-02-04",
+        "original-bhadra-state-2026-03-26",
+        "original-bhadra-state-2026-05-15"
+      ]
+    }
+  ],
+  "source_provenance": [
+    {
+      "date": "2025-10-12",
+      "sha256": "06babcb4a87c59d20251db32c4b6961b41ba3cd4503cb498c87d736a1f1016ea",
+      "provenance_state": "manifest_date_verified"
+    },
+    {
+      "date": "2025-12-11",
+      "sha256": "a0442ea5acf156b7f8fb61dbdd8eff059ab38b481cd1f781f629897339ec5102",
+      "provenance_state": "manifest_date_verified"
+    },
+    {
+      "date": "2026-02-04",
+      "sha256": "5f34ee3b6c6c1a90cba95980b3c1c16432374e5ba89671af74471c6afb496bfd",
+      "provenance_state": "manifest_date_verified"
+    },
+    {
+      "date": "2026-03-26",
+      "sha256": "8d2d553030e14bacf8c69b10a05628497b35b8f448f7449877479fbf79c37960",
+      "provenance_state": "manifest_date_verified"
+    },
+    {
+      "date": "2026-05-15",
+      "sha256": "0929c857b6d00037fc34623860b767fcf1f36859705c51dd6510bc71e15e92ad",
+      "provenance_state": "manifest_date_verified"
+    }
+  ]
+}

@@ -1,273 +1,314 @@
-# HELPSs
+# HELPS — Helicopter Emergency Landing Place Suggestion System
 
-Helicopter Emergency Landing Place Suggestion System: an explainable, terrain-first research pipeline for **possible open terrain**.
+HELPS builds terrain knowledge from satellite imagery, mapped obstacles and elevation, then explains helicopter-specific candidate recommendations. **Bhadra, India** is the working region. Main aircraft choices are **LCH, LUH and ALH**.
 
-Select an AOI GeoJSON and a Sentinel observation date in the local application. HELPSs reuses verified local inputs or acquires missing Sentinel-2 L2A imagery, OSM context and Overture buildings, runs the established processing stages, and displays the candidate polygons over satellite imagery.
+This handover is current as of **21 October 2026**. It separates implemented behavior, experiments and future work. HELPS is research decision support; candidate polygons are not certified landing sites.
 
-![Bhadra candidate polygons](docs/results/bhadra_final_open_land_zones.png)
+## 1. Where the project stands
 
-## Current Results
+The user has **accepted** the vision-assisted revision. The selected dataset in the local registry is `bhadra-cv-20260601-313234b7`:
 
-The automated pipeline was rerun against the existing Bhadra inputs for **June 1, 2026**.
+| Item | Value |
+|---|---|
+| Sentinel context date | 2026-06-01 |
+| Candidate polygons | **4,474** |
+| Measured slope subregions | **25,931** |
+| Total candidate area | **28.364502 km²** |
+| Refined fragments from previous candidates | **1,664**, 16.821074 km² |
+| Additional vision-derived candidates | **2,810**, 11.543428 km² |
+| Historical measurements | **152,025**, five dates for 30,405 terrain/zone entities |
+| Vision imagery acquisition date | **Unknown**; not relabelled as June 1 |
 
-| Stage | Result |
-|---|---:|
-| AOI pixels | 11,073,317 |
-| Possible-open pixels | 1,163,689 |
-| UNKNOWN pixels inside observed AOI footprint | 1,154,896 |
-| Open components | 19,697 |
-| Geometry-qualified parents | 5,210 |
-| Raw operational zones | 4,898 |
-| Final candidate polygons | **4,130** |
-| Final candidate area | **88.824 km²** |
+`data/knowledge/registry.json` is the live authority; this README is a dated snapshot.
 
-The final audit passed: valid geometries, unique IDs, area/dimension/MIC thresholds, stored-area consistency, no positive zone overlaps, and no cloud or UNKNOWN pixel-centre overlaps. Building overlap is below the numerical tolerance of 0.000001 m². Machine-readable results are in [bhadra_summary.json](docs/results/bhadra_summary.json).
+Do not confuse different versions:
 
-The new runner uses the complete AOI building inputs rather than the old prefiltered Overture export. The rerun produced 26,828 intermediate fragments versus the historical 26,827, with identical final polygon count and a total final-area difference of approximately 0.041 m². The original validated GeoPackage and figures are retained unchanged. This is a near-equivalent reproduction, not a claim of byte-identical geometry.
+- **2,484:** Neha's original calibrated June baseline, recovered and reproduced with pinned code and correct water/industrial context.
+- **2,477:** retained June map after seven reviewed exclusions; source of temporal enrichment and vision refinement.
+- **4,474:** accepted vision revision after subtraction, splitting, geometry checks and new additions. More fragments do not imply more usable area or measured accuracy.
+- **October experiments:** conversation screenshots referred to roughly 533. Recovered-profile jobs inspected in this workspace have **577** candidates and 3,243 slope regions; stricter experiments produced 9 or 313. Identify an algorithm using dataset ID, sources, profile and manifest, not a remembered count.
 
-![Rejection reasons](docs/results/bhadra_rejection_reason_map.png)
+Old/rejected/failed results remain preserved locally and do not become current automatically. [Delivery evidence](docs/reviews/2026-10-21-vision-refinement-delivery.md) records the vision proposal before its subsequent acceptance.
 
-## Run Without The UI
+## 2. Start the application
 
-The supported command-line entry point is:
+### Existing Windows workspace
 
-```text
-scripts/pipeline/run_aoi_pipeline.py
-```
-
-Run it as a Python module from the project root:
-
-```powershell
-.\helps_env\Scripts\Activate.ps1
-python -m scripts.pipeline.run_aoi_pipeline --aoi "data/raw/Bhadra/bhadra_entire_region.geojson" --date 2026-06-01 --name Bhadra
-```
-
-Use the same pattern for any new AOI:
+Open PowerShell in this root:
 
 ```powershell
-python -m scripts.pipeline.run_aoi_pipeline --aoi "<path-to-your-aoi.geojson>" --date YYYY-MM-DD --name "<short_area_name>"
+.\launch.ps1
 ```
 
-The three inputs mean:
-
-| Argument | What to give | Example |
-|---|---|---|
-| `--aoi` | Path to the main AOI GeoJSON. It must contain valid Polygon or MultiPolygon geometry and a CRS. | `"data/raw/Bhadra/bhadra_entire_region.geojson"` |
-| `--date` | Sentinel-2 observation date in `YYYY-MM-DD` format. | `2026-06-01` |
-| `--name` | Human-readable run name. This is used in final zone IDs and display text. It is not used for caching. | `"Bhadra"` |
-
-The AOI path can be relative to the project root or an absolute Windows path:
+Open [http://127.0.0.1:5000](http://127.0.0.1:5000). Stop with Ctrl+C. `launch.ps1 -Port 5001` uses another port. The launcher installs requirements into `.venv` before starting Flask. Direct start with the installed environment:
 
 ```powershell
-python -m scripts.pipeline.run_aoi_pipeline --aoi "C:\Users\manim\OneDrive\Desktop\HELPSs\data\raw\Bhadra\bhadra_entire_region.geojson" --date 2026-06-01 --name Bhadra
+.\.venv\Scripts\python.exe -m flask --app app run --host 127.0.0.1 --port 5000
 ```
 
-When the same AOI geometry and date already exist locally, HELPSs reuses verified cached data. For the known Bhadra AOI on `2026-06-01`, it reuses the retained local Sentinel, OSM and Overture inputs. For a new AOI/date, it downloads Sentinel-2 L2A spectral bands and SCL from Copernicus, queries OSM context, downloads Overture buildings, then stores those source inputs under `data/inputs/<geometry-date-key>/<date>/`.
+### Fresh checkout
 
-The pipeline always creates a new run folder:
-
-```text
-data/runs/<run_id>/
-  aoi.geojson
-  run.json
-  run.log
-  summary.json
-  final_zones.gpkg
-  final_zones.geojson
-  final_zones.png
-  archive/
-    possible_open.tif
-    stages.gpkg
-```
-
-The most important output for viewing is `final_zones.png`. The most important GIS output is `final_zones.gpkg`, layer `final_open_land_zones`. The JSON summary records pixel counts, candidate counts, final area and audit status.
-
-Each command-line run executes the active test suite first. If any test fails, processing stops before producing a successful result. To skip this only from Python code, call `run(..., run_tests=False)` directly; the CLI intentionally keeps preflight tests on.
-
-Common examples:
+The verified local runtime is Python 3.10.9. Manifests record library versions. Git LFS is required for existing tracked TIFFs:
 
 ```powershell
-# Run the validated Bhadra date using retained local data
-python -m scripts.pipeline.run_aoi_pipeline --aoi "data/raw/Bhadra/bhadra_entire_region.geojson" --date 2026-06-01 --name Bhadra
-
-# Run another AOI stored inside data/raw
-python -m scripts.pipeline.run_aoi_pipeline --aoi "data/raw/MyArea/main_aoi.geojson" --date 2026-06-01 --name MyArea
-
-# Run an AOI from anywhere on the computer
-python -m scripts.pipeline.run_aoi_pipeline --aoi "C:\Users\manim\Downloads\aoi.geojson" --date 2026-06-01 --name Field_Check_01
+git lfs install
+git lfs pull
+py -3.10 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+Copy-Item .env.example .env
 ```
 
-## Historical Bhadra Dates
+Do not overwrite an existing `.env`. Configure credentials if downloads are needed, then start Flask. Node.js is needed for frontend tests, not for running the app.
 
-The Bhadra temporal-history workflow is handled by:
+**A clone does not contain the complete local data workspace.** Knowledge packages, the 2.43 GB vision GeoPackage, team ZIPs, downloads and caches are excluded from new commits. Obtain matching data separately, preserve its layout and verify [the handover manifest](docs/data-assets-2026-10-21.json). Do not fabricate an empty registry or arbitrary map to make a clone appear populated. Historical immutable provenance can retain old absolute paths; deliberately relocate mutable routing without editing package bytes.
 
-```text
-scripts/pipeline/historical_dates.py
-```
+Providers: Copernicus Data Space/Sentinel Hub for Sentinel bands/SCL (`CDSE_CLIENT_ID`, `CDSE_CLIENT_SECRET` in ignored `.env` or local provider form); Open-Meteo for weather without a key; OSM/Overture/DEM/land-cover adapters for acquisition/maintenance. Ordinary Bhadra scans reuse local static evidence. Esri supplied the separate vision imagery; retrieval time does not establish acquisition date.
 
-It runs the same validated AOI pipeline for each selected historical date, then publishes stable date-based outputs:
+The application is a local loopback workspace. Engineer/application roles are workflow/API distinctions, not production multi-user authentication.
 
-```text
-data/raw/Sentinel2/<date>/
-  tiles/
-  spectral.tif
-  scl.tif
+## 3. UI and users
 
-data/processed/Bhadra/sentinel2/<date>/
-  bhadra_spectral.tif
-  bhadra_scl.tif
-  bhadra_possible_open_mask.tif
-  bhadra_final_open_land_zones.gpkg
-  bhadra_final_open_land_zones.geojson
-  bhadra_final_open_land_zones.png
-  bhadra_aoi_boundary.gpkg
-  bhadra_aoi_rgb_preview.png
-  summary.json
-  run.json
-  run.log
-  published_from_run.json
-```
+The unified interface has **Overview**, **Map**, **Candidates**, **Application** and **Build knowledge** tabs:
 
-Run the selected low-cloud history dates with:
+- Map starts at India, allows Bhadra selection, shows candidate boundaries, features and measured slope.
+- Candidates provides search/sort, expanded measurements and an inline selected-polygon map.
+- Application shows aircraft dimensions/features, mission, typed coordinates or map-selected point, radius, weather and explained top-K recommendations.
+- Build knowledge provides Bhadra date selection, monthly date search, input/storage readiness, durable processing, temporal enrichment and completed-map acceptance/rejection.
+
+The original requirement distinguished a data engineer, who builds knowledge and can test recommendations, from an application user, who consumes them. These now share one application. Compatibility routes `/workspace/engineer` and `/workspace/application` remain; no separate draft checkout is required.
+
+The current map display uses ceilings **0, 2, 4, 6, 8, 12, 15 degrees**; stored analysis also includes the **10°** threshold used by aircraft checks. Lower-ceiling areas replace overlapping larger-ceiling areas, giving the requested nested/onion shading. A ceiling is not an exact cell value. Unknown support and above-range terrain remain distinct.
+
+## 4. All eight original phases
+
+| Phase | Implemented responsibility |
+|---|---|
+| 1. Geospatial infrastructure | AOI, acquisition/import, CRS/coverage/nodata/date/hash validation and reusable storage |
+| 2. Candidate terrain | Classification, polygons, obstacle subtraction, geometry filtering and lineage |
+| 3. Characterization | Geometry, elevation/slope/roughness, surface observations, access and unknown fields |
+| 4. Operational zones | DEM-derived connected slope regions, remeasured geometry/clearance and parent links |
+| 5. Knowledge database | Immutable indexed GeoPackage, linked tables, provenance, integrity and active selection |
+| 6. Recommendation | Validated inputs, retrieval, aircraft/weather/footprint gates, soft scores and explanations |
+| 7. UI/integration | Map, candidates, recommendations, processing and explicit review |
+| 8. Optimization | Indexes, bounded/cached requests, checkpoints, tests and source-pinned reproduction |
+
+The [original V1 design](docs/superpowers/specs/2026-10-13-helps-v1-all-phases-design.md) records the earlier gaps and acceptance requirements. Its old status column is historical. Implementation does not establish ground firmness, obstacle height, approach clearance, complete legal coverage or authoritative aircraft limits.
+
+## 5. Dated Sentinel pipeline
+
+Default ordinary scans use **`neha-236c34c`**, recovered from Neha's commit `236c34c975f400f4a3bc636f6e431db2f1e75d66`. This includes geometry ordering, not only thresholds:
+
+1. Resolve polygon/multipolygon **GeoJSON AOI** and date-matched Sentinel bands/SCL. Other vector sources need compatible declared layers.
+2. Validate dates, bands/grid, CRS, nodata, coverage and required layers. File existence alone is insufficient.
+3. Possible-open classification: **SCL bare soil 5: NDVI ≤0.50; SCL vegetation 4: NDVI ≤0.20; MNDWI <0**. Explicit water is excluded. Clouds/shadows/invalid observations and a **30 m margin** are unknown/unavailable.
+4. Use **8-connected polygonization**, preserving recovered component/subtraction order. Later early repair/explosion changed the baseline and is disabled for this profile.
+5. Work in metric **EPSG:32643**. Subtract buildings, water and industrial context. Water centerlines receive a **5 m buffer** and water exclusions a **20 m setback**. Missing required context fails; it is not silently empty.
+6. Require **area ≥900 m²**, rotated-rectangle **length and width ≥30 m**.
+7. Remove narrow necks: **15 m erosion → 15 m reconstruction → intersection with original usable geometry**. Measure maximum inscribed clearance; preserve holes/fragments.
+8. Audit validity, overlap, unknown/cloud pixels and numerical tolerances.
+9. Build DEM derivatives, slope regions, all features, environmental context and temporal overlap; validate/store immutable knowledge.
+10. Preview the complete map; explicitly accept or reject. Processing alone never selects its output.
+
+Read encoding metadata: detector/history masks use **0 not-open, 1 possible-open, 255 unknown**; some intermediate formats differ. They cannot be exchanged blindly.
+
+The restored profile does not impose all later conservative WorldCover/facility experiments as hard candidate vetoes; those sources can provide context. Normal builds retain reviewed exclusions. See [baseline recovery and per-ID proof](docs/reviews/2026-10-18/neha-baseline-recovery.md).
+
+### Why dates and thresholds matter
+
+One algorithm can produce different June/October geometry because vegetation, water, clouds and source snapshots differ. Same-policy recovery measured 624,431 possible-open pixels after cloud buffering for June versus 88,138 for October. Count differences neither prove a bug nor establish accuracy; inspect source/date/profile/coverage and stage areas.
+
+Sentinel pixels mix soil, roofs, vegetation and water. Spectral thresholds do not measure tree height or detect every small building. Threshold tuning cannot guarantee both complete obstacle exclusion and recovery of every useful brown patch.
+
+## 6. Vision workflow and actual completed work
+
+The teammate's [cv_ai_helps repository](https://github.com/Nehareddy1234/cv_ai_helps) was reviewed at `47843a288f195e1bbb1eb2df7481d7ec255c9eb1`. The output represents roughly **100 hours of team batch processing**, not automatic inference inside every HELPS scan.
+
+### Model and source facts
+
+- Esri overlapping RGB windows, zoom 19 preferred/18 fallback, approximately **0.485 m output grid**. This does not establish native detail or acquisition date.
+- **SAM ViT-H proposes boundaries/masks**; it does not assign land-cover labels.
+- A scene-specific **random forest**, 16 RGB/color/texture/context features, interpreted references and rules assign classes. Gap completion and core/halo clipping preserve batch lineage.
+- Classes: **1 water, 2 trees, 3 crops/grass/low vegetation, 4 bare/open/sparse, 5 roofs, 6 industrial, 7 roads, 8 uncertain/mixed**.
+- Reported **90.53%** block-holdout pixel agreement is scene-level interpreted-label agreement, not independent Bhadra-wide candidate accuracy. Roof/road acceptance partly depends on reference context. Only **317 roof-labelled features** exist in the final file; this is not a complete building inventory.
+
+`probably_final.qgz/` is an extracted directory with a QGIS project and external `probably_final.gpkg`, not embedded vector data. The **2,430,738,432-byte** EPSG:32643 GeoPackage contains `open_regions` (**112,283**, classes 3/4), `other_regions` (**648,748**, classes 1/2/5/6/7/8), and one boundary. There are **1,861 distinct batch IDs**. Earlier checkpoint counts were partial products.
+
+See [reviewed implementation](docs/reviews/2026-10-20/cv-integration-assessment.md) and [final-file audit](docs/reviews/2026-10-20/cv-final-geopackage-findings.md). Their dated findings distinguish initially missing data from the subsequently supplied file.
+
+### Refinement completed 20–21 October
+
+1. Pinned the GeoPackage checksum and audited layers, CRS, coverage and indexes.
+2. Subtracted all applicable `other_regions` from the **2,477 current candidates**, reapplied mapped/reviewed exclusions and geometry gates: **1,664 fragments**, with 1,272 parents having no qualifying fragment left.
+3. Contracted each vision open segmentation inward **5 m**, removed exclusions/already accepted geometry and reapplied strict geometry.
+4. Required full valid DEM coverage and **every positive-area intersecting DEM cell ≤12°** for additions, as selected by the user. Highest admitted slope: **11.971163°**.
+5. Added **2,810** sites with feature/class/batch/parent lineage and prevented duplicates.
+6. Rebuilt all features, slope subregions, environmental and temporal measurements. Aircraft limits remain separate: configured LUH/ALH **10°**, LCH **12°**.
+7. Created a separate source-pinned reviewed revision; preserved the previous package byte-for-byte. The user subsequently accepted it.
+
+Uncertain class 8 is excluded under this approved strict policy. This is conservative withholding, not proof of a physical obstacle. Original classes remain in provenance. **Vision acquisition date is unknown. June 1 is Sentinel context, not demonstrated June imagery for every new site.**
+
+Offline entry point:
 
 ```powershell
-python -m scripts.pipeline.historical_dates 2025-10-12 2025-12-11 2026-02-04 2026-03-26 2026-05-15 --skip-tests
+.\.venv\Scripts\python.exe -u -m scripts.knowledge.run_vision_refinement --max-slope 12
 ```
 
-The command skips dates that already have `published_from_run.json`, so accidental reruns do not redownload or reprocess completed dates. To intentionally rerun and republish a date, add `--force`:
+This producer targets the selected June baseline and pinned local assets. It is not general model inference/arbitrary-region/date processing and does not activate results. Do not casually rerun it against an already refined selection; establish the intended base and sources first.
+
+## 7. Geometry, features and knowledge tables
+
+A **terrain parent** is a candidate footprint. A **slope child/subregion** is a connected usable portion at a measured ceiling. Ceiling-specific regions can overlap; recommendation deduplication avoids repeating one opportunity.
+
+| Feature group | Stored evidence |
+|---|---|
+| Identity/geometry | Dataset/source/parent IDs, boundary/holes, area/dimensions/hash, inscribed clearance/reference coordinate |
+| Terrain | DEM source/resolution, support/sample counts, elevation/slope/roughness statistics |
+| Surface | SCL proportions, observable/unknown fractions, NDVI/support/date, bare/vegetation/water fractions |
+| Environment | Road/water proximity, available road/access tags, mapped occupancy/openness and restrictions/context |
+| Temporal | Per-date open/not-open/unknown areas, coverage, dates/source IDs, confidence and support |
+| Unknown evidence | Firmness, unsupported terrain, unverified surface/height/restriction values remain explicit |
+| Vision | Origin, old parent, feature/class/batch, unknown acquisition date, addition slope evidence |
+
+Tables include `terrain`, `zones`, `terrain_characteristics`, `zone_environment`, `lineage`, `sources`, `temporal_observations`, `temporal_aggregates`, dataset/run/parameters and spatial indexes. Actual foreign keys and integrity are validated. Geometry changes trigger recalculation; parent scores/percentages are not copied to fragments.
+
+Current refinement uses covering FABDEM with a **30 m** terrain grid. Public fallback Copernicus GLO-30 is **DSM**, potentially including buildings/vegetation. Neither resolves every touchdown-scale hazard. [Elevation details](docs/automatic-elevation.md).
+
+## 8. Temporal openness and updates
+
+Historical **rasters** are measured against the **current exact footprint**, not just old polygon IDs:
+
+```text
+open_confidence = sum(historical open area) / sum(valid observed area)
+support = sum(valid observed area) / (current area × available dates)
+reported support also accounts for unavailable requested dates
+```
+
+Cloud/unknown area is excluded from open/closed evidence. Missing dates reduce support, not openness by inventing closed terrain. Current history: **2025-10-12, 2025-12-11, 2026-02-04, 2026-03-26, 2026-05-15**. Every current terrain/slope entity was remeasured. Masks are harmonized to the selected classifier/cloud policy and cache identity.
+
+Temporal evidence is stored, explained and used as a **soft ranking factor**. It does not establish present openness, tree clearance or safety. A newer accepted scan preserves previous packages/classification sources for later comparisons; edited geometry is not a synthetic satellite observation. Same-date enrichment and pinned vision revision are reviewed exceptions, not a general date-rule bypass.
+
+## 9. Recommendation gates and scoring
+
+The engine retrieves measured slope opportunities, then checks request/aircraft/mission/weather evidence. Main choices are LCH/LUH/ALH; legacy profiles remain in compatibility code.
+
+**Hard checks:** area, measured slope/support, clearance, exact aircraft footprint containment including holes, verified surface compatibility, restrictions and weather return **pass/fail/unknown**. Known failure excludes; soft score/history cannot compensate. Strict eligible results require passes. Research ranking can retain labelled unknowns, but never a known hard failure. Zero strict passes can coexist with promising research candidates. Ground firmness/obstacle heights are not silently verified.
+
+**Soft score**, in `scripts/recommendation/ranking.py`, with mission weights in `helicopter_profiles.py`:
+
+```text
+score = 100 × sum(normalized_effective_weight[i] × supported_factor[i])
+effective temporal weight = configured temporal weight × temporal support
+```
+
+Only supported, positively weighted factors participate; weights are normalized. Responses expose factors, contributions, configured/effective/normalized weights and supported-weight coverage. Missing factors are not invented. Factors include distance, clearance, area, slope, roughness, road proximity, mapped openness, water distance, surface, vegetation, weather and temporal openness according to mission. These policy weights are not learned safe-landing probabilities.
+
+Missions: immediate emergency, precautionary/safest, medevac and balanced. Weather checks include location, time, units, heading/wind constraints. Nested opportunities are deduplicated. Reasoning preserves failures and unknowns. Do not weaken gates merely to populate results.
+
+## 10. Storage, reuse and publication
+
+```text
+HELPSs/
+  app.py, launch.ps1                  application entry points
+  helicopter_profiles.py             aircraft/mission policy
+  landing_zone_engine.py             GIS/compatibility integration
+  weather_pipeline.py                weather normalization/acquisition
+  scripts/pipeline/                  source resolution, acquisition, caches
+  scripts/processing/                spectral/polygon geometry stages
+  scripts/knowledge/                 terrain, features, temporal, DB/review
+  scripts/recommendation/             gates, ranking, reasons
+  scripts/ui/                         API and durable jobs
+  scripts/archive/                    historical, not normal entry points
+  static/, templates/                 unified frontend/retained legacy views
+  tests/                              Python and frontend tests
+  docs/                               handover, decisions, evidence, old plans
+  data/raw/<region>/<source>/          downloaded/uploaded originals
+  data/processed/<region>/            validated prepared inputs/dated imagery
+  data/knowledge/                     immutable packages/jobs/sources/registry
+  data/runs/                           polygon execution artifacts
+  data/inputs/, uploads/              compatibility/staging where applicable
+  data/cache/                          reusable request/provider data
+  data/recovery/                       pinned baseline replays
+  data/reviews/, validation/          local audits/tests/source review copies
+  data/archive/                        preserved recovery/runtime/history
+  probably_final.qgz/                 pinned local vision/QGIS data
+  archive/                            earlier workspace material
+```
+
+Six loose team ZIPs now live in `data/raw/vision/batches/`; root change notes are in `docs/requests/`. [Move manifest](docs/workspace-moves-2026-10-21.json) records paths, byte sizes and verified hashes. Runtime/hash-pinned paths were preserved. [Workspace guide](docs/workspace-organization.md).
+
+Reuse order is **validated processed → valid raw and local preparation → permitted acquisition**. Manifests, hashes, AOI/date/coverage/layer contracts determine reuse, not filenames. Partial attempts are not complete caches. Legacy Bhadra evidence was registered in place. DEM reference, mapped snapshot and Sentinel observation dates remain separate.
+
+The ordinary **Bhadra date-only form downloads only missing Sentinel/SCL**. Missing static baseline evidence stops for maintenance/import. General adapters retain acquisition capabilities but the current form does not offer arbitrary new-region automation.
+
+Monthly search distinguishes catalog cloud estimates from measured AOI SCL cloud/shadow coverage. Date selection waits for workflow initialization and reports errors. Ordinary observation dates must be newer than current context and no later than today.
+
+Sentinel calls are paced/serialized with bounded retries, provider retry timing and request/grid/band/content cache checks. Overpass 500/502 failures were acquisition failures, not the disappearance of OSM. A checksum-verified Geofabrik regional PBF recovery established local context; routine date scans avoid new Overpass calls. Never replace missing context with empty masks.
+
+Durable jobs live in `knowledge/jobs`. Checkpoints require matching source/algorithm fingerprints. Builds produce immutable `knowledge/<dataset-id>/knowledge.gpkg` and manifests. Preview tokens/current/package checks guard explicit acceptance. Failed/rejected builds preserve current selection. Never edit accepted bytes or rewrite checksums to bypass validation.
+
+## 11. Project history and major changes
+
+| Stage | Actual change |
+|---|---|
+| Original spectral work | Sentinel classification, polygons/building subtraction and reference outputs; obvious obstacles/missed openings exposed resolution/context limitations. |
+| Neha calibration | Class-specific NDVI, water/industrial handling, cloud margin, neck opening/MIC/audits and satellite polygon UI; June result 2,484. |
+| Strict experiments | Extra vetoes sharply reduced counts, including roughly 190 and 9-candidate attempts; user rejected sacrificing promising ground merely for a cleaner-looking map. |
+| Full V1 | All eight phases, linked knowledge, real DEM/slope regions, environmental/temporal evidence, mandatory gates and soft ranking. |
+| UI consolidation | One app; India/Bhadra map, aircraft details, point selection, feature inspection, onion slope bands, dark/light theme and review. |
+| Input storage | Raw/processed manifests, reuse/coverage/date contracts and visible paths; existing sources retained in place. |
+| OSM/date-only recovery | Verified extract recovery after provider failures; local static reuse with dated Sentinel downloads. |
+| Baseline restoration | Recovered code/context and per-ID proof of 2,484; normal retained June 2,477 after exclusions. |
+| Temporal enrichment | Historical area overlap added to reasoning/scoring without changing boundaries; reviewed revision. |
+| Build/download fixes | Workflow shape/null date-selection errors, newer-date search, Sentinel 429 pacing/backoff and validated tile reuse. |
+| Vision audit | 95 pinned source/report files reviewed; SAM/RF distinction, scene validation, missing dates, roof/context limitations and actual vector layers. |
+| Vision refinement | Subtraction, contraction, strict geometry/12° admission and full feature/history rebuild; 4,474-candidate revision accepted 21 October. |
+
+Reports under `docs/reviews/` describe dated evidence; `docs/superpowers/` retains historical designs/plans. Plans are not implementation proof. Current code, registry/manifests and final validation supersede old status statements. [Baseline recovery](docs/reviews/2026-10-18/neha-baseline-recovery.md) includes exact replay and missing-layer diagnosis.
+
+## 12. Next pipeline question — proposed, not implemented
+
+The expensive Esri segmentation is detailed but undated. Sentinel provides dated seasonal appearance but misses small obstacles. Neither alone establishes complete current suitability. The next design must reuse detailed evidence while updating current conditions:
+
+1. Preserve detailed geometry/classes, uncertainty/coverage and source date-or-unknown. Do not rerun every expensive batch by default.
+2. Produce dated Sentinel proposals and condition evidence, separating observable support, contrary evidence and cloud/unknown areas.
+3. Evaluate detailed openings **and new dated proposals**. Blind intersection misses newly open land; blind union admits stale/unsupported land.
+4. Define obstacle, disagreement and freshness rules. An old opening does not prove today's opening; undated obstacle evidence cannot automatically be assumed current forever. Disputed/detail-limited areas need compatible dated detailed imagery or verification.
+5. Apply geometry, slope, mapped restrictions and aircraft checks; rebuild features/history/reasons; preview before acceptance.
+6. Measure obstacle inclusion and missed-opening rates on representative held-out examples. Counts/topology tests are not detection accuracy.
+
+The scene-specific RGB forest is **not validated on Sentinel's 10 m bands**. Radiometry, spatial feature scales and context differ. Upsampling cannot restore small obstacles. Compatible dated imagery, model adaptation/training and evaluation require a separate agreed design. The completed offline refinement is not automatic seasonal/vision model integration.
+
+## 13. Code map, tests and troubleshooting
+
+| Area | Main files |
+|---|---|
+| API | `app.py`, `scripts/ui/api.py`, `unified_api.py`, `analysis_jobs.py` |
+| UI | `templates/unified.html`, `static/unified_core.js`, `unified_application.js`, `unified_build.js` |
+| Inputs | `scripts/pipeline/region_inputs.py`, `source_store.py`, `acquisition.py`, `sentinel_requests.py`, `osm_extract.py`, `elevation.py` |
+| Geometry | `scripts/processing/open_land_detector.py`, `candidate_polygonization.py`, `building_subtraction.py`, `candidate_geometry_filter.py`, `operational_zone_extraction.py`, `maximum_clearance.py` |
+| Knowledge | `scripts/knowledge/build.py`, `dem.py`, `characterization.py`, `slope_zones.py`, `environment.py`, `temporal.py`, `repository.py`, `review.py` |
+| Vision | `scripts/knowledge/vision_refinement.py`, `run_vision_refinement.py` |
+| Recommendation | `scripts/recommendation/inputs.py`, `compatibility.py`, `ranking.py`, `weather_policy.py`, `helicopter_profiles.py` |
 
 ```powershell
-python -m scripts.pipeline.historical_dates 2026-05-15 --skip-tests --force
+.\.venv\Scripts\python.exe -m pytest tests -q
+node --test tests/*.cjs tests/*.test.js
 ```
 
-The UI also includes a historical-date scan that queries the Copernicus catalogue and reports the lowest metadata-cloud Sentinel-2 date per month. These catalogue percentages are only date-selection candidates; the accepted date still needs the full AOI pipeline and SCL-based audit.
+Refinement verification passed **401 Python tests, 87 frontend tests**, focused review, independent geometry/slope/features/history checks, HTTP page/review and all **4,474** GeoJSON boundaries. The detailed preview is approximately **72 MB** and can take time to load. Browser visual verification was unavailable at delivery; API/DOM checks do not imply manual visual inspection.
 
-## CDSE Credentials
+- **Zero strict passes:** inspect hard failures/unknowns; do not delete gates.
+- **Different count by date:** compare observable area, inputs/profile and stage audits before changing thresholds.
+- **Monthly SCL failure:** catalog estimates are not local QA; inspect provider/credentials/retry/cache evidence.
+- **OSM failure:** use validated local static inputs; missing evidence requires maintenance, not empty layers.
+- **Missing vision data after clone:** transfer the matching GeoPackage; QGIS styles/project are not the layers.
+- **Relocated paths:** restore layout or deliberately relocate mutable routing without changing immutable packages.
+- **Interrupted job:** inspect persisted status/checkpoint fingerprints. Avoid server restarts during builds; startup recovery can mark interruption.
 
-HELPSs uses the Copernicus Data Space Ecosystem Sentinel Hub Process API to fetch Sentinel-2 Level-2A imagery for a user-selected AOI and date. This happens in [scripts/pipeline/acquisition.py](scripts/pipeline/acquisition.py), inside the `sentinel(...)` function.
+## 14. Git and data handover
 
-You need CDSE credentials only when HELPSs must download new Sentinel data. The retained Bhadra `2026-06-01` inputs can be reused locally without a new Sentinel download.
+Source, tests, docs, sanitized summaries and already tracked reference assets belong in Git. Credentials, environments, caches, generated packages, downloads, vision GeoPackages and team archives remain local/separately transferred. Existing TIFFs use Git LFS. Ignore rules do not remove tracked files or rewrite history.
 
-To get the credentials:
+Use [data assets](docs/data-assets-2026-10-21.json) for paths/sizes/checksums and [move records](docs/workspace-moves-2026-10-21.json) for organization. Git push does not back up ignored data; keep a separately verified copy.
 
-1. Sign in to the [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/).
-2. Open the Sentinel Hub Dashboard from your account/profile area.
-3. Go to **User Settings**.
-4. Find the **OAuth clients** section.
-5. Click **Create**.
-6. Give the client a name, for example `HELPSs Local Pipeline`.
-7. Use the client credentials flow / non-SPA backend style client.
-8. Choose an expiry date, or choose the non-expiring option only if you understand the risk.
-9. Create the client.
-10. Copy both values immediately:
-    - Client ID
-    - Client Secret
-
-The client secret is shown only once. If you close the popup without copying it, create a new OAuth client.
-
-Paste the values into a local `.env` file at the project root:
-
-```text
-CDSE_CLIENT_ID=your_client_id
-CDSE_CLIENT_SECRET=your_client_secret
-```
-
-For example:
-
-```text
-CDSE_CLIENT_ID=sh-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-CDSE_CLIENT_SECRET=your-secret-value-here
-```
-
-Do not put quotes around the values unless the value itself requires special shell handling. The `.env` file is ignored by Git, so your secret stays local. The repository includes `.env.example` only as a template.
-
-How HELPSs uses these values:
-
-1. `scripts/pipeline/acquisition.py` reads `.env` with `python-dotenv`.
-2. It sends the client ID and secret to the official CDSE OAuth token endpoint.
-3. CDSE returns a temporary access token.
-4. HELPSs sends that token in the `Authorization: Bearer ...` header when requesting Sentinel imagery.
-5. The token is not written to the project folder.
-
-Source: [Copernicus Data Space Ecosystem Sentinel Hub authentication documentation](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Overview/Authentication.html).
-
-OSM and Overture downloads also need internet access, but they do not use the CDSE client ID or secret. OSM and Overture are acquisition-time building/context snapshots, not historical snapshots for the Sentinel date.
-
-## Run With The UI
-
-Python 3.10 is the verified environment. From the project root:
-
-```powershell
-python -m venv helps_env
-.\helps_env\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python -m scripts.ui.server --port 8765
-```
-
-Open **http://127.0.0.1:8765**. Select a Polygon/MultiPolygon GeoJSON, enter its name and observation date, and run the analysis. The page shows progress, previous analyses, the final image, and PNG/GeoJSON/GeoPackage/JSON downloads. Use another port if 8765 is occupied.
-
-Credentials stay local. Existing matching Bhadra data can run without new Sentinel authentication.
-
-Each run executes the active test suite before processing. Run the tests separately with:
-
-```powershell
-python -m pytest -q
-```
-
-## Processing
-
-```text
-Validate AOI and date -> verify cached inputs or download missing sources
--> prepare aligned 10 m Sentinel bands and SCL
--> possible-open detection with 30 m cloud buffer
--> polygonization -> exact building subtraction
--> geometry gate -> 15 m morphological opening
--> child geometry gate -> maximum-inscribed-circle gate
--> cloud/UNKNOWN and topology audits -> polygons, image and summary
-```
-
-The retained rules are NDVI <= 0.50, MNDWI < 0, observable SCL classes, explicit water exclusion, and UNKNOWN exclusion. The geometry gates are 900 m² minimum area, 30 m length and width, and 30 m maximum clear diameter with 0.5 m polylabel tolerance. Roads remain context; DEM/slope analysis is future work.
-
-No usable observations produce a clear failure asking for another date. An observable AOI with no qualifying land produces a successful, empty polygon result. New downloads use a regional UTM grid; AOIs spanning more than six degrees or exceeding the local 40-million-pixel download limit are rejected.
-
-## Project Layout
-
-```text
-scripts/
-  pipeline/       Input validation, acquisition, orchestration and final audits
-  processing/     Established terrain and geometry algorithms
-  validation/     Reusable UNKNOWN overlap audit
-  ui/             Local server, HTML, CSS and JavaScript
-  archive/        Historical runners, diagnostics, boundary tools and old tests
-tests/            Active offline unit and integration tests
-docs/
-  results/        GitHub-ready reference images and numerical results
-  archive/        Historical research documents and papers
-  cleanup-manifest.json
-data/
-  raw/            Authoritative AOI, original Sentinel tiles and DEM sources
-  processed/      Retained Bhadra inputs, historical date folders and validated results
-  inputs/         Geometry/date-keyed input manifests and downloaded data
-  runs/           Independent run folders, final outputs and logs
-  validation/     Manual annotations and validation packages
-  archive/        Local historical data
-archive/          Historical root-level notes, screenshots and QGIS projects
-```
-
-Each data directory has an `archive` subdirectory for superseded files. A run's diagnostic mask and intermediate vector layers live under its `archive`; final results remain at the run root. Matching geometry and date determine cache identity, not the user-entered name. Checksums detect changed inputs, and completion manifests prevent partial downloads from being treated as complete.
-
-See [workspace organization](docs/workspace-organization.md) for archive details. Historical scripts are preserved as research history; their original hard-coded paths are not the supported entry point.
-
-See [code responsibility](docs/code-responsibility.md) for a file-by-file explanation of the active codebase.
-
-## GitHub Contents
-
-Source code, archived source, tests, documentation, reference figures and the Bhadra AOI are prepared for Git. Large local rasters, downloaded vectors, run outputs, annotation packages, virtual environments, caches and `.env` are excluded. No repository or remote has been created, and nothing has been uploaded. Use external data storage or Git LFS separately if you decide to publish the large datasets.
-
-## Verification and Scope
-
-The local-data Bhadra pipeline has completed end to end. All 35 active tests pass, covering core algorithms, empty results, AOI/cache behavior, mocked Sentinel acquisition, and local HTTP access restrictions. The UI has been inspected at desktop and mobile sizes, including its AOI file chooser and completed-result downloads.
-
-A separate live acquisition check on a small Bhadra-area polygon successfully downloaded Sentinel spectral/SCL rasters, queried all seven OSM groups, and completed the Overture query (zero buildings in that small test area). The initial sandboxed request was blocked; the live check succeeded with network access enabled. The full Bhadra run reused existing data. The small acquisition-check files are retained under `data/archive/acquisition_smoke`.
-
-These outputs identify possible open terrain. They do not certify helicopter landing suitability: slope, surface strength, operational obstacles, permissions and helicopter-specific constraints are not yet evaluated. Residual thin-cloud contamination missed by single-date Sentinel SCL remains a documented limitation.
+Further reading: [workspace](docs/workspace-organization.md), [inputs](docs/region-input-workflow.md), [elevation](docs/automatic-elevation.md), [baseline](docs/reviews/2026-10-18/neha-baseline-recovery.md), [vision findings](docs/reviews/2026-10-20/cv-final-geopackage-findings.md), [delivery](docs/reviews/2026-10-21-vision-refinement-delivery.md), [weather](docs/reference/weather-module.md).

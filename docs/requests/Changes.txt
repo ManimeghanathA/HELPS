@@ -1,0 +1,78 @@
+Changes:
+I want you think like a user actual user and getting impressed by what we present to them 
+
+1. This is not how i want the slope to be, i want (0,2,4,6,8,12,15) to be shown, not as pairs, lets each of them have some color and then let smaller slopes in the current polygon replace the current slope, and let our if we have deg, then 2,4,6 all comes under <=  8 deg right, so we will region which has 2deg slope , region havign 6deg slope and so on....., i'm not gonna select anything
+
+- Here are the theme details:
+Light Theme:
+I want to have optimism Lime and #A2B9B5 and light orange
+Dark Theme:
+Have Navy Blue + Magneta + Teal / Brown
+Theme Let it have a helicopter headlight/any light as a logo to shift between light and dark theme
+
+- Name: Its just HELPS with letter spacing in between
+Work On the wordings of the first front page
+
+- Be specific clear and precise over what our project is about and what we are doing, have a section below with the core idea and brief implementation of our project
+
+- I want you to include some animations in the background with the movement of the cursor and scroll down 
+- each of these animation should be related to helicopter or aerospace
+
+- I want a loading animation - it should be a top vertical view of the helicopter main rotor rotating 
+
+- Take away the concept of roles and have a single unified place, we can build the knowledge base and make use of the use of it for recommendations
+
+- Do not display this "1 published dataset versions · other considered regions remain unavailable"
+let user know about the existing things inside a separate tab 
+
+- Here is how i want the website to be
+Lets have a header, In which we will have the HELPS, light theme and dark theme Project overview and implementation, Map, candidates list, Application, Build Knowledge base
+
+Project overview:
+Here we explain what the project is about and all the other stuff
+
+Map:
+Here we will have display the map, select the region by pressing the bordered area and also option to come back
+for now Bhadra will be bright and selectable, rest of them would be faded should disabled
+after selecting Bhadra we will show all the polygons and on selecting each polygon, information about the polygon should be displayed as a floating notes and should have 'X' closing option and applies for others polygons as well
+
+candidate List:
+Here we show the list of all the candidates as a list and show their properties when they are selected
+First as a list we show the basic features and on clicking, a panel will slide down and show the detailed features and option to close back as well, we will have an option to view on map - then it goes to the map and show only this polygon, no new other polygons (we have map to show all the polygons) on selecting map it should not go to map tab, everything stays where the users are
+
+include good animation and UI, make it impressive
+
+Application:
+Here we will have the recommendation engine
+Here we will have display the map, select the region by pressing the bordered area and also option to come back
+Take away the option of choosing the version, we are always on the last built dataset and i also what you to just show polygon belongs to which date which is last previously scanned
+after selecting the region move to giving all the inputs
+Selecting the helicopter or giving manual dimensions (but have a check it should be reasonable)
+Do not put all this bullshit - HAL ALH Dhruv upgraded civil brochure; Mk III/IV variant confirmation required ↗
+
+- Make the options to select easy to understand and do not complicate it
+
+- Have this option, lat and long manually entering option / or select on the map, If i press select on the map, then it open a map as a floating window of the current region only and i will select a point and confirm will get enabled and as i confirm it will take that coordinates 
+
+- Show the updates of the analysis in in the right panel where you should the list of recommendations , once it finish replace it with the recommendations
+
+- Strictly on selecting the recommendation and viewing it, should be under this tab only, each tab (map , view candidates and application) should have their own independent map and all recommended polygons on selecting them should display in this map and show the reasons as a sentence on the right panel and also option to go back as well
+
+- coming to UI, make this look vibrant and beautiful, it should not be chaotic, have a simple look but robust and solid working
+
+Build Knowledge base:
+This TAB is our entire first half of the project of building the database, first select the region of interest (list the area we already have and add new region (specify what file) to give input)
+As we go here first show the current details, the list of temporal scans we did (dates and cloud interference) and what is the current version we are having (with the date and cloud interference)
+Then have a button feature to search the best date (less cloud interference from the last scanned date to now (one per month) 
+
+Then have a inputs space, 
+In that selection boxes and dropdown boxes, and also specify what inputs are required
+Also give an option to supply the API Key and the other keys, you please let me know what the current API Key is i forgot 
+and start processing and let user know about the phases it is in and with some percentage
+
+
+Finally organize our entire HELPS Folder, do not have versions or draft or anything, just have 1 single folder, delete all the useless files, and organize everything into a clean repo
+
+
+
+

@@ -1,0 +1,65 @@
+{
+  "source_sha256": "0ded087336e671d5e7c1f2cb12ab84a62c94077055aff979ed79dfa86d02ebd9",
+  "proposed_sha256": "8171ad24748ef12d24a10857fb76eca60679c25ae102a730b66e0711601513d0",
+  "preservation_verified_tables": [
+    "terrain",
+    "zones",
+    "terrain_characteristics",
+    "zone_environment",
+    "lineage"
+  ],
+  "parent_count": 2477,
+  "slope_zone_count": 13150,
+  "temporal_observations": 78135,
+  "temporal_aggregates": 15627,
+  "temporal_summary": {
+    "entities_with_valid_history": 15627,
+    "history_dates": [
+      "2025-10-12",
+      "2025-12-11",
+      "2026-02-04",
+      "2026-03-26",
+      "2026-05-15"
+    ],
+    "mean_valid_support": 0.9647794238556487,
+    "observation_count": 78135,
+    "source_limitations": [
+      {
+        "classification_policy": "calibrated",
+        "date": "2025-10-12",
+        "provenance_state": "reclassified_from_original_dated_sources"
+      },
+      {
+        "classification_policy": "calibrated",
+        "date": "2025-12-11",
+        "provenance_state": "reclassified_from_original_dated_sources"
+      },
+      {
+        "classification_policy": "calibrated",
+        "date": "2026-02-04",
+        "provenance_state": "reclassified_from_original_dated_sources"
+      },
+      {
+        "classification_policy": "calibrated",
+        "date": "2026-03-26",
+        "provenance_state": "reclassified_from_original_dated_sources"
+      },
+      {
+        "classification_policy": "calibrated",
+        "date": "2026-05-15",
+        "provenance_state": "reclassified_from_original_dated_sources"
+      }
+    ]
+  },
+  "lookup_query_plan": [
+    [
+      3,
+      0,
+      0,
+      "SEARCH temporal_aggregates USING INDEX sqlite_autoindex_temporal_aggregates_1 (dataset_id=? AND entity_type=? AND entity_id=?)"
+    ]
+  ],
+  "active_unchanged": true,
+  "review_decision": "pending",
+  "verification_seconds": 10.201779299997725
+}

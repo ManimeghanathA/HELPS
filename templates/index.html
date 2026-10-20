@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HELPS - Helicopter Emergency Landing Planning System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}?v=33">
+</head>
+<body>
+  <main class="shell">
+    <div class="shell-top-bar">
+      <div class="eyebrow"><span class="status-dot"></span> HELPS / EMERGENCY LANDING &amp; WEATHER INTELLIGENCE</div>
+      <div class="top-bar-actions">
+        <button type="button" class="back-to-map-btn" id="top-back-to-map-btn" title="Return to Overview Satellite Map">&larr; Back to Map</button>
+        <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle Night/Day Mode" title="Toggle Night / Day Mode">
+          <span class="theme-toggle-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M12.3 2a10 10 0 0 0-.19 20 10 10 0 0 0 8.7-5.06 1 1 0 0 0-1.12-1.46 8 8 0 1 1-8.85-12.36 1 1 0 0 0 .16-1.12 1 1 0 0 0-1.3-.4z"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <header class="masthead">
+      <h1>HELPS</h1>
+      <p class="intro">Explore candidate terrain. Choose a place, zoom in, and inspect its polygons.</p>
+    </header>
+
+    <section class="mission-board" aria-label="Landing spot search">
+      <!-- 01 / Satellite Map of India & Operational Zones -->
+      <section class="observation-panel map-panel" aria-labelledby="observation-title">
+        <div class="observation-heading">
+          <div>
+            <span class="section-kicker">01 / SATELLITE TERRAIN TELEMETRY · INDIA</span>
+            <h2 id="observation-title">Explore candidate terrain</h2>
+          </div>
+          <div class="map-status-pill">
+            <span class="status-indicator status-indicator--ready"></span>
+            <span>CANDIDATE TERRAIN</span>
+          </div>
+        </div>
+
+        <div class="region-explorer-controls">
+          <label for="region-select">Explore a place
+            <select id="region-select" disabled>
+              <option value="">India overview — choose a place</option>
+            </select>
+          </label>
+          <button type="button" id="india-overview-btn">Back to India</button>
+          <p id="explorer-status" role="status">Choose an available place to explore candidate terrain.</p>
+        </div>
+
+        <div class="satellite-map-container" id="satellite-map-container">
+          <div id="india-satellite-map" aria-label="Interactive Satellite Map of India with Operational Landing Boundaries"></div>
+          <div class="map-crosshair-overlay" pointer-events="none">
+            <div class="map-reticle"></div>
+          </div>
+        </div>
+
+        <div class="map-meta-footer">
+          <div><span>PLACE</span><strong id="active-sector-name">India overview</strong></div>
+          <div><span>CANDIDATES</span><strong id="active-sector-status" class="status-text--ready">Select a place</strong></div>
+          <div><span>OBSERVATION DATE</span><strong>June 1, 2026 · Sentinel-2</strong></div>
+        </div>
+      </section>
+
+      <div class="radar-panel">
+        <div class="radar-heading">
+          <div>
+            <span class="section-kicker">01 / Tactical Telemetry</span>
+            <h2 id="tactical-view-title">Tactical Landing Zones Map</h2>
+          </div>
+          <div class="radar-live" id="radar-live-badge"><span class="radar-live-dot"></span> <span id="radar-live-text">2,694 PIPELINE ANNOTATIONS</span></div>
+        </div>
+        <div class="radar-stats-bar" id="radar-stats-bar">
+          <span id="radar-sites-count">Awaiting query...</span>
+          <span class="stats-sep">·</span>
+          <span id="radar-closest-site">Scroll &amp; Drag Active</span>
+        </div>
+
+        <!-- Dedicated Tactical High-Resolution Satellite Map with Verified Pipeline Annotations & Query Point -->
+        <div class="tactical-view-container" id="tactical-map-view">
+          <div class="tactical-map-wrapper">
+            <div id="tactical-satellite-map" aria-label="High-resolution tactical landing sites map"></div>
+          </div>
+          <div class="map-view-legend">
+            <span><i class="legend-dot legend-dot--query"></i> Query Position</span>
+            <span><i class="legend-dot legend-dot--optimal"></i> Pipeline Landing Annotation</span>
+            <span><i class="legend-dot legend-dot--caution"></i> Caution Zone</span>
+            <span><i class="legend-dot legend-dot--warning"></i> Adverse / Narrow</span>
+            <span><i class="legend-line"></i> Fully Pan, Zoom &amp; Scrollable</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 / Tactical Input Panel for Fine-tuning / Querying on Results View -->
+      <aside class="query-panel" id="query-panel" aria-labelledby="query-title">
+        <div class="panel-heading">
+          <div>
+            <span class="section-kicker">02 / Tactical Input</span>
+            <h2 id="query-title">Observation &amp; Flight Telemetry</h2>
+          </div>
+          <span class="api-badge">OPEN-METEO + GPKG</span>
+        </div>
+
+        <div class="quick-presets">
+          <div class="presets-label">QUICK SECTOR PRESETS:</div>
+          <div class="presets-chips">
+            <button type="button" class="preset-chip" data-lat="13.7800" data-lon="75.6600">Bhadra North</button>
+            <button type="button" class="preset-chip" data-lat="13.6800" data-lon="75.6400">Bhadra Reservoir</button>
+            <button type="button" class="preset-chip" data-lat="13.5600" data-lon="75.6500">Reserve Center</button>
+            <button type="button" class="preset-chip" data-lat="13.3800" data-lon="75.5800">South Valley</button>
+          </div>
+        </div>
+
+        <form id="weather-form">
+          <label>
+            <span>Helicopter Model</span>
+            <select id="helicopter-model" name="helicopter_model">
+              <option value="hal_dhruv" selected>HAL Dhruv (ALH Mk III / IV)</option>
+              <option value="hal_prachand">HAL Prachand (LCH Combat)</option>
+              <option value="hal_luh">HAL LUH (Light Utility)</option>
+              <option value="mi_17">Mil Mi-17 V5 (Heavy Transport)</option>
+              <option value="ec_135">Eurocopter EC135 / H135 (Light Twin)</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Mission Context</span>
+            <select id="mission-context" name="mission_context">
+              <option value="immediate_emergency">Immediate Emergency (Shortest Distance)</option>
+              <option value="safest_landing">Safest Landing (Max Clearance &amp; Wind)</option>
+              <option value="medevac">Medevac / Casualty (Large Area)</option>
+              <option value="hybrid_balanced" selected>Hybrid Operational Balance</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Longitude</span>
+            <input id="longitude" name="longitude" type="number" min="-180" max="180" step="any" placeholder="75.6600" value="75.6600" required>
+            <small>180 to 180 degrees (Bhadra: ~75.50 to 75.82)</small>
+          </label>
+          <label>
+            <span>Latitude</span>
+            <input id="latitude" name="latitude" type="number" min="-90" max="90" step="any" placeholder="13.7800" value="13.7800" required>
+            <small>90 to 90 degrees (Bhadra: ~13.30 to 13.82)</small>
+          </label>
+          <label class="form-full-row">
+            <span>Time (UTC)</span>
+            <input id="timestamp" name="timestamp" type="datetime-local" min="1000-01-01T00:00" max="9999-12-31T23:59" required>
+            <small>UTC timestamp for historical/live atmospheric record</small>
+          </label>
+          <button type="submit" id="submit-button"><span>Re-Evaluate &amp; Rank Landing Zones</span><strong>&nearr;</strong></button>
+        </form>
+        <p class="form-error" id="form-error" role="alert"></p>
+        <div class="query-note" id="heli-specs-note">
+          <span class="note-mark">i</span>
+          <p id="heli-specs-text">Dhruv: Rotor ⌀13.2 m, Min Clearance ⌀27.0 m, Max Slope 10 deg, Max Crosswind 25 kt, Speed 130 kt.</p>
+        </div>
+      </aside>
+
+      <section class="loading" id="loading" aria-live="polite"><span></span> Acquiring weather telemetry &amp; indexing landing sites...</section>
+
+      <section class="results" id="results" aria-live="polite" hidden>
+        <!-- Weather Record -->
+        <div class="result-header">
+          <div>
+            <span class="section-kicker">03 / Weather Telemetry</span>
+            <h2 id="result-location">Atmospheric record</h2>
+            <p id="result-time" class="mono"></p>
+          </div>
+          <div class="daylight-chip" id="daylight-chip"><span class="sun-mark">◐</span><span id="daylight-value">--</span></div>
+        </div>
+
+        <div class="metric-grid">
+          <article class="metric-card metric-card--wind">
+            <div class="metric-label">Wind speed</div><div class="metric-value"><span id="wind-speed">--</span><small> kt</small></div>
+            <div class="metric-foot">Gust <b id="wind-gust">--</b> kt</div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-label">Temperature</div><div class="metric-value"><span id="temperature">--</span><small> °C</small></div>
+            <div class="metric-foot">Cloud cover <b id="cloud-cover">--</b>%</div>
+          </article>
+          <article class="metric-card">
+            <div class="metric-label">Visibility</div><div class="metric-value"><span id="visibility">--</span><small> m</small></div>
+            <div class="metric-foot">Pressure <b id="pressure">--</b> hPa</div>
+          </article>
+          <article class="metric-card metric-card--rain">
+            <div class="metric-label">Rain / current hour</div><div class="metric-value"><span id="current-rain">--</span><small> mm</small></div>
+            <div class="metric-foot">Last 24 hours <b id="daily-rain">--</b> mm</div>
+          </article>
+        </div>
+
+        <div class="detail-grid">
+          <article class="detail-card">
+            <div class="detail-title"><span class="icon">&uarr;</span><h3>Wind Profile &amp; Approach Vector</h3></div>
+            <dl>
+              <div><dt>Wind Direction</dt><dd><span id="wind-direction">--</span>°</dd></div>
+              <div><dt>Recommended Approach</dt><dd id="flight-approach">--</dd></div>
+              <div><dt>Observation Time</dt><dd id="observation-time">--</dd></div>
+            </dl>
+          </article>
+          <article class="detail-card">
+            <div class="detail-title"><span class="icon">&sect;</span><h3>Rotorcraft &amp; Mission Spec</h3></div>
+            <dl>
+              <div><dt>Helicopter Profile</dt><dd id="heli-profile-name">HAL Dhruv (ALH Mk III / IV)</dd></div>
+              <div><dt>Clearance Footprint</dt><dd id="heli-footprint-info">Req ⌀27.0 m · Max Slope 10°</dd></div>
+              <div><dt>Mission Priority</dt><dd id="mission-priority-name">Hybrid Operational Balance</dd></div>
+            </dl>
+          </article>
+        </div>
+
+        <!-- Landable Locations Briefing Section -->
+        <div class="locations-section">
+          <div class="locations-header">
+            <div>
+              <span class="section-kicker">04 / Multi-Factor Ranked Sites</span>
+              <h3>Evaluated Candidate Sites (<span id="sites-count-badge">0</span> found in 10 km)</h3>
+            </div>
+            <div class="locations-filter-summary" id="locations-filter-summary">Ranked: Highest Suitability (#1) to Lowest</div>
+          </div>
+
+          <!-- Alert / Out of Range Notification -->
+          <div class="out-of-range-alert" id="out-of-range-alert" hidden>
+            <div class="alert-icon">!</div>
+            <div class="alert-body">
+              <strong>Query location outside active Bhadra candidate perimeter.</strong>
+              <p id="out-of-range-text">Nearest verified landing zone cluster is not in active 10 km range. Click a preset chip above or use the Bhadra region coordinates.</p>
+            </div>
+          </div>
+
+          <!-- Location Cards List -->
+          <div class="locations-list" id="locations-list"></div>
+        </div>
+
+        <p class="retrieved" id="retrieved"></p>
+      </section>
+    </section>
+
+    <footer>HELPS research prototype · Candidate terrain from satellite imagery and mapped exclusions.</footer>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="{{ url_for('static', filename='app.js') }}?v=36"></script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+{
+  "snapshot_date": "2026-10-21",
+  "selected": {
+    "bhadra": "bhadra-cv-20260601-313234b7"
+  },
+  "counts": {
+    "terrain": 4474,
+    "zones": 25931,
+    "temporal_observations": 152025
+  },
+  "note": "Data manifest only, not bundled data or automatic relocation configuration. Transfer complete matching data/knowledge and source snapshots separately; keep credentials local. Immutable metadata may retain historical absolute paths. Registry/source-store/job routing must be deliberately relocated on another computer.",
+  "assets": [
+    {
+      "path": "data/knowledge/bhadra-cv-20260601-313234b7/knowledge.gpkg",
+      "bytes": 708489216,
+      "sha256": "6f90f657eaec54a1c901b93907bd2a8f0e556264f6b976324a130c89ebbe883b",
+      "purposes": [
+        "active linked knowledge package"
+      ]
+    },
+    {
+      "path": "data/knowledge/bhadra-cv-20260601-313234b7/manifest.json",
+      "bytes": 321376,
+      "sha256": "0d3c96acd2f95027275f767e7e7751038d2fd79fb21b84ba2e56cea12ac07883",
+      "purposes": [
+        "active build provenance/verification"
+      ]
+    },
+    {
+      "path": "data/knowledge/bhadra-cv-20260601-313234b7/refinement-spec.json",
+      "bytes": 90006,
+      "sha256": "79a3c517b32b5b61a4b070ae0b2496b4429a5a5f9d6bbe464ed0e9badcf07a66",
+      "purposes": [
+        "active build provenance/verification"
+      ]
+    },
+    {
+      "path": "data/knowledge/bhadra-cv-20260601-313234b7/refinement-result.json",
+      "bytes": 108671,
+      "sha256": "4c369fe0346092e2230a4f9eb45102d29c74b9db9aaeeaa812c41b828d83c565",
+      "purposes": [
+        "active build provenance/verification"
+      ]
+    },
+    {
+      "path": "data/knowledge/bhadra-cv-20260601-313234b7/delivery-validation.json",
+      "bytes": 108041,
+      "sha256": "cba111f12ac5284af4773a90d9a9dd9e1d63b957955cd4e2b546f732213aaac8",
+      "purposes": [
+        "active build provenance/verification"
+      ]
+    },
+    {
+      "path": "data/knowledge/bhadra-temporal-580354150707/knowledge.gpkg",
+      "bytes": 289345536,
+      "sha256": "8171ad24748ef12d24a10857fb76eca60679c25ae102a730b66e0711601513d0",
+      "purposes": [
+        "preserved June baseline/enrichment"
+      ]
+    },
+    {
+      "path": "data/knowledge/bhadra-v1-20260601-fabdem-20261013/knowledge.gpkg",
+      "bytes": 201728000,
+      "sha256": "0ded087336e671d5e7c1f2cb12ab84a62c94077055aff979ed79dfa86d02ebd9",
+      "purposes": [
+        "preserved June baseline/enrichment"
+      ]
+    },
+    {
+      "path": "data/raw/Bhadra/bhadra_entire_region.geojson",
+      "bytes": 27916,
+      "sha256": "6b6094b2d67ad78bba0a01a4c86cdb534df92bdcb7e98a94a2dc1eaeb84af62c",
+      "purposes": [
+        "refinement aoi"
+      ]
+    },
+    {
+      "path": "data/raw/DEM/FABDEM_N13E075.tif",
+      "bytes": 38341665,
+      "sha256": "a6d536e0b0e260efb99223e0b24498cf605275ad6800c0035dd61c7070230302",
+      "purposes": [
+        "refinement dem"
+      ]
+    },
+    {
+      "path": "data/knowledge/bhadra-cv-20260601-313234b7/refinement-input/candidate_seed.gpkg",
+      "bytes": 26910720,
+      "sha256": "e7c3055eaa7ff2a9aa420d9ae2648830386025e32ecbf1f5ddabf276e253e919",
+      "purposes": [
+        "refinement retained_seed",
+        "refinement source: vision_context"
+      ]
+    },
+    {
+      "path": "data/processed/Bhadra/sentinel2/2026-06-01/bhadra_spectral.tif",
+      "bytes": 146112356,
+      "sha256": "06d304c9cfb6822e0cf32b03b65c21edf26db2f5849a5f25c1e894ed3e834e39",
+      "purposes": [
+        "refinement source: spectral"
+      ]
+    },
+    {
+      "path": "data/processed/Bhadra/sentinel2/2026-06-01/bhadra_scl.tif",
+      "bytes": 419014,
+      "sha256": "3d71416ff17bba92b22f4ea5fbd2fea94a6381db722a4e087dc6309c42e4a66d",
+      "purposes": [
+        "refinement source: scl"
+      ]
+    },
+    {
+      "path": "data/processed/Bhadra/osm/20261018T125805489322_fa579594/osm.gpkg",
+      "bytes": 1527808,
+      "sha256": "6dc7474c05f6ba6454de3db5fae65b1c362a8eab5e477a03620f6727c00798d8",
+      "purposes": [
+        "refinement source: osm_buildings",
+        "refinement source: roads",
+        "refinement source: water",
+        "refinement source: industrial",
+        "refinement source: facilities",
+        "refinement source: power",
+        "refinement source: man_made",
+        "refinement source: barriers"
+      ]
+    },
+    {
+      "path": "data/processed/Bhadra/buildings/bhadra_overture_buildings.geojson",
+      "bytes": 23452537,
+      "sha256": "980788050f9dcccc4d0f85732d58d9749541af45cfa908baa7464ad9398a76bc",
+      "purposes": [
+        "refinement source: buildings"
+      ]
+    },
+    {
+      "path": "data/inputs/45295356fafbdae35c06ddec/2026-06-01/landcover/worldcover_2021_aligned.tif",
+      "bytes": 1184732,
+      "sha256": "86d042b2b982b0cf75a20e5e3fc952404bb64fbfc772b0ea6c6965a4b735d919",
+      "purposes": [
+        "refinement source: landcover"
+      ]
+    },
+    {
+      "path": "data/raw/Bhadra/reviewed_exclusions.geojson",
+      "bytes": 206898,
+      "sha256": "7eea88815a026ad004e103a06c3141543420a263603b9e3f60b118b3da43d3af",
+      "purposes": [
+        "refinement source: reviewed_site_exclusions"
+      ]
+    },
+    {
+      "path": "data/processed/Bhadra/sentinel2/2025-10-12/bhadra_possible_open_mask.tif",
+      "bytes": 423248,
+      "sha256": "06babcb4a87c59d20251db32c4b6961b41ba3cd4503cb498c87d736a1f1016ea",
+      "purposes": [
+        "historical 2025-10-12 path"
+      ]
+    },
+    {
+      "path": "data/processed/Bhadra/sentinel2/2025-12-11/bhadra_possible_open_mask.tif",
+      "bytes": 506278,
+      "sha256": "a0442ea5acf156b7f8fb61dbdd8eff059ab38b481cd1f781f629897339ec5102",
+      "purposes": [
+        "historical 2025-12-11 path"
+      ]
+    },
+    {
+      "path": "data/processed/Bhadra/sentinel2/2026-02-04/bhadra_possible_open_mask.tif",
+      "bytes": 694155,
+      "sha256": "5f34ee3b6c6c1a90cba95980b3c1c16432374e5ba89671af74471c6afb496bfd",
+      "purposes": [
+        "historical 2026-02-04 path"
+      ]
+    },
+    {
+      "path": "data/processed/Bhadra/sentinel2/2026-03-26/bhadra_possible_open_mask.tif",
+      "bytes": 890334,
+      "sha256": "8d2d553030e14bacf8c69b10a05628497b35b8f448f7449877479fbf79c37960",
+      "purposes": [
+        "historical 2026-03-26 path"
+      ]
+    },
+    {
+      "path": "data/processed/Bhadra/sentinel2/2026-05-15/bhadra_possible_open_mask.tif",
+      "bytes": 592120,
+      "sha256": "0929c857b6d00037fc34623860b767fcf1f36859705c51dd6510bc71e15e92ad",
+      "purposes": [
+        "historical 2026-05-15 path"
+      ]
+    },
+    {
+      "path": "probably_final.qgz/probably_final.gpkg",
+      "bytes": 2430738432,
+      "sha256": "575b980a4225eda768fd83fee29fbee2ae073bc8a578b8b256fb50290c14f634",
+      "purposes": [
+        "supplied high-resolution vision segmentation; acquisition date unknown"
+      ]
+    },
+    {
+      "path": "data/knowledge/bhadra-cv-20260601-313234b7/rasters/elevation.tif",
+      "bytes": 7295094,
+      "sha256": "819419eae8e3f506a7ca0295fbb92583cc3a81cef09d2e03deffd84118c2a1bd",
+      "purposes": [
+        "active terrain derivative"
+      ]
+    },
+    {
+      "path": "data/knowledge/bhadra-cv-20260601-313234b7/rasters/slope.tif",
+      "bytes": 8086470,
+      "sha256": "c2e2565c8b2e11f74330f723c2025f96f3a7320e99992f3a875e0c2025c00724",
+      "purposes": [
+        "active terrain derivative"
+      ]
+    },
+    {
+      "path": "data/knowledge/bhadra-cv-20260601-313234b7/rasters/roughness.tif",
+      "bytes": 8093992,
+      "sha256": "e1962f852e5032f6c2678abfbc71e97f41e84d48a3113d230496a3694bc28c71",
+      "purposes": [
+        "active terrain derivative"
+      ]
+    },
+    {
+      "path": "data/knowledge/bhadra-cv-20260601-313234b7/rasters/valid.tif",
+      "bytes": 8302,
+      "sha256": "2af112578c02941b3e88647728f5991f54c2504ea1e10f469f1899b8cc1e3569",
+      "purposes": [
+        "active terrain derivative"
+      ]
+    }
+  ]
+}

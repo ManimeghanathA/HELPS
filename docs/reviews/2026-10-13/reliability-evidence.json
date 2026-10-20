@@ -1,0 +1,22 @@
+{
+  "draft_commit": "236c34c + local fixes",
+  "map": {
+    "features": 2484,
+    "interior_rings_preserved": 297,
+    "total_symmetric_difference_m2": 0.0001308085713714643,
+    "maximum_zone_difference_m2": 8.636471648921189e-07
+  },
+  "temporal": {
+    "reference_candidate_count": 4130,
+    "reference_date": "2026-06-01",
+    "reference_detector": "original local classifier; not the new calibrated 2484-zone dataset",
+    "original_output_preserved": true,
+    "corrected_output": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\data\\processed\\Bhadra\\candidate_database\\2026-06-01-corrected-2026-10-13",
+    "before_confidence_min": 1.0,
+    "before_confidence_max": 1.0,
+    "after_confidence_min": 0.0,
+    "after_confidence_median": 0.5285714285714286,
+    "after_confidence_max": 1.0,
+    "candidates_with_confidence_below_one": 4082
+  }
+}

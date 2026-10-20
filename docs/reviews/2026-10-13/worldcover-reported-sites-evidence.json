@@ -1,0 +1,58 @@
+{
+  "source_url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N12E075_Map.tif",
+  "reference_year": 2021,
+  "candidate_source_date": "2026-06-01",
+  "purpose": "Supplementary exclusion evidence; not current ground truth",
+  "samples": [
+    {
+      "zone_id": "Bhadra_ZONE_000020",
+      "reference_pixel_centres": 224,
+      "worldcover_2021_classes": {
+        "grassland": 23,
+        "cropland": 201
+      }
+    },
+    {
+      "zone_id": "Bhadra_ZONE_000056",
+      "reference_pixel_centres": 330,
+      "worldcover_2021_classes": {
+        "trees": 13,
+        "cropland": 317
+      }
+    },
+    {
+      "zone_id": "Bhadra_ZONE_000095",
+      "reference_pixel_centres": 117,
+      "worldcover_2021_classes": {
+        "grassland": 78,
+        "cropland": 10,
+        "built_up": 29
+      }
+    },
+    {
+      "zone_id": "Bhadra_ZONE_000211",
+      "reference_pixel_centres": 58,
+      "worldcover_2021_classes": {
+        "grassland": 40,
+        "cropland": 18
+      }
+    },
+    {
+      "zone_id": "Bhadra_ZONE_000283",
+      "reference_pixel_centres": 138,
+      "worldcover_2021_classes": {
+        "trees": 110,
+        "grassland": 28
+      }
+    },
+    {
+      "zone_id": "Bhadra_ZONE_000304",
+      "reference_pixel_centres": 33,
+      "worldcover_2021_classes": {
+        "trees": 29,
+        "built_up": 4
+      }
+    }
+  ],
+  "accuracy_measured": false
+}

@@ -1,0 +1,60 @@
+{
+  "dataset": "C:\\Users\\manim\\OneDrive\\Desktop\\HELPSs\\HELPS - draft\\data\\processed\\Bhadra\\sentinel2\\2026-06-01\\bhadra_final_open_land_zones.gpkg",
+  "zones": 2484,
+  "area_km2": 36.683251479395224,
+  "crs": "EPSG:32643",
+  "valid_geometries": true,
+  "engine_zones": 2484,
+  "zones_with_holes": 122,
+  "total_holes": 297,
+  "excluded_hole_area_m2": 472555.27137933613,
+  "osm_layers": [
+    {
+      "name": "buildings",
+      "geometry_type": "Polygon"
+    },
+    {
+      "name": "roads",
+      "geometry_type": "Unknown"
+    },
+    {
+      "name": "power",
+      "geometry_type": "Unknown"
+    },
+    {
+      "name": "man_made",
+      "geometry_type": "Polygon"
+    },
+    {
+      "name": "water_polygons",
+      "geometry_type": "MultiPolygon"
+    },
+    {
+      "name": "barriers",
+      "geometry_type": "Unknown"
+    }
+  ],
+  "building_source_counts": {
+    "osm": 28,
+    "overture": 33867
+  },
+  "building_overlap_m2": 1.7052816313433664e-06,
+  "zone_overlap_pairs_above_1e_6_m2": 0,
+  "reclassified_state_counts_full_grid": {
+    "0": 9293990,
+    "1": 624431,
+    "255": 11375141
+  },
+  "zone_pixel_centers": {
+    "unknown": 0,
+    "not_open": 0,
+    "scl_water": 0
+  },
+  "display_reproduction": {
+    "zone_id": "Bhadra_ZONE_000007",
+    "actual_holes": 1,
+    "displayed_holes": 0,
+    "extra_display_area_m2": 907.711907048656,
+    "missing_display_area_m2": 11.924113076729027
+  }
+}

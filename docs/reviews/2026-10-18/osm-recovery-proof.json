@@ -1,0 +1,5 @@
+{
+  "success": false,
+  "error": "OSM acquisition failed: providers could not complete a small query. No empty obstacle layer was substituted.",
+  "seconds": 158.19
+}

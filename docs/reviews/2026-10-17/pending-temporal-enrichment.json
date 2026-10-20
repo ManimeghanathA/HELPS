@@ -1,0 +1,21 @@
+{
+  "created_at": "2026-10-17T18:29:08.051421+00:00",
+  "dataset_id": "bhadra-temporal-580354150707",
+  "date": "2026-06-01",
+  "history": [
+    {
+      "stage": "Validating sources and building terrain knowledge",
+      "time": "2026-10-17T18:29:08.061486+00:00"
+    }
+  ],
+  "job_id": "5eedeec872f94e0d995ed8d7022661d9",
+  "progress": {
+    "completed_stages": [],
+    "indeterminate": true,
+    "percent": null,
+    "total_stages": 8
+  },
+  "region_id": "bhadra",
+  "stage": "Validating sources and building terrain knowledge",
+  "status": "running"
+}

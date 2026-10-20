@@ -1,0 +1,15 @@
+# OSM recovery and Bhadra date-only delivery
+
+The observed outage was in public Overpass query services (500/502, timeouts, and an explicit worker-capacity response), not removal of OSM data. Earlier successful requests and local caches remained readable. Older caches did not meet the expanded nine-layer source contract.
+
+Recovered source: Geofabrik Southern Zone, `southern-zone-261017.osm.pbf`, 558,269,430 bytes; source timestamp 2026-10-17T20:20:51Z. Published MD5 `92f7996ce01d2fec517371afcfb56ce8` and local SHA-256 `63fc20d9789509114fa595f5f9646804cd78d4808b08e70e53f0b782f305d772` verified. Dated URLs prevent mixing latest-file and latest-checksum editions. Original source is retained in `data/raw/osm-extracts/southern-zone/92f7996ce01d2fec517371afcfb56ce8/`.
+
+Local layers: buildings 28, roads 1,136, railways 1, power 128, man_made 4, barriers 4, water 60, industrial 5, facilities 5. The 28 building IDs and footprints exactly match the earlier successful Overpass download (zero symmetric difference). Separate Overture remains in use; the build subtracted 33,896 combined building footprints. Whole-extract geometry warnings were retained in the preparation log; selected regional geometries passed validity checks. Parser diagnostics are now captured explicitly for future acquisitions. No claim of complete real-world obstacle mapping is made.
+
+The ordinary build form is fixed to Bhadra and asks only for a newer observation date. It downloads only missing Sentinel imagery/SCL, reuses local static evidence, and stops rather than downloading missing static inputs. Source selection/new-region/refresh controls are hidden from the ordinary form. Compatibility APIs remain for existing integrations. Road access/surface tags reach characterization; explicit closed facility footprints cover their interiors, preserving area=no and linear infrastructure.
+
+Real date-only verification: job `7f4cf8106cfd4b029358f01813f7f7ed`, dataset `bhadra-20261012-623bdb28`, October 12. All requested sources were reused from processed storage. Complete package has 9 candidate polygons, 44 slope-threshold areas, 318 temporal rows and 53 temporal aggregate records across six previous dates including June 1. It is valid and pending review; no acceptance/publication occurred. Low candidate count is the current conservative detector's result, not an OSM acquisition cap. The retained June map is still active.
+
+Independent review identified and verified fixes for nested road tags and closed facility area interpretation. Final regression evidence: `data/validation/osm-date-only-final-python.log` (375 passed) and `data/validation/osm-date-only-final-node.log` (85 passed). Live homepage and review API return 200; same-date and future-date builds are rejected. Protected current and earlier enrichment hashes match their pre-task values. No browser visual QA or operational safety validation is claimed.
+
+Machine-readable proofs: `osm-extract-real-proof.json`, `date-only-completed-proof.json`.

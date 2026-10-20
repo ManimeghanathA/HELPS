@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "features": 4474,
+  "origins": {
+    "vision_addition": 2810,
+    "retained_refinement": 1664
+  },
+  "bytes": 72114468,
+  "preview_token_present": true,
+  "decision": "pending"
+}

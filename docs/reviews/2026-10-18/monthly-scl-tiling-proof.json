@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "quality": {
+    "qa_state": "measured",
+    "usable_support": 0.9244258798253797,
+    "cloud_shadow_fraction": 0.02231543196269146,
+    "coverage_fraction": 1.0000000000000004,
+    "qa_note": "Measured SCL vegetation/bare ground support; water excluded, vegetation remains subject to candidate screening",
+    "observation_date": "2026-10-12",
+    "measurement_resolution_m": 20,
+    "product_identity_status": "Same-day process mosaic; exact tile identity not returned by provider"
+  }
+}

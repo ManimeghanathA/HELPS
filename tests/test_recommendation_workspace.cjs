@@ -1,0 +1,2 @@
+const test=require('node:test'),assert=require('node:assert/strict');const {createWorkspaceState}=require('../static/workspace_state.js');
+test('view changes retain selected geometry identity and invalidate request',()=>{const s=createWorkspaceState();s.selectRegion('bhadra','v1');s.select({terrain_id:'7'});const t=s.beginRequest();s.setView('candidates');assert.equal(s.snapshot.selected.terrain_id,'7');assert.equal(s.applyResponse(t,{eligible_spots:[]}),false);});

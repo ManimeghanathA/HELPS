@@ -1,0 +1,38 @@
+{
+  "checked_at": "2026-10-13T13:47:53.567236+00:00",
+  "snapshot": {
+    "location": {
+      "latitude": 13.68,
+      "longitude": 75.64
+    },
+    "requested_timestamp_utc": "2026-10-13T13:47:53.567236+00:00",
+    "observation_time_utc": "2026-10-13T13:47:53.567236+00:00",
+    "wind": {
+      "speed_kt": 4.26,
+      "gust_kt": 8.1,
+      "direction_deg": 48.77
+    },
+    "visibility_m": 21008.86,
+    "precipitation": {
+      "current_hour_mm": 0.0,
+      "last_24h_mm": 0.0
+    },
+    "temperature_c": 25.4,
+    "pressure_hpa": 1012.28,
+    "cloud_cover_pct": 41.51,
+    "daylight_status": "night",
+    "source": {
+      "provider": "Open-Meteo",
+      "model": "open-meteo-forecast (blended model)",
+      "retrieved_at_utc": "2026-10-13T13:47:54.257902+00:00",
+      "interpolated": {
+        "applied": true,
+        "between": [
+          "2026-10-13T13:00:00+00:00",
+          "2026-10-13T14:00:00+00:00"
+        ]
+      }
+    }
+  },
+  "provider_check": "available"
+}

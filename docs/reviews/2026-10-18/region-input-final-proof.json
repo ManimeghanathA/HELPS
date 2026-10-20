@@ -1,0 +1,13 @@
+{
+  "readiness": {
+    "sentinel": "reuse_processed",
+    "dem": "reuse_processed",
+    "osm": "download",
+    "overture": "reuse_processed",
+    "landcover": "download"
+  },
+  "registered_file_stream_verified": true,
+  "active_and_pending_hashes_unchanged": true,
+  "active_selection_unchanged": true,
+  "proposal_still_pending": true
+}

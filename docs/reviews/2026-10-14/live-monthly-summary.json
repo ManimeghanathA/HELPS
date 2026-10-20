@@ -1,0 +1,9 @@
+{
+  "provider": "Copernicus Data Space Sentinel Hub catalog",
+  "status": "completed",
+  "months": 12,
+  "observations": 85,
+  "measured_shortlist": 24,
+  "errors": [],
+  "scope": "Authenticated tiny-AOI twelve-month probe; metadata-only days were not fully measured."
+}
