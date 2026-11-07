@@ -15,6 +15,7 @@ test/
 .superpowers/
 data/knowledge/
 data/experiments/
+data/models/
 docs/reviews/**/*.log
 
 helps_env/

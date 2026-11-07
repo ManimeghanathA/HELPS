@@ -3,133 +3,102 @@
 \usepackage{graphicx}
 \usepackage{cite}
 \usepackage[hidelinks]{hyperref}
-\title{HELPS: Auditable Screening of Potential Helicopter Landing Areas From Dated Aerial Imagery}
+\title{Segmentation-Based Screening of Potential Helicopter Landing Areas in Bhadra, Karnataka}
 \author{Research manuscript draft}
 \begin{document}
 \maketitle
 \begin{abstract}
-Preflight screening of unprepared terrain can use dated imagery to narrow the search for possible helicopter landing areas. We present the Helicopter Emergency Landing Place Suggestion System (HELPS), a local workflow that converts a georeferenced RGB image and a user-supplied boundary into a reviewable terrain package. The workflow composes overlapping Segment Anything ViT-H masks into regions, classifies them using an existing random forest, and joins predicted low vegetation and bare or sparse ground across tile boundaries. It retains valid 30 m slope cells at or below 15 degrees and applies geometric gates before a reviewer can select the package for aircraft-specific research assessment. On a dated 512 m Raichur crop, a historical bare-ground-only producer yielded no qualifying polygons despite identifying 6646.75 square metres of possible bare ground. A separate 128 m single-tile prototype run with the two-class seed policy yielded two qualifying terrain footprints. These runs demonstrate empty and nonempty screening outcomes. The differing footprints and rules, the absence of independent reference labels, and the coarse elevation data prevent comparative accuracy or landing-suitability claims.
+We evaluate a geospatial workflow for proposing potential helicopter landing footprints from image segmentation in Bhadra, Karnataka, India. The Helicopter Emergency Landing Place Suggestion System (HELPS) composes Segment Anything ViT-H mask proposals and image-edge regions, then applies an existing random forest and region rules to assign land-cover labels. From 112,283 source regions labelled as low vegetation or bare and sparse ground, the workflow contracts polygons inward, subtracts exclusion and overlap masks, and applies minimum footprint geometry and complete valid slope support at or below 12 degrees on a 30 m terrain grid. The audited result comprises 2,810 segmentation-derived additions from 2,569 contributing source regions, covering 11.543428 square kilometres. The highest admitted grid-cell slope was 11.971163 degrees. The imagery acquisition date is unknown and the study has no independent ground truth. The results quantify how the rules screened the mapped evidence. They cannot establish detection accuracy or physical landing suitability.
 \end{abstract}
 \begin{IEEEkeywords}
-Aerial imagery, geographic information systems, helicopter landing areas, random forests, remote sensing, terrain screening.
+Aerial imagery, geographic information systems, helicopter landing areas, image segmentation, random forests, terrain screening.
 \end{IEEEkeywords}
 
 \section{Introduction}
-\IEEEPARstart{U}{nprepared} helicopter landing areas may vary in usable extent, surface condition, slope, nearby obstructions, and access. Reconnaissance and aircraft-specific procedures remain necessary for operational decisions \cite{faa}. HELPS addresses the earlier map-based research task of finding terrain footprints that warrant examination. A candidate is a polygon supported by the specified terrain and geometry gates. A research opportunity is a candidate or slope subregion evaluated for a particular aircraft and mission context.
+\IEEEPARstart{U}{nprepared} landing areas vary in usable extent, surface condition, terrain slope, and nearby hazards. Operational decisions require reconnaissance and aircraft-specific procedures \cite{faa}. HELPS supports the earlier map-based task of identifying footprints that warrant examination. In this study a qualifying footprint is a mapped polygon that satisfies specified data and rule checks. A segmentation-derived addition is a qualifying footprint whose lineage starts in a classified image segment, after removing overlap with polygons already admitted to the proposal.
 
-The engineering contribution connects a dated RGB observation to the selected regional terrain package used for assessment. A common input contract and tiled processing associate the classified output with an image and date. A terrain audit records how slope coverage and geometry affect the candidates. The review step separates generating a package from selecting it for assessment. We report historical and prototype evidence of feasibility and define a controlled evaluation of image scale and seed policy.
+The contribution is a traceable case study of a segmentation pipeline and subsequent terrain screening across Bhadra. We report the source label inventory, the qualification rules, and the count and extent of the additions. Retaining the source label and the identifier of each contributing region lets the analysis distinguish source-region outcomes from resulting polygon counts. The case study addresses feasibility and auditability. The absence of independent ground truth prevents estimates of omission, commission, and operational safety.
 
 \section{Related Work}
-Scherer \emph{et al.} assessed site geometry and approach feasibility with aircraft-mounted lidar and demonstrated autonomous landing on a full-scale helicopter \cite{scherer}. Their system measured hazards near the time of landing. HELPS uses an offline dated observation and exposes unknown evidence to the reviewer. Erskine \emph{et al.} compared modelled helicopter landing areas with surveyed footprints using land-cover and elevation inputs from 1 to 30 m. They found that feature scale and site geography affected boundary accuracy \cite{erskine}. The independent reference survey in that study is an important distinction from the feasibility evidence reported here.
+Scherer \emph{et al.} assessed geometry and approach feasibility with onboard lidar and demonstrated autonomous landings on a full-scale helicopter \cite{scherer}. HELPS uses previously acquired map evidence for screening, which offers a different spatial and temporal view of the terrain. Erskine \emph{et al.} compared surveyed helicopter landing zones with estimates from land-cover and elevation inputs sampled at 1--30 m. Feature scale and local geography affected boundary accuracy \cite{erskine}. Their surveyed footprints supplied reference evidence that is unavailable in the Bhadra study.
 
-Segment Anything (SAM) provides promptable and automatic mask generation \cite{sam}. SamGeo and related remote-sensing studies demonstrate georeferenced use of SAM \cite{samgeo,osco}. HELPS reuses the project-specific GeoSAM region composition and trained random forest from the Bhadra project \cite{neha}, based on Breiman's ensemble method \cite{breiman}. The forest's semantic labels and the downstream terrain gates are distinct from SAM mask quality.
+Segment Anything (SAM) supports promptable and automatic mask generation \cite{sam}. Geospatial adaptations such as SamGeo have demonstrated its use with georeferenced imagery \cite{samgeo}. In the Bhadra pipeline, SAM contributes mask boundaries, while an existing random forest based on Breiman's method and context rules supply semantic labels \cite{neha,breiman}. The assessment considers the combined classification and screening workflow. It does not isolate the contribution of SAM relative to the other boundary sources.
 
-\section{Data and Study Areas}
-\subsection{Raichur imagery and elevation}
-WELL Labs contributed the drone orthomosaic \emph{RAICHUR\_D10\_2025\_09-M1} to OpenAerialMap \cite{well,oam}. The archived catalog metadata lists an interval from 18:30 to 19:30 UTC on 31 August 2025, corresponding to 00:00--01:00 India Standard Time on 1 September 2025. We use that local capture date. The nominal 3.1 cm source was resampled to a 0.5 m RGB grid in WGS 84 / UTM zone 43N. The initial experiments used a 512 m square centred near 76.76567 degrees E, 16.30969 degrees N. A separate 128 m square within the image supplied the prototype smoke test. Figure~\ref{fig:pilot} shows both footprints.
+\section{Study Area and Inputs}
+\subsection{Imagery and classified vectors}
+The Bhadra boundary covers approximately 1,107.33 square kilometres. The project sampled Esri World Imagery in overlapping windows, preferring zoom 19 and falling back to zoom 18. It projected the working grid to WGS 84 / UTM zone 43N (EPSG:32643) at approximately 0.485 m spacing. This value is the processing-grid spacing. Native imagery resolution, acquisition date, and whether all tiles share a common acquisition date remain unverified.
 
-Terrain measurements use Copernicus GLO-30 \cite{copdem}, with a window from tile N16E076 and a halo to compute terrain derivatives. GLO-30 is a digital surface model (DSM) and may include vegetation and structures. Its provenance is separate from RGB capture time. One 30 m cell covers an area equivalent to 3600 RGB pixels at the 0.5 m working scale. The Raichur package includes no independently reviewed obstacle-height, restriction, road, or building survey.
+The final classified GeoPackage contains 761,031 polygons across 1,861 recorded batch identifiers. Its two grouped layers contain 112,283 potentially open regions and 648,748 other regions. The open layer contains 37,556 low-vegetation polygons and 74,727 bare or sparse ground polygons. The other layer retains the original labels for water, woody vegetation, roofs, industrial structures, roads, and uncertainty. Counts and class areas describe the supplied labels. Batch count alone does not establish regional coverage quality.
 
-The original imagery footprint intersects about 1.54 square kilometres of the 8450.99 square kilometre Raichur district feature used by the project \cite{geoboundaries}. Both reported runs cover much smaller parts of that image. The prototype test used a district-oriented worker on a local crop.
+\subsection{Terrain and context}
+The screening uses the saved 30 m FABDEM grid. FABDEM was designed to reduce vegetation and building height biases in the Copernicus elevation product \cite{fabdem}. Mapped exclusions and reviewed rejects provide additional context, with their coverage limits retained. The linked knowledge package carries a 1 June 2026 context date. The acquisition date of the segmented imagery remains unknown.
 
-\subsection{Historical Bhadra context}
-Bhadra supplied the existing classifier and an earlier terrain-knowledge example. The historical vision-refined package uses a Sentinel-2 context date of 1 June 2026. Its high-resolution vision imagery has an unknown acquisition date. Its 30 m terrain grid uses FABDEM, which was designed to remove estimated building and tree height biases from Copernicus GLO-30 \cite{fabdem}. Bhadra and Raichur differ in image source, date provenance, geography, and processing policy.
+\section{Method}
+\subsection{Segmentation and region labels}
+The Bhadra producer uses pretrained SAM ViT-H in automatic mode on windows with a halo for image context. A composition stage reconciles overlapping masks and accepted reference footprints. It fills remaining areas with graph-based image-edge regions following Felzenszwalb and Huttenlocher \cite{felz}, cleans small fragments, and clips the output to each batch core. The resulting partition therefore includes SAM, reference, and edge-derived boundaries. Seam-adjacent features can remain split.
 
-\section{Workflow}
-\subsection{Observation validation and tile processing}
-Figure~\ref{fig:workflow} shows the stages. The operator supplies a named region, local capture date, WGS 84 GeoJSON polygon or multipolygon, and a georeferenced 8-bit RGB GeoTIFF. The interactive build limits the region to 4 square kilometres and 8 km across, with a maximum of 32 planned tiles, 256 MiB of RGB input, and 2 MiB of boundary input. The area determines a local UTM projection. The working pixel size is 0.5--2 m, derived from the image or specified by the operator. Input validation rejects coarse sources that would need upsampling into the supported range. Preflight checks footprint and recognized date tags. Per-tile checks verify valid pixels and alpha opacity inside the requested region.
-
-The worker uses cores of up to 896 pixels per side and reads a 64-pixel halo at each edge for model context. It retains only classified geometry in the intersection of a tile core and the region boundary. Each pixel therefore has one core owner, which avoids counting the overlap twice. Labels can still disagree across seams. The job runs separately from the browser and stores completed tile GeoPackages with checksum records. A resume can reuse matching completed outputs.
+An existing scene-specific forest predicts per-pixel classes from 16 colour, texture, and road-context features. Region voting and confidence and context rules assign the final labels. Some roofs and other engineered features use accepted references or review rules. Region uncertainty stays explicit. The seed categories are class 3 (crops, grass, and low vegetation) and class 4 (bare soil, rock, and sparse ground). Neither class establishes surface height, firmness, or clearance. Figure~\ref{fig:detail} shows the label partition and the retained footprints for one detail window.
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/workflow.png}
-\caption{HELPS workflow. The background job produces a terrain package and audit. The review decision controls which observation is used for aircraft assessment.}
-\label{fig:workflow}
+\includegraphics[width=\textwidth]{figures/bhadra-segmentation.png}
+\caption{Bhadra segmentation and qualification in a 2 km square detail window. Panel (a) shows predicted classes. Panel (b) overlays the segmentation-derived additions outlined in purple. Both panels are redrawn from saved polygons in EPSG:32643. The detail window location is marked in Fig.~\ref{fig:additions}.}
+\label{fig:detail}
 \end{figure*}
 
-\subsection{Mask composition and classification}
-SAM ViT-H generates automatic mask proposals on each buffered tile. The recorded configuration samples 24 points per side and uses a predicted-IoU threshold of 0.82 and stability threshold of 0.90. These settings filter mask proposals. The GeoSAM composition resolves overlaps, fills uncovered areas using image edges, and merges small fragments. The original forest uses 16 features, including colour and texture. The region rules aggregate the classifier predictions and preserve uncertain labels. In Raichur the road-distance feature was held constant and geographic priors were empty because reviewed local inputs were unavailable.
-
-Let $B$ denote the study boundary, $C_j$ the core of tile $j$, and $P_{ji}$ a classified polygon with label $k_{ji}$. The producer dissolves polygons selected from class 3 (crops, grass, and low vegetation) and class 4 (bare soil, rock, and sparse ground) before measuring footprint geometry. This allows pieces split by tile boundaries to be measured together when they form a connected footprint.
+\subsection{Spatial filtering and geometry}
+Let $P_i$ be a source open polygon, $B$ the study boundary, $E$ the applicable exclusions, and $A_i$ the footprints already admitted when $P_i$ is processed. The initial contraction $P_i^{(-5)}$ offsets the boundary inward by 5 m. The proposal stage checks geometry and slope on contracted components before subtracting exclusions and overlaps. For the subset that passes those preliminary gates, the remaining geometry is computed as
 \begin{equation}
-S = \bigcup_{j,i \,:\, k_{ji} \in \{3,4\}} (P_{ji} \cap C_j \cap B).
-\label{eq:seed}
+Q_i = (P_i^{(-5)} \cap B) \setminus (E \cup A_i).
+\label{eq:filter}
 \end{equation}
+The mask $E$ combines the applicable mapped exclusions and reviewed rejects with the vision classes outside 3 and 4. Uncertain class 8 is withheld by policy, even though uncertainty does not establish a physical obstruction. Subtracting $A_i$ prevents a proposed footprint from duplicating existing admitted polygons or earlier additions.
 
-\subsection{Slope and footprint geometry}
-The worker aligns a covering elevation window to a 30 m metric grid. Horn's $3 \times 3$ derivative estimates slopes from neighbouring samples \cite{horn}. For east and north gradients $g_x$ and $g_y$, the slope in degrees is given by
-\begin{equation}
-\theta = (180/\pi)\arctan\sqrt{g_x^2 + g_y^2}.
-\label{eq:slope}
-\end{equation}
-The derivative calculation includes a one-cell halo and records the area with valid support. The initial seed mask is intersected with the union of valid cells satisfying $\theta \leq 15^\circ$. The resulting pieces require area of at least $900\,\mathrm{m}^2$, both rotated-rectangle dimensions of at least $30\,\mathrm{m}$, and a maximum inscribed clear diameter of at least $30\,\mathrm{m}$. Clear diameter describes the interior of the mapped polygon. Aircraft profiles apply their own thresholds during assessment. The 15 degree threshold is a producer setting.
+The remaining pieces undergo the shared geometry checks. They must have area at least $900\,\mathrm{m}^2$, both dimensions of the minimum rotated rectangle at least $30\,\mathrm{m}$, and a maximum inscribed clear diameter of at least $30\,\mathrm{m}$. A 15 m erosion and dilation opening removes narrow connections and is intersected with the input geometry. Geometry is rechecked on the surviving pieces. Clear diameter refers to mapped two-dimensional containment.
 
-\subsection{Review and aircraft assessment}
-The package stores terrain footprints, measured subregions, and source provenance. A reviewer can inspect the map and source limits before accepting or rejecting the proposal. The regional registry identifies the selected observation. A pending or rejected proposal leaves an existing selection in use.
+\subsection{Terrain and lineage checks}
+Slope is estimated from a Horn $3 \times 3$ derivative on the 30 m metric grid \cite{horn}. For a candidate footprint, every grid cell with a positive-area intersection must be valid. The maximum of the intersecting cell slopes must be at most $12^\circ$. The check is performed again after footprint filtering. This threshold was the Bhadra producer's terrain screen. Aircraft limits and approach considerations require separate evidence.
 
-The assessment engine queries selected terrain within a search radius and uses the configured LCH, LUH, or ALH research profile, mission weights, and available weather and context. Known hard-gate failures exclude an opportunity. Unknown evidence can appear in a research result with the corresponding verification requirements. For supported mission factors with scaled values $f_i \in [0,1]$ and effective weights $w_i$, the relative priority is given by
-\begin{equation}
-R = 100 \frac{\sum_i w_i f_i}{\sum_i w_i}.
-\label{eq:rank}
-\end{equation}
-The engine also reports the coverage of configured weight by the supported factors. An empty set of supported factors yields no score. The priority score has no probabilistic interpretation. An empty shortlist is a valid application outcome.
+Each output retains the source region key, class, batch identifier, and the unknown imagery date. The independent software audit checked polygon validity, containment within the contracted source, overlap against exclusions and other accepted polygons, slope and valid DEM support, and package relationships. These checks verify the implementation against supplied inputs and rules. Field verification was outside their scope.
 
-\section{Feasibility Results}
-\subsection{512 m historical Raichur pilot}
-The fixed-segment transfer comparison reused 250 automatic SAM mask proposals to produce 603 classified regions over $262{,}144\,\mathrm{m}^2$. The recovered Bhadra forest and region rules classified $6646.75\,\mathrm{m}^2$ as possible bare ground and marked 58.12\% of classified area uncertain. Six bare-ground components entered strict screening and failed geometry or clearance. The slope-only layer retained $6025.50\,\mathrm{m}^2$ at or below 12 degrees in eight fragments. The strict layer contained zero qualifying candidates. The separate forest trained on this same crop marked 16.65\% of the classified area uncertain and also yielded no strict candidates. The comparison changed the model and classification rules, with no independently labelled reference set.
+\section{Results}
+\subsection{Source-region decisions and footprint yield}
+Of 112,283 source open regions, 2,569 contributed at least one qualifying footprint. They produced 2,810 additions after splitting and screening. The audit assigned 107,864 source regions the contracted-geometry rejection reason and 1,850 the slope-above-limit reason. These are recorded terminal reasons. Sequential filtering and polygons with multiple components mean they are not a count of every reason each source could fail.
 
-A separate integrated legacy build, \texttt{raichur-rgb-20250901-6c329e7c}, regenerated the same mask and region counts. With six CPU PyTorch threads, it recorded 26.71 s for model loading, 142.88 s for SAM inference, and 31.46 s for composition and classification. Its bare-ground producer returned zero candidates. The measurements are specific to this archived run.
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/raichur-pilot.png}
-\caption{Raichur historical pilot. (a) The 512 m RGB crop with the 128 m prototype extent dashed. (b) Land-cover predictions from the recovered forest. Imagery by WELL Labs, Open Imagery Network contributor, via OpenAerialMap, CC BY 4.0 \cite{well,oam}. Cropped and resampled.}
-\label{fig:pilot}
-\end{figure*}
-
-\subsection{128 m Raichur prototype smoke test}
-The prototype worker processed one tile on the 0.5 m image with both seed classes enabled. It generated 93 proposals on the buffered window, composed 132 regions before clipping, and retained 74 class polygons within the study boundary. Dissolving the seed classes produced nine polygons. The 30 m slope raster covered the full study area. Seven pieces failed geometry or clearance and two qualified (Fig.~\ref{fig:screening}). Table~\ref{tab:sites} reports the measured footprints. The largest rejected polygon had $1168.75\,\mathrm{m}^2$ after clipping but failed the clear-diameter gate. Restriction and obstacle-height evidence remained unknown for both retained polygons. The prototype test exercised terrain qualification for one tile. Aircraft assessment and multi-tile behaviour were outside that test.
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/raichur-screening.png}
-\caption{Raichur prototype screening output. The white outlines show the two footprints that passed the terrain and geometry gates. Panel (a) uses cropped and resampled WELL Labs imagery via OpenAerialMap, CC BY 4.0 \cite{well,oam}. Panel (b) shows slope derived on the 30 m grid. Copernicus DEM copyright DLR e.V. 2010--2014 and Airbus Defence and Space GmbH 2014--2018, provided under COPERNICUS by the European Union and ESA. All rights reserved. \cite{copdem}}
-\label{fig:screening}
-\end{figure*}
+The additions cover 11.543428 square kilometres. Table~\ref{tab:class} breaks down the count and area by the original source label. The median footprint area was 2,345.55 square metres, with an interquartile range from 1,502.82 to 4,010.65 square metres. The median maximum cell slope was 3.04 degrees, and the highest was 11.971163 degrees. Figure~\ref{fig:additions} shows locations and the maximum-slope distribution. The model's source labels have not been independently checked against ground conditions.
 \begin{table}[t]
-\caption{Measured terrain footprints in the 128 m prototype crop}
-\label{tab:sites}
+\caption{Segmentation-derived additions by source class}
+\label{tab:class}
 \centering
-\begin{tabular}{lrrrr}
+\begin{tabular}{lrr}
 \hline
-ID & Area (m$^2$) & Width (m) & Clear dia. (m) & Max slope \\
+Source label & Footprints & Area (km$^2$) \\
 \hline
-RGB-1 & 1736.00 & 39.00 & 33.92 & $10.62^\circ$ \\
-RGB-5 & 2127.75 & 47.61 & 38.07 & $11.39^\circ$ \\
+Low vegetation (3) & 1508 & 5.335627 \\
+Bare / sparse ground (4) & 1302 & 6.207801 \\
+Total & 2810 & 11.543428 \\
 \hline
 \end{tabular}
 \end{table}
 
-\subsection{Integrated build confirmation}
-The unified application accepted the same 128 m boundary and 0.5 m image through its upload API. The submitting process exited while the detached worker continued. Dataset \texttt{rgb-rgb-workflow-validation-20250901-6ee09498} reached the review stage with two terrain candidates and five threshold-specific slope subregions, comprising one at 10 degrees, two at 12 degrees, and two at 15 degrees. Multiple slope subregions can refer to the same terrain parent. The repeat uses the prototype input and confirms the integrated upload-to-review path. The study did not measure aircraft ranking performance.
-\subsection{Historical Bhadra package}
-The earlier Bhadra vision refinement delivered 4474 terrain candidates and 25\,931 measured slope subregions. The candidate total includes 1664 fragments of prior candidates and 2810 additions from image-derived regions screened with the historical 12 degree maximum-slope policy. The imagery provenance, elevation source, 5 m contraction, and exclusions differ from the Raichur prototype. These counts describe the historical package. They cannot serve as a benchmark for the new RGB producer.
+The independent software audit found all additions inside their 5 m contracted source polygons and recorded full DEM support to numerical tolerance. The package was subsequently selected following explicit review. It also contains separately tracked retained fragments. The counts, areas, and slope statistics in this paper refer only to the segmentation-derived additions.
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/bhadra-additions.png}
+\caption{Spatial and slope summaries for the 2,810 segmentation-derived additions. Panel (a) plots one interior point per footprint, grouped by source class, and marks the detail window shown in Fig.~\ref{fig:detail}. Panel (b) plots each footprint's highest intersecting 30 m slope cell and the 12 degree qualification threshold.}
+\label{fig:additions}
+\end{figure*}
 
-\section{Evaluation Design}
-The Raichur runs changed multiple variables at once. A controlled study should use held-out tiles sampled across settlement edges, irrigated and dry agricultural land, rocky terrain, woody cover, and relief. Reference annotation should delineate visible openings and hazards independently of the models, retain ambiguous areas, and record inter-reviewer disagreement. Field or fine 3-D evidence would support a separate comparison of local slope, obstacle height, approach geometry, and surface suitability. Olofsson \emph{et al.} provide guidance on sampling and area-adjusted accuracy \cite{olofsson}.
+\section{Limitations and Validation Design}
+The study has no independent ground truth for land-cover polygons, obstacles, or feasible helicopter landing footprints. Model labels and reference layers used during classification cannot serve as an independent benchmark. Software verification confirms consistency with the supplied polygons and terrain raster. It leaves false positives, omissions, and geographic generalization unmeasured. Image age and capture-date variation also remain unknown. Small hazards such as wires and local slope changes may be missed. The measured grid and footprint diameter cannot establish ground bearing capacity or approach clearance.
 
-For image-scale experiments, resample the same dated orthomosaic and geographic footprint to 0.5, 1, and 2 m with a specified method. Hold elevation, geometry rules, model and seed policy fixed. Report how the ground support of pixel-based texture features and SAM prompt spacing varies with resolution. For a seed-policy ablation, hold the image and all later stages fixed and compare class 4 alone with classes 3 and 4 together. A terrain experiment can compare DSM products on the same image predictions using an independent, finer elevation reference. Seam tests can compare classification overlap and candidate persistence after shifting the tile grid.
-
-Report per-class area-adjusted user and producer accuracy, opening precision and recall at declared polygon intersection-over-union thresholds, overlap with independently annotated visible hazards, empty-shortlist rate, and per-stage time and memory. Use spatial blocks as the resampling unit when estimating uncertainty, and report counts of independent tiles or sites. For the assessment stage, record hard-gate and unknown-state frequencies and rank agreement when rankings exist. Report unmatched opportunities and changes in supported weight coverage when comparing ranks.
-
-\section{Limitations}
-Single-date RGB supports visible evidence at the acquisition date. Shadows, crop phenology, transfer of the Bhadra classifier to drone imagery, and missing context can change label assignments. A low-vegetation label leaves height, wetness and bearing capacity unknown. The 30 m DSM cannot consistently resolve wires, ruts, small trees, or local slope variation within a cell. An inscribed disk describes mapped geometry. Approach, departure, wind, aircraft limits, and surface conditions require separate evidence. The Raichur pilots contain no independent field verification.
+A follow-up should sample spatially separated blocks and use date-matched reference imagery interpreted independently of the model and its priors. Stratification should cover both predicted seed classes, uncertainty, rejected regions, and relevant terrain types. Area-adjusted confusion estimates and confidence intervals should reflect the sampling design \cite{olofsson}. Visible opening boundaries can be evaluated with polygon intersection-over-union and precision and recall. Reference sampling should include output-free areas to estimate omissions. A separate field or higher-resolution 3-D study is needed to evaluate obstacles, local slope, and physical suitability.
 
 \section{Conclusion}
-HELPS converts a dated RGB observation into a documented terrain package whose selection requires review. Historical and prototype Raichur runs exercised the empty and nonempty screening paths. Their audits distinguish missing or unsuitable geometry from coarse slope evidence. Controlled evaluation is needed to determine how image scale and seed policy affect detectable footprints and where additional evidence is necessary for aircraft assessment.
+The Bhadra workflow translated segmentation and land-cover labels into 2,810 traceable terrain footprints that passed specified geometry and 30 m slope checks. Independent field or reference validation is needed before interpreting these footprints as accurately detected openings or physically suitable sites.
 
 \section*{Data and Reproducibility}
-The open image source is identified in \cite{well,oam}, with elevation terms and attribution in \cite{copdem}. The project records input and model hashes, settings, tile outputs, screening audits, and package manifests. The pilot evidence is archived under \texttt{data/experiments} in the HELPS checkout. The editable figure generator and reproduction notes accompany this manuscript. No Bhadra basemap imagery is reproduced.
-
-\begin{thebibliography}{15}
+The archived classified and qualification GeoPackages, decisions, and verification reports are indexed in the accompanying reproduction notes. The maps are original thematic renders of the saved vectors.
+\begin{thebibliography}{11}
 \bibitem{faa}
 Federal Aviation Administration, \emph{Helicopter Flying Handbook}, FAA-H-8083-21B, 2019, chs. 5, 10--11. [Online]. Available: \url{https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/helicopter_flying_handbook}
 \bibitem{scherer}
@@ -140,22 +109,14 @@ J. Erskine, C. Oxendine, W. Wright, M. O'Banion, and A. Philips, "Evaluating the
 A. Kirillov \emph{et al.}, "Segment anything," in \emph{Proc. IEEE/CVF Int. Conf. Comput. Vis. (ICCV)}, 2023, pp. 4015--4026, doi: \href{https://doi.org/10.1109/ICCV51070.2023.00371}{10.1109/ICCV51070.2023.00371}.
 \bibitem{samgeo}
 Q. Wu and L. P. Osco, "samgeo: A Python package for segmenting geospatial data with the Segment Anything Model (SAM)," \emph{J. Open Source Softw.}, vol. 8, no. 89, Sep. 2023, Art. no. 5663, doi: \href{https://doi.org/10.21105/joss.05663}{10.21105/joss.05663}.
-\bibitem{osco}
-L. P. Osco \emph{et al.}, "The Segment Anything Model (SAM) for remote sensing applications: From zero to one shot," \emph{Int. J. Appl. Earth Obs. Geoinf.}, vol. 124, 2023, Art. no. 103540, doi: \href{https://doi.org/10.1016/j.jag.2023.103540}{10.1016/j.jag.2023.103540}.
 \bibitem{neha}
-Nehareddy1234, \emph{cv\_ai\_helps}, GitHub software repository, classifier asset revision 47843a2 and pipeline revision 9e46fe3. [Online]. Available: \url{https://github.com/Nehareddy1234/cv_ai_helps}
+Nehareddy1234, \emph{cv\_ai\_helps}, GitHub software repository, reviewed revision 47843a288f195e1bbb1eb2df7481d7ec255c9eb1. [Online]. \href{https://github.com/Nehareddy1234/cv_ai_helps/tree/47843a288f195e1bbb1eb2df7481d7ec255c9eb1}{Pinned implementation}.
 \bibitem{breiman}
 L. Breiman, "Random forests," \emph{Mach. Learn.}, vol. 45, no. 1, pp. 5--32, Oct. 2001, doi: \href{https://doi.org/10.1023/A:1010933404324}{10.1023/A:1010933404324}.
-\bibitem{well}
-WELL Labs, \emph{RAICHUR\_D10\_2025\_09-M1}, OpenAerialMap / Open Imagery Network, item 69493f7684a859b011c94916, Sep. 2025 (local capture date), CC BY 4.0. [Online]. \href{https://api.imagery.hotosm.org/stac/collections/openaerialmap/items/69493f7684a859b011c94916}{STAC item}.
-\bibitem{oam}
-Humanitarian OpenStreetMap Team, \emph{OpenAerialMap}, Open Imagery Network license and attribution terms. [Online]. Available: \url{https://openaerialmap.org/about/}
-\bibitem{copdem}
-European Union and European Space Agency, \emph{Copernicus Digital Elevation Model, GLO-30}, N16E076. [Online]. Available: \url{https://registry.opendata.aws/copernicus-dem/}
-\bibitem{geoboundaries}
-D. Runfola \emph{et al.}, "geoBoundaries: A global database of political administrative boundaries," \emph{PLOS ONE}, vol. 15, no. 4, Apr. 2020, Art. no. e0231866, doi: \href{https://doi.org/10.1371/journal.pone.0231866}{10.1371/journal.pone.0231866}.
 \bibitem{fabdem}
 L. Hawker \emph{et al.}, "A 30 m global map of elevation with forests and buildings removed," \emph{Environ. Res. Lett.}, vol. 17, no. 2, 2022, Art. no. 024016, doi: \href{https://doi.org/10.1088/1748-9326/ac4d4f}{10.1088/1748-9326/ac4d4f}.
+\bibitem{felz}
+P. F. Felzenszwalb and D. P. Huttenlocher, "Efficient graph-based image segmentation," \emph{Int. J. Comput. Vis.}, vol. 59, no. 2, pp. 167--181, Sep. 2004, doi: \href{https://doi.org/10.1023/B:VISI.0000022288.19776.77}{10.1023/B:VISI.0000022288.19776.77}.
 \bibitem{horn}
 B. K. P. Horn, "Hill shading and the reflectance map," \emph{Proc. IEEE}, vol. 69, no. 1, pp. 14--47, Jan. 1981, doi: \href{https://doi.org/10.1109/PROC.1981.11918}{10.1109/PROC.1981.11918}.
 \bibitem{olofsson}

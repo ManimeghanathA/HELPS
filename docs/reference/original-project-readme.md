@@ -4,7 +4,7 @@ Helicopter Emergency Landing Place Suggestion System: an explainable, terrain-fi
 
 Select an AOI GeoJSON and a Sentinel observation date in the local application. HELPSs reuses verified local inputs or acquires missing Sentinel-2 L2A imagery, OSM context and Overture buildings, runs the established processing stages, and displays the candidate polygons over satellite imagery.
 
-![Bhadra candidate polygons](docs/results/bhadra_final_open_land_zones.png)
+![Bhadra candidate polygons](../archive/legacy-results/bhadra_final_open_land_zones.png)
 
 ## Current Results
 
@@ -21,11 +21,11 @@ The automated pipeline was rerun against the existing Bhadra inputs for **June 1
 | Final candidate polygons | **4,130** |
 | Final candidate area | **88.824 km²** |
 
-The final audit passed: valid geometries, unique IDs, area/dimension/MIC thresholds, stored-area consistency, no positive zone overlaps, and no cloud or UNKNOWN pixel-centre overlaps. Building overlap is below the numerical tolerance of 0.000001 m². Machine-readable results are in [bhadra_summary.json](docs/results/bhadra_summary.json).
+The final audit passed: valid geometries, unique IDs, area/dimension/MIC thresholds, stored-area consistency, no positive zone overlaps, and no cloud or UNKNOWN pixel-centre overlaps. Building overlap is below the numerical tolerance of 0.000001 m². Machine-readable results are in [bhadra_summary.json](../archive/legacy-results/bhadra_summary.json).
 
 The new runner uses the complete AOI building inputs rather than the old prefiltered Overture export. The rerun produced 26,828 intermediate fragments versus the historical 26,827, with identical final polygon count and a total final-area difference of approximately 0.041 m². The original validated GeoPackage and figures are retained unchanged. This is a near-equivalent reproduction, not a claim of byte-identical geometry.
 
-![Rejection reasons](docs/results/bhadra_rejection_reason_map.png)
+![Rejection reasons](../archive/legacy-results/bhadra_rejection_reason_map.png)
 
 ## Run Without The UI
 

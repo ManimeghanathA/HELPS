@@ -20,7 +20,6 @@ from shapely.ops import transform
 from .chronology import validate_new_date
 from .contracts import KnowledgeBuildSpec, SourceAsset
 from .repository import _atomic_json
-from .rgb_model import PILOT
 from .rgb_tiles import CORE, HALO, SEED_CLASSES, prepare_tile, process_tile, tile_plan
 from .slope_zones import generate_slope_zones, polygon_parts
 from .sources import file_sha256
@@ -128,22 +127,13 @@ def open_grid(image, aoi, grid, width, height):
 
 def resolve_elevation(root, aoi, log):
     from dotenv import dotenv_values
-    from scripts.pipeline.elevation import PROVIDER_METADATA, acquire_dem, verify_dem_coverage
+    from scripts.pipeline.elevation import acquire_dem, verify_dem_coverage
 
     value = os.environ.get('HELPS_RGB_DEM') or dotenv_values(root / '.env').get('HELPS_RGB_DEM')
     if value:
         supplied = SourceAsset('rgb-configured-elevation', (root / value).resolve(), kind='dem', units='m')
         verify_dem_coverage(supplied, aoi)
         return supplied
-    cached = root / PILOT / 'source_dsm_crop.tif'
-    if cached.is_file():
-        source = SourceAsset('copernicus-glo30-pilot-window', cached, kind='dem', units='m',
-                             coverage_state='verified', metadata=PROVIDER_METADATA)
-        try:
-            verify_dem_coverage(source, aoi)
-            return source
-        except ValueError:
-            pass
     return acquire_dem(aoi, root, log=log)
 
 

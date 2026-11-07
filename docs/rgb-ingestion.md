@@ -1,6 +1,6 @@
 # Dated RGB ingestion
 
-Use **Build knowledge** to process a boundary and dated aerial image, inspect the finished candidate map, and select a dataset for use in **Application**. The app runs on Windows at the local address in the [setup guide](../README.md#start-on-windows).
+Use **Build knowledge** to process a boundary and dated aerial image, inspect the finished candidate map, and select a dataset for use in **Application**. For an existing dataset, restore and open the [accepted Bhadra package](../README.md#bhadra-case-study).
 
 ## Prepare the inputs
 
@@ -12,7 +12,7 @@ Use **Build knowledge** to process a boundary and dated aerial image, inspect th
 | Imagery | Upload one internally georeferenced **8-bit RGB GeoTIFF**, up to **256 MiB**, with red, green and blue bands and optional alpha. A single image or same-date mosaic can cover the boundary. The image extent must contain the boundary. The worker also verifies valid pixels and opacity inside the boundary. |
 | Working resolution | Use **0.5–2 m**. By default HELPS derives the projected native pixel size and bounds the working resolution to this range. Supply imagery with native detail of about **2 m** or finer. Finer imagery can be downsampled. Upsampling coarser imagery does not supply the required detail. |
 
-Satellite or airborne sensors can supply RGB if the inputs meet this contract. A Sentinel-2 image at 10 m does not meet the detail requirement. Large, elongated or fragmented boundaries may hit the tile limit before the area limit. Crop to the portion covered by dated imagery and check that the full polygon fits.
+Satellite or airborne sensors can supply RGB if the inputs meet this contract. Large, elongated or fragmented boundaries may hit the tile limit before the area limit. Crop to the portion covered by dated imagery and check that the full polygon fits.
 
 ## Model and worker setup
 
@@ -20,14 +20,14 @@ The app uses a SAM ViT-H checkpoint and the recovered GeoSAM composition and sce
 
 | Setting | Required asset or runtime |
 | --- | --- |
-| `HELPS_RGB_SAM_REPO` | Meta Segment Anything checkout. The pilot used revision `dca509fe793f601edb92606367a655c15ac00fdf`. |
-| `HELPS_RGB_SAM_CHECKPOINT` | Original `sam_vit_h_4b8939.pth`. The worker checks the file against its pinned SHA-256. |
-| `HELPS_RGB_GEOSAM_REPO` | Recovered GeoSAM checkout containing `bhadra_highres_batches` and `samgeo_esri_test`. The local source audit pins revision `47843a288f195e1bbb1eb2df7481d7ec255c9eb1`. |
-| `HELPS_RGB_FOREST` | Original `scene_random_forest.joblib`. The worker checks the file against its pinned SHA-256. |
-| `HELPS_RGB_SAM_PYTHON` | Python executable for the SAM worker with the project geospatial dependencies and CPU PyTorch and torchvision. The pilot used Python 3.10, `torch 2.7.1+cpu` and `torchvision 0.22.1+cpu`. |
-| `HELPS_RGB_CLASSIFIER_PYTHON` | Python executable with the project geospatial dependencies, scikit-image, scikit-learn **1.8.0** and joblib. The pilot used Python 3.12 and joblib 1.5.3. |
+| `HELPS_RGB_SAM_REPO` | Meta Segment Anything checkout at revision `dca509fe793f601edb92606367a655c15ac00fdf`. Defaults to `data/models/segment-anything`. |
+| `HELPS_RGB_SAM_CHECKPOINT` | Original `sam_vit_h_4b8939.pth`. Defaults to `data/models/sam_vit_h_4b8939.pth`. The worker checks the file against its pinned SHA-256. |
+| `HELPS_RGB_GEOSAM_REPO` | Recovered GeoSAM checkout containing `bhadra_highres_batches` and `samgeo_esri_test`. Defaults to `data/reviews/2026-10-20-cv/repository`. The local source audit pins revision `47843a288f195e1bbb1eb2df7481d7ec255c9eb1`. |
+| `HELPS_RGB_FOREST` | Original `scene_random_forest.joblib`. Defaults to `data/models/scene_random_forest.joblib`. The worker checks the file against its pinned SHA-256. |
+| `HELPS_RGB_SAM_PYTHON` | Python executable for the SAM worker with the project geospatial dependencies and CPU PyTorch and torchvision. The runtime below uses Python 3.10, `torch 2.7.1+cpu` and `torchvision 0.22.1+cpu`. |
+| `HELPS_RGB_CLASSIFIER_PYTHON` | Python executable with the project geospatial dependencies, scikit-image, scikit-learn **1.8.0** and joblib. The runtime below uses Python 3.12 and joblib 1.5.3. |
 | `HELPS_RGB_TORCH_PACKAGES`, `HELPS_RGB_CLASSIFIER_PACKAGES` | Optional package directories for isolated dependency installs. When dependencies are installed in the worker environments, those interpreters can use empty package directories. |
-| `HELPS_RGB_DEM` | Optional local elevation GeoTIFF in metres. A configured file must pass coverage checks for the boundary and slope calculation margin. With this setting unset, the worker tries a covering cached surface model, then public elevation. |
+| `HELPS_RGB_DEM` | Optional local elevation GeoTIFF in metres. A configured file must pass coverage checks for the boundary and slope calculation margin. With this setting unset, the shared elevation adapter uses covering cached or public elevation. |
 
 After the application setup, install the CPU model dependencies into the app's Python environment and create a separate Python 3.12 environment for the classifier. Run these commands in PowerShell from the repository root.
 
@@ -38,7 +38,7 @@ py -3.12 -m venv $classifierEnv
 & (Join-Path $classifierEnv 'Scripts\python.exe') -m pip install -r requirements.txt scikit-image 'scikit-learn==1.8.0' 'joblib==1.5.3'
 ```
 
-Point `HELPS_RGB_SAM_PYTHON` to the app's `.venv\Scripts\python.exe` and `HELPS_RGB_CLASSIFIER_PYTHON` to the classifier environment's `Scripts\python.exe`. Set the four model asset paths in the table before submitting a build.
+Point `HELPS_RGB_SAM_PYTHON` to the app's `.venv\Scripts\python.exe` and `HELPS_RGB_CLASSIFIER_PYTHON` to the classifier environment's `Scripts\python.exe`. Put the model assets at the default locations or set their paths in `.env` before submitting a build.
 
 The original forest is scene-specific. Use the matched GeoSAM code and model artifact together. Existing accepted packages can be viewed without loading these models. [Segment Anything source](https://github.com/facebookresearch/segment-anything) · [Recovered GeoSAM source](https://github.com/Nehareddy1234/cv_ai_helps).
 

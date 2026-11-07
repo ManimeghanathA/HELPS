@@ -1,30 +1,28 @@
-# HELPS research manuscript
+# Bhadra segmentation research manuscript
 
-- **Review PDF** — [helps-ieee.pdf](helps-ieee.pdf), a two-column copy rendered from the manuscript with ReportLab because this workspace has no LaTeX engine.
-- **Editable journal source** — [helps-ieee.tex](helps-ieee.tex) uses the IEEEtran journal class. With a TeX distribution containing IEEEtran, run the command below from this folder. The reference list is embedded in the source.
-- **Figures** — [workflow](figures/workflow.png), [Raichur classification](figures/raichur-pilot.png), and [Raichur terrain screening](figures/raichur-screening.png). The two maps use local geospatial evidence. The captions credit WELL Labs, the Open Imagery Network, OpenAerialMap, and Copernicus DEM.
+- [Review PDF](helps-ieee.pdf) uses a two-column ReportLab layout because the workspace lacks a LaTeX engine.
+- [Editable journal source](helps-ieee.tex) uses the IEEEtran journal class with numbered references. From this directory, run the command below with a TeX distribution containing IEEEtran.
+- [Predicted classes and qualified footprints](figures/bhadra-segmentation.png) shows the same local window before and after overlaying the screening output.
+- [Locations and slope distribution](figures/bhadra-additions.png) covers all 2,810 segmentation-derived additions.
 
     latexmk -pdf -interaction=nonstopmode -halt-on-error helps-ieee.tex
 
-The manuscript uses a draft byline pending confirmation of authors and affiliations. Apply the target journal's requirements when preparing a submission.
+The byline is a draft pending confirmation of authors and affiliations.
 
-## Evidence and figure reproduction
+## Reproduce the figures
 
-Run the following from the checkout root with the project environment. The generator uses the already archived raster and GIS layers and writes all three PNGs.
+Run the generator from the checkout root with the project environment. The generator reads the saved vector layers and writes the two thematic PNGs. The figures contain no basemap tiles.
 
     .venv/Scripts/python.exe docs/paper/generate_figures.py
 
-The figures in this folder are ready to use. Recreating them requires the local files below. The prototype job files under .tmp may need to be restored from the originating workspace.
+The classified vectors and audited seed geometries are retained as local GIS artifacts. Restore the corresponding data folders before rerunning the generator.
 
 | Evidence | Location in the checkout |
 | --- | --- |
-| 512 m orthomosaic and fixed-segment recovered-forest result | data/experiments/raichur-geosam-pilot-2026-11-07/rgb_050m.tif and neha-original/raichur_results.gpkg |
-| Recovered-forest totals and verification | data/experiments/raichur-geosam-pilot-2026-11-07/neha-original/results.json, verification.json, and screening_decisions.csv |
-| Separate 512 m integrated legacy build and timings | data/knowledge/datasets/raichur-rgb-20250901-6c329e7c/segmentation.json and manifest.json |
-| 128 m prototype boundary, plan, tile outputs, slope, and screening audit | .tmp/raichur-district-worker-smoke/aoi.geojson and the adjacent job/ folder |
-| 128 m unified upload-to-review result | data/knowledge/datasets/rgb-rgb-workflow-validation-20250901-6ee09498/manifest.json, screening-audit.csv, and knowledge.gpkg |
-| Historical Bhadra delivery | docs/reviews/2026-10-21-vision-refinement-delivery.md |
+| Original classified polygons and Bhadra study boundary | data/probably_final.qgz/probably_final.gpkg, layers open_regions, other_regions, bhadra_boundary |
+| Qualified footprint vectors with lineage | data/knowledge/bhadra-cv-20260601-313234b7/refinement-input/candidate_seed.gpkg, layers candidate_seed and vision_extent |
+| Source decisions and screening parameters | data/knowledge/bhadra-cv-20260601-313234b7/refinement-input/geometry-decisions.jsonl and refinement-audit.json |
+| Selected knowledge package, terrain rasters, and full audit | data/knowledge/bhadra-cv-20260601-313234b7/knowledge.gpkg, preparation-terrain/, and delivery-validation.json |
+| Classification inventory and independent software checks | docs/reviews/2026-10-20/cv-final-geopackage-findings.md and docs/reviews/2026-10-21/vision-independent-validation.json |
 
-The 512 m Raichur working-image SHA-256 is 71f6630dcf57ea859ba2d3e02c7771223bc2f905be783564d81e3b130140999c. The original Bhadra forest SHA-256 is 6b20051872b1722fd09ff30b4ac9000eeffab3d61269cc3ffcebcb6a4b5239f8. The SAM ViT-H checkpoint SHA-256 is a7bf3b02f3ebf1267aba913ff637d9a2d5c33d3173bb679e46d9f338c26f262e.
-
-The archived Raichur imagery catalog identifies the local capture date and source item. OpenAerialMap's published CC BY 4.0 terms and the local capture record supply the attribution. Copernicus DEM attribution and terms appear in the manuscript. The historical Bhadra section reports package counts without redistributing its basemap imagery.
+The original classification GeoPackage SHA-256 is 575b980a4225eda768fd83fee29fbee2ae073bc8a578b8b256fb50290c14f634. The selected knowledge GeoPackage SHA-256 is 6f90f657eaec54a1c901b93907bd2a8f0e556264f6b976324a130c89ebbe883b. Figures and statistics select only rows with refinement_origin equal to vision_addition. The study used no independent ground truth for assessing classifications or candidate suitability.

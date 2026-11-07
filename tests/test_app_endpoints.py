@@ -81,19 +81,17 @@ def test_helicopter_model_and_mission_ranking(client):
     assert data_luh["mission"]["id"] == "immediate_emergency"
 
 
-def test_api_operational_regions(client):
+def test_api_operational_regions_uses_the_published_boundaries(client, monkeypatch):
+    from scripts.ui import unified_api
+    feature = {
+        "type": "Feature",
+        "properties": {"id": "bhadra_reserve", "region_id": "bhadra", "status": "ready"},
+        "geometry": {"type": "Polygon", "coordinates": [[[75, 13], [76, 13], [76, 14], [75, 13]]]},
+    }
+    monkeypatch.setattr(unified_api, "registered_region_features", lambda root: [feature])
     response = client.get("/api/operational-regions")
     assert response.status_code == 200
-    data = response.get_json()
-    assert data["type"] == "FeatureCollection"
-    assert len(data["features"]) >= 3
-    # Check green, yellow, red statuses
-    statuses = [f["properties"]["status"] for f in data["features"]]
-    assert all(s in ("ready", "under_consideration") for s in statuses)
-    assert "in_progress" not in statuses
-    assert "under_consideration" in statuses
-    # Verify geometry polygons have coordinates
-    assert all(len(f["geometry"]["coordinates"][0]) > 3 for f in data["features"])
+    assert response.get_json() == {"type": "FeatureCollection", "features": [feature]}
 
 
 def test_api_reload_zones(client):

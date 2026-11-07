@@ -36,19 +36,23 @@ You can close the browser or stop Flask during processing and return to **Build 
 
 ## Assess a landing opportunity
 
-Choose a region with accepted knowledge in **Map** or **Application**. **Candidates** lists terrain footprints and measured slope subregions. In **Application**, choose an aircraft and mission, enter coordinates or select a point on the map, set the search radius, then run the assessment.
+Select **Bhadra** in **Map** or **Application** after restoring the accepted package. **Candidates** lists terrain footprints and measured slope subregions. In **Application**, choose an aircraft and mission, enter coordinates or select a point on the map, set the search radius, then run the assessment. You can also select a region after accepting its RGB build.
 
 Open a result to see its footprint, score, evidence and checks that need verification. Known hard failures exclude a candidate. Research results can include candidates with unknown checks, and the engine can return zero opportunities. The score compares mission priorities using supported evidence and has no probabilistic interpretation. Candidate counts can change with coverage, imagery date, classification and terrain filters.
 
-## Evidence and example results
+## Bhadra case study
 
-The integrated RGB workflow continued after the Flask submitting process exited. On a 128 m × 128 m crop it produced two candidate terrain polygons and five threshold-specific slope subregions for review. The result demonstrates end-to-end processing on that crop. [Integration run and study boundary](docs/results/rgb-integration-2026-11-07.md).
+The accepted package for **Bhadra, Karnataka, India**, `bhadra-cv-20260601-313234b7`, contains **4,474 candidate polygons** and **25,931 measured slope subregions**. It combines **1,664 fragments** of previously retained candidates, refined with segmentation-derived exclusions, and **2,810 segmentation-derived additions** that passed geometry checks and a **12°** slope limit. The acquisition date of the high-resolution RGB imagery is unknown. The app opens this existing package from the local registry. New builds use the dated RGB upload workflow above. [Bhadra results and reproducibility](docs/results/bhadra-segmentation.md).
 
-The journal draft describes the workflow, the observed results and the validation still needed for accuracy and ranking claims. [IEEEtran manuscript](docs/paper/helps-ieee.tex) · [Two-column PDF](docs/paper/helps-ieee.pdf).
+![Bhadra detail maps showing predicted land-cover classes and candidate screening](docs/paper/figures/bhadra-segmentation.png)
 
-The RGB forest was developed on a different scene. Its labels can transfer imperfectly, particularly for crop cover and small obstacles. Public Copernicus GLO-30 elevation is a digital surface model at roughly 30 m and can include vegetation and structures. Neither input establishes ground firmness, complete obstacle or restriction coverage, or safe approach paths. [Elevation sources](docs/automatic-elevation.md) · [Vision model audit](docs/reviews/2026-10-20/cv-integration-assessment.md).
+![Regional map of the 2,810 Bhadra additions and histogram of their maximum slopes](docs/paper/figures/bhadra-additions.png)
 
-The restored **Bhadra** example `bhadra-cv-20260601-313234b7` is an accepted historical package with **4,474 terrain candidates** and **25,931 measured slope subregions**. Its Sentinel context is **2026-06-01** and its high-resolution vision imagery has an unknown acquisition date. The earlier **Raichur** pilot `raichur-rgb-20250901-6c329e7c` returned **zero** terrain candidates on its **2025-09-01** crop. These are results of earlier producers. The unified app builds new observations from dated RGB, and `data/knowledge/registry.json` records the selected packages in each local installation. [Bhadra delivery evidence](docs/reviews/2026-10-21-vision-refinement-delivery.md) · [Baseline recovery](docs/reviews/2026-10-18/neha-baseline-recovery.md).
+The regional map shows one point per added footprint.
+
+The journal draft describes the workflow, the Bhadra case study and the evidence needed to evaluate detection and ranking. [IEEEtran manuscript](docs/paper/helps-ieee.tex) · [Two-column PDF](docs/paper/helps-ieee.pdf) · [Evidence and figure reproduction](docs/paper/README.md).
+
+The RGB forest was developed for the Bhadra scene and may classify cover differently elsewhere. Bhadra uses a 30 m FABDEM terrain grid. New builds can use public Copernicus GLO-30 elevation, a surface model at roughly 30 m that can include vegetation and structures. Ground firmness, complete obstacle and restriction coverage, and safe approach paths require independent evidence. [Elevation sources](docs/automatic-elevation.md) · [Vision model audit](docs/reviews/2026-10-20/cv-integration-assessment.md).
 
 ## Repository and tests
 

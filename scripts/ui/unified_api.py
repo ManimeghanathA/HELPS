@@ -39,7 +39,7 @@ def registered_region_features(root):
     registry=json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
     features=[]
     for identity,region in region_records(root).items():
-        if identity=='raichur':continue
+        if identity=='bhadra' or identity.startswith('rgb-'):continue
         selected=registry.get('selected',{}).get(identity)
         current=registry.get('datasets',{}).get(selected,{})
         if current.get('region_id')!=identity:continue
@@ -51,7 +51,7 @@ def registered_region_features(root):
         geometry=frame.geometry.union_all()
         features.append({'type':'Feature','geometry':mapping(geometry),'properties':{'id':identity,'region_id':identity,'name':region['name'],'status':'ready','status_label':'Current knowledge available','dataset_id':selected,'date':current.get('date'),'center':[geometry.centroid.y,geometry.centroid.x]}})
     for identity,selected in registry.get('selected',{}).items():
-        if identity!='raichur' and not identity.startswith('rgb-'):continue
+        if identity!='bhadra' and not identity.startswith('rgb-'):continue
         current=registry.get('datasets',{}).get(selected,{})
         if current.get('region_id')!=identity:continue
         package=(root/Path(current['package_path'])).resolve()
@@ -67,8 +67,9 @@ def registered_region_features(root):
         geometry=gpd.GeoSeries([shape(aoi['geometry'])],crs=aoi['crs']).to_crs(4326).iloc[0]
         point=geometry.representative_point()
         features.append({'type':'Feature','geometry':mapping(geometry),'properties':{
-            'id':identity,'region_id':identity,'name':current.get('region_name') or (
-                'Raichur · historical pilot' if identity=='raichur' else identity[4:].replace('-',' ').title()),
+            'id':'bhadra_reserve' if identity=='bhadra' else identity,'region_id':identity,
+            'name':current.get('region_name') or (
+                'Bhadra, Karnataka' if identity=='bhadra' else identity[4:].replace('-',' ').title()),
             'status':'ready','dataset_id':selected,'date':current.get('date'),'center':[point.y,point.x]}})
     return features
 
@@ -153,7 +154,7 @@ def register_unified_api(app,root):
             if not identity:raise ValueError('Region name must contain letters or numbers')
             with _lock:
                 records=region_records(root)
-                if identity in ('bhadra','raichur') or identity in records:raise ValueError('A region with this name already exists')
+                if identity=='bhadra' or identity in records:raise ValueError('A region with this name already exists')
                 from scripts.pipeline.source_store import SourceStore
                 import shutil
                 store=SourceStore(root,identity,frame)

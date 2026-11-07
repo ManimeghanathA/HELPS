@@ -14,7 +14,6 @@ from .repository import _atomic_json
 from .sources import file_sha256
 
 TIMEOUT = 30 * 60
-PILOT = Path('data/experiments/raichur-geosam-pilot-2026-11-07')
 SAM_SHA256 = 'a7bf3b02f3ebf1267aba913ff637d9a2d5c33d3173bb679e46d9f338c26f262e'
 FOREST_SHA256 = '6b20051872b1722fd09ff30b4ac9000eeffab3d61269cc3ffcebcb6a4b5239f8'
 SETTINGS = dict(points_per_side=24, points_per_batch=8, pred_iou_thresh=.82,
@@ -25,20 +24,18 @@ def runtime_config(root):
     from dotenv import dotenv_values
 
     config = {**dotenv_values(root / '.env'), **os.environ}
-    local = Path.home() / 'AppData/Local/Temp'
-    sam = local / 'helps-raichur-geosam-20261107'
+    models = root / 'data/models'
     paths = dict(
-        sam_repo=Path(config.get('HELPS_RGB_SAM_REPO') or sam / 'segment-anything'),
-        checkpoint=Path(config.get('HELPS_RGB_SAM_CHECKPOINT') or sam / 'sam_vit_h_4b8939.pth'),
-        torch_packages=Path(config.get('HELPS_RGB_TORCH_PACKAGES') or local / 'helps-sentinel-sam-20261107/packages'),
-        classifier_packages=Path(config.get('HELPS_RGB_CLASSIFIER_PACKAGES') or local / 'helps-neha-classifier-runtime-20261107'),
+        sam_repo=Path(config.get('HELPS_RGB_SAM_REPO') or models / 'segment-anything'),
+        checkpoint=Path(config.get('HELPS_RGB_SAM_CHECKPOINT') or models / 'sam_vit_h_4b8939.pth'),
+        torch_packages=Path(config.get('HELPS_RGB_TORCH_PACKAGES') or models / 'torch-packages'),
+        classifier_packages=Path(config.get('HELPS_RGB_CLASSIFIER_PACKAGES') or models / 'classifier-packages'),
         geosam=Path(config.get('HELPS_RGB_GEOSAM_REPO') or root / 'data/reviews/2026-10-20-cv/repository'),
-        forest=Path(config.get('HELPS_RGB_FOREST') or root / PILOT / 'neha-original/scene_random_forest.joblib'),
+        forest=Path(config.get('HELPS_RGB_FOREST') or models / 'scene_random_forest.joblib'),
+        sam_python=Path(config.get('HELPS_RGB_SAM_PYTHON') or sys.executable),
+        classifier_python=Path(config.get('HELPS_RGB_CLASSIFIER_PYTHON') or sys.executable),
     )
-    python312 = local.parent / 'Programs/Python/Python312/python.exe'
-    paths['sam_python'] = Path(config.get('HELPS_RGB_SAM_PYTHON') or sys.executable)
-    paths['classifier_python'] = Path(config.get('HELPS_RGB_CLASSIFIER_PYTHON') or
-                                      (python312 if python312.is_file() else sys.executable))
+    paths = {key: (root / path).resolve() for key, path in paths.items()}
     for key in ('sam_repo', 'checkpoint', 'geosam', 'forest', 'sam_python', 'classifier_python'):
         if not paths[key].exists():
             raise ValueError(f'RGB model setup is missing {key}. See the RGB ingestion setup guide.')
@@ -56,7 +53,7 @@ def run_segmentation(root, folder, log):
                     ('infer', config['sam_python'], config['torch_packages']),
                     ('classify', config['classifier_python'], config['classifier_packages'])):
                 env = {**os.environ, 'PYTHONPATH': packages,
-                       'MPLCONFIGDIR': str(root / 'data/cache/raichur-matplotlib')}
+                       'MPLCONFIGDIR': str(root / 'data/cache/rgb-matplotlib')}
                 if phase == 'classify':
                     log('GeoSAM: composing and classifying segmentation masks')
                 command = [python, '-m', 'scripts.knowledge.rgb_model', phase, str(folder)]
@@ -81,7 +78,7 @@ def infer(folder):
     from segment_anything import SamAutomaticMaskGenerator, sam_model_registry
 
     if file_sha256(config['checkpoint']) != SAM_SHA256:
-        raise ValueError('SAM weights differ from the verified Raichur pilot weights.')
+        raise ValueError('SAM weights differ from the pinned checkpoint.')
     with rasterio.open(folder / 'rgb.tif') as src:
         rgb = src.read((1, 2, 3)).transpose(1, 2, 0)
     start = perf_counter()
@@ -117,7 +114,7 @@ def classify_masks(folder):
     if sklearn.__version__ != '1.8.0':
         raise ValueError('The original forest requires scikit-learn 1.8.0.')
     if file_sha256(config['forest']) != FOREST_SHA256:
-        raise ValueError('Classifier weights differ from the verified Raichur pilot weights.')
+        raise ValueError('Classifier weights differ from the pinned GeoSAM model.')
     with rasterio.open(folder / 'rgb.tif') as src:
         rgb = src.read((1, 2, 3)).transpose(1, 2, 0)
         transform, crs = src.transform, src.crs
