@@ -44,7 +44,7 @@ The original forest is scene-specific. Use the matched GeoSAM code and model art
 
 ## Track and review a build
 
-Start the job in **Build knowledge**. One RGB worker runs at a time. The detached Windows process persists progress under `data/knowledge/rgb-jobs/` so that you can close the browser and later reopen the job list. Keep Windows awake while the build runs. If the job is interrupted or fails, inspect its reported error before resuming. A resumed job can reuse verified tile checkpoints from the original inputs.
+Start the job in **Build knowledge**. One RGB worker runs at a time. The detached Windows process persists progress under `data/knowledge/rgb-jobs/` so that you can close the browser, stop Flask and later reopen the job list. Keep Windows awake while the build runs. If the job is interrupted or fails, inspect its reported error before resuming. A resumed job can reuse verified tile checkpoints from the original inputs.
 
 The finished job is pending review. Open the preview to compare it with the current dataset and see the candidate area, geometry, slope and source completeness. Confirm the proposal to make it current for the region, or reject it. A rejected job retains its artifacts and the current selection. A valid run can finish with zero candidates.
 

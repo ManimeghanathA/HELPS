@@ -8,10 +8,12 @@ HELPS is a local research tool. Its candidates require independent verification 
 
 From an existing checkout with Python and the local data in place, run `.\launch.ps1` in PowerShell and open [HELPS on localhost](http://127.0.0.1:5000). Use `.\launch.ps1 -Port 5001` to change the port.
 
-For a fresh checkout, install Git, Git LFS and Python 3.10, then run these commands from the repository root.
+For a fresh checkout, install Git, Git LFS and Python 3.10, then run these commands in PowerShell.
 
 ```powershell
 git lfs install
+git clone --branch codex/unified-helps https://github.com/ManimeghanathA/HELPS.git
+Set-Location HELPS
 git lfs pull
 py -3.10 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
@@ -30,7 +32,7 @@ To open a previously accepted dataset on another computer, restore the matching 
 3. Start the build and follow its status in the job list. The detached Windows worker tiles the image with overlap, uses SAM to propose regions and the GeoSAM random forest to classify them, and stitches class 3 and 4 seed geometry across tile boundaries. It reuses or acquires covering elevation, retains valid terrain at or below **15°**, applies the shared geometry and clearance rules, and builds a knowledge package for review.
 4. Open the finished job's preview and inspect the map, candidate measurements and source limits. Confirm the proposal to select it for that region, or reject it. A pending or failed job leaves the previously selected dataset in use.
 
-You can close the browser during processing and return to **Build knowledge** later. Keep Windows running. Job status, resume behavior and review API calls are documented in the [RGB ingestion guide](docs/rgb-ingestion.md#track-and-review-a-build).
+You can close the browser or stop Flask during processing and return to **Build knowledge** later. Keep Windows awake. Job status, resume behavior and review API calls are documented in the [RGB ingestion guide](docs/rgb-ingestion.md#track-and-review-a-build).
 
 ## Assess a landing opportunity
 
@@ -39,6 +41,10 @@ Choose a region with accepted knowledge in **Map** or **Application**. **Candida
 Open a result to see its footprint, score, evidence and checks that need verification. Known hard failures exclude a candidate. Research results can include candidates with unknown checks, and the engine can return zero opportunities. The score compares mission priorities using supported evidence and has no probabilistic interpretation. Candidate counts can change with coverage, imagery date, classification and terrain filters.
 
 ## Evidence and example results
+
+The integrated RGB workflow continued after the Flask submitting process exited. On a 128 m × 128 m crop it produced two candidate terrain polygons and five threshold-specific slope subregions for review. The result demonstrates end-to-end processing on that crop. [Integration run and study boundary](docs/results/rgb-integration-2026-11-07.md).
+
+The journal draft describes the workflow, the observed results and the validation still needed for accuracy and ranking claims. [IEEEtran manuscript](docs/paper/helps-ieee.tex) · [Two-column PDF](docs/paper/helps-ieee.pdf).
 
 The RGB forest was developed on a different scene. Its labels can transfer imperfectly, particularly for crop cover and small obstacles. Public Copernicus GLO-30 elevation is a digital surface model at roughly 30 m and can include vegetation and structures. Neither input establishes ground firmness, complete obstacle or restriction coverage, or safe approach paths. [Elevation sources](docs/automatic-elevation.md) · [Vision model audit](docs/reviews/2026-10-20/cv-integration-assessment.md).
 

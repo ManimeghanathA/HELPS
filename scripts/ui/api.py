@@ -10,7 +10,7 @@ from .rgb_jobs import RgbJobs
 
 KINDS={'aoi','dem','spectral','scl','osm','buildings','landcover','restriction','candidate_seed','reviewed_exclusions','water','industrial','facilities','roads'}
 
-def register_api(app, root):
+def register_api(app, root, *, legacy_authoring=True):
     bp=Blueprint('knowledge_ui',__name__); repository_cache={};terrain_cache={};repository_lock=RLock();root=Path(root).resolve(); managed=root/'data/knowledge'; assets=managed/'sources'; rgb_jobs=RgbJobs(root); jobs=JobManager(storage_dir=managed/'jobs',external=rgb_jobs)
     from scripts.knowledge.review import BuildReview
     reviews=BuildReview(managed,jobs)
@@ -24,6 +24,15 @@ def register_api(app, root):
         if request.remote_addr not in ('127.0.0.1','::1'):return jsonify(error='Engineering is restricted to loopback'),403
         origin=request.headers.get('Origin')
         if origin and urlparse(origin).netloc!=request.host:return jsonify(error='Same local origin required'),403
+    if not legacy_authoring:
+        @bp.before_request
+        def require_rgb_authoring():
+            endpoint=(request.endpoint or '').rsplit('.',1)[-1]
+            if endpoint in {'imagery_search','history_import','named_build','register_source',
+                            'upload','submit','enrich_current'}:
+                denied=guard()
+                if denied:return denied
+                return jsonify(error='New knowledge builds use dated RGB. Submit GeoJSON and RGB through Build knowledge.'),410
     def package(dataset_id):
         record=registry()['datasets'].get(dataset_id)
         if not record:raise LookupError('Published dataset not found')

@@ -37,7 +37,7 @@ def workspace(role):
     return render_template("unified.html")
 
 from scripts.ui.api import register_api
-register_api(app, Path(__file__).parent)
+register_api(app, Path(__file__).parent, legacy_authoring=False)
 from scripts.ui.unified_api import register_unified_api
 from scripts.ui.analysis_jobs import register_analysis_api
 register_unified_api(app, Path(__file__).parent)
