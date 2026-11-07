@@ -9,6 +9,12 @@
 
 .section-heading{margin-bottom:30px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:15px}.section-heading>.eyebrow,.section-heading>h1,.section-heading>p{flex-basis:100%}.section-heading .eyebrow{margin-bottom:12px}.section-heading h1{font-size:38px}.section-heading p{font-size:13px;color:var(--muted)}.application-map.map-canvas{height:760px}.build-grid aside{min-width:0}.build-grid p{font-size:12px}.build-grid h2{font-size:22px}.build-inventory td{overflow-wrap:anywhere}.build-grid .panel .panel{margin-top:12px;padding:16px}
 @media(max-width:760px){.build-grid,.field-grid{grid-template-columns:1fr}.application-map.map-canvas{height:500px}.section-heading h1{font-size:30px}.build-inventory{font-size:10px}.section-heading{margin-bottom:24px}}
+.build-grid{align-items:start}
+.build-grid .scan-card{overflow-wrap:anywhere}
+.build-grid .scan-card .badge{margin:0 0 6px 4px}
+.build-grid .scan-card button{margin-top:8px}
+.build-grid .scan-card progress{display:block}
+.build-grid .build-status:last-child{margin:0;padding-bottom:0}
 
 .candidate-evidence{max-height:560px;overflow:auto;margin-top:20px;padding-right:10px}.region-shortcut{font-size:12px;padding:7px 13px;margin-right:6px;border-color:var(--teal);color:var(--ink)}body[data-theme=light] .eyebrow,body[data-theme=light] .candidate-id,body[data-theme=light] .site-header nav button.active{color:#507422}
 /* Flight visuals: shared map symbol, clock scene and mechanically centred loader. */

@@ -8,10 +8,11 @@ from pathlib import Path
 import json
 
 class JobManager:
-    def __init__(self, workers=1, capacity=3, storage_dir=None):
+    def __init__(self, workers=1, capacity=3, storage_dir=None, external=None):
         self.executor=ThreadPoolExecutor(max_workers=workers,thread_name_prefix='knowledge-build')
         self.capacity=capacity; self.jobs={}; self.lock=Lock()
         self.storage_dir=Path(storage_dir) if storage_dir else None
+        self.external=external
         if self.storage_dir:
             for path in self.storage_dir.glob('*.json'):
                 try:
@@ -68,12 +69,15 @@ class JobManager:
             self._persist(job)
     def update_review(self,job_id,review):
         with self.lock:
+            if job_id not in self.jobs and self.external:
+                return self.external.update_review(job_id,review)
             updated={**self.jobs[job_id],'review':deepcopy(review)}
             self._persist(updated);self.jobs[job_id]=updated
     def list(self,region_id=None,include_unfinished=False):
         with self.lock:
-            return deepcopy([j for j in self.jobs.values() if (region_id is None or j.get('region_id')==region_id) and ((isinstance(j.get('result'),dict) and j['result'].get('package_path')) or (include_unfinished and j['status'] in ('queued','running')))])
+            rows=list(self.jobs.values())+(self.external.list() if self.external else [])
+            return deepcopy([j for j in rows if (region_id is None or j.get('region_id')==region_id) and ((isinstance(j.get('result'),dict) and j['result'].get('package_path')) or (include_unfinished and j['status'] in ('queued','running')))])
     def get(self,job_id):
         with self.lock:
             j=self.jobs.get(job_id)
-            return deepcopy(j) if j else None
+            return deepcopy(j) if j else (self.external.get(job_id) if self.external else None)

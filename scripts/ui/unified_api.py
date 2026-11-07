@@ -39,6 +39,7 @@ def registered_region_features(root):
     registry=json.loads(path.read_text(encoding='utf-8')) if path.exists() else {}
     features=[]
     for identity,region in region_records(root).items():
+        if identity=='raichur':continue
         selected=registry.get('selected',{}).get(identity)
         current=registry.get('datasets',{}).get(selected,{})
         if current.get('region_id')!=identity:continue
@@ -49,6 +50,26 @@ def registered_region_features(root):
         frame=gpd.read_file(boundary,layer=region['aoi'].get('layer') or None).to_crs(4326)
         geometry=frame.geometry.union_all()
         features.append({'type':'Feature','geometry':mapping(geometry),'properties':{'id':identity,'region_id':identity,'name':region['name'],'status':'ready','status_label':'Current knowledge available','dataset_id':selected,'date':current.get('date'),'center':[geometry.centroid.y,geometry.centroid.x]}})
+    for identity,selected in registry.get('selected',{}).items():
+        if identity!='raichur' and not identity.startswith('rgb-'):continue
+        current=registry.get('datasets',{}).get(selected,{})
+        if current.get('region_id')!=identity:continue
+        package=(root/Path(current['package_path'])).resolve()
+        if not package.is_relative_to(root/'data/knowledge') or not package.is_file():continue
+        import geopandas as gpd
+        import sqlite3
+        from contextlib import closing
+        from shapely.geometry import mapping, shape
+        with closing(sqlite3.connect(package.as_uri()+'?mode=ro',uri=True)) as db:
+            record=db.execute('SELECT record_json FROM aois WHERE region_id=?',(identity,)).fetchone()
+        if not record:continue
+        aoi=json.loads(record[0])
+        geometry=gpd.GeoSeries([shape(aoi['geometry'])],crs=aoi['crs']).to_crs(4326).iloc[0]
+        point=geometry.representative_point()
+        features.append({'type':'Feature','geometry':mapping(geometry),'properties':{
+            'id':identity,'region_id':identity,'name':current.get('region_name') or (
+                'Raichur · historical pilot' if identity=='raichur' else identity[4:].replace('-',' ').title()),
+            'status':'ready','dataset_id':selected,'date':current.get('date'),'center':[point.y,point.x]}})
     return features
 
 
@@ -104,7 +125,8 @@ def register_unified_api(app,root):
     @bp.get('/api/knowledge/regions')
     def regions():
         rows=[{'region_id':'bhadra','name':'Bhadra','existing':True}]
-        rows.extend({k:v for k,v in row.items() if k not in ('aoi',)} for row in region_records(root).values())
+        rows.extend({k:v for k,v in row.items() if k!='aoi'}
+                    for row in region_records(root).values())
         return jsonify(regions=rows)
     @bp.post('/api/knowledge/regions')
     def upload_region():
@@ -131,7 +153,7 @@ def register_unified_api(app,root):
             if not identity:raise ValueError('Region name must contain letters or numbers')
             with _lock:
                 records=region_records(root)
-                if identity=='bhadra' or identity in records:raise ValueError('A region with this name already exists')
+                if identity in ('bhadra','raichur') or identity in records:raise ValueError('A region with this name already exists')
                 from scripts.pipeline.source_store import SourceStore
                 import shutil
                 store=SourceStore(root,identity,frame)

@@ -1,103 +1,314 @@
-(function(root){'use strict';
+(function(root) {
+'use strict';
 
-const cloud=row=>{const measured=row?.qa_state==='measured',value=measured?row.cloud_shadow_fraction:row?.cloud_fraction;return value==null?'Cloud interference unknown':(Number(value)*100).toFixed(1)+'% '+(measured?'AOI cloud / shadow · measured':'product cloud · metadata only')+(measured&&row.coverage_fraction!=null?' · '+(Number(row.coverage_fraction)*100).toFixed(2)+'% AOI observed; remaining area unknown':'');};
+const reviewActions = (decision, previewReady) => ({
+  accept: decision === 'pending' && previewReady,
+  reject: decision === 'pending'
+});
 
-const scanHistory=data=>[...new Map([...data.versions,...data.history].filter(r=>r.date!==data.current_date).map(r=>[r.date,r])).values()];
+if (typeof module !== 'undefined') module.exports = {reviewActions};
+if (!root.document || !root.HELPS) return;
 
-const today=()=>new Date().toLocaleDateString('en-CA');
+const H = root.HELPS;
+const E = H.esc;
+const $ = id => root.document.getElementById(id);
+const panel = $('build-panel');
+if (!panel) return;
 
-const sourceOptions=(rows,slot,date)=>rows.filter(s=>s.available&&(s.slot===slot||(slot==='buildings'&&s.slot==='osm_buildings')||(slot==='restrictions'&&s.slot==='restriction'))&&(!['spectral','scl'].includes(slot)||!date||!s.date||s.date===date));
+panel.innerHTML = `
+  <div class="section-heading">
+    <p class="eyebrow">OFFLINE KNOWLEDGE</p>
+    <h1>Build regional knowledge</h1>
+    <p>Upload a boundary and dated RGB imagery. Review the resulting candidate polygons before publishing them.</p>
+  </div>
+  <div class="build-grid">
+    <section class="panel build-section">
+      <h2>New RGB build</h2>
+      <form id="build-form">
+        <div class="field-grid">
+          <label class="field">Region name
+            <input name="name" required maxlength="80" placeholder="A name you recognise">
+          </label>
+          <label class="field">Capture date
+            <input name="date" type="date" required aria-describedby="build-date-help">
+            <small id="build-date-help">Use the date the image was captured.</small>
+          </label>
+        </div>
+        <label class="field">Region boundary
+          <input name="boundary" type="file" accept=".geojson,.json,application/geo+json" required aria-describedby="build-boundary-help">
+          <small id="build-boundary-help">GeoJSON Polygon or MultiPolygon. Up to 2 MiB, 4 km², and 8 km across.</small>
+        </label>
+        <label class="field">RGB GeoTIFF
+          <input name="image" type="file" accept=".tif,.tiff,image/tiff" required aria-describedby="build-image-help">
+          <small id="build-image-help">One georeferenced 8-bit RGB or RGBA image, up to 256 MiB, with valid pixels covering the entire boundary.</small>
+        </label>
+        <label class="field">Working resolution
+          <select name="resolution_m" aria-describedby="build-resolution-help">
+            <option value="">Automatic from imagery</option>
+            <option value="0.5">0.5 metres per pixel</option>
+            <option value="1">1 metre per pixel</option>
+            <option value="2">2 metres per pixel</option>
+          </select>
+          <small id="build-resolution-help">Processing uses 0.5 to 2 metres per pixel and up to 32 tiles. Choose a resolution at least as coarse as the source imagery.</small>
+        </label>
+        <button id="build-start" type="submit" class="primary">Start processing</button>
+      </form>
+      <p class="build-status" id="build-progress" role="status">After the build is queued, you can close HELPS. Keep this computer awake while the worker runs.</p>
+    </section>
+    <section class="panel build-section">
+      <h2>Build jobs</h2>
+      <p class="muted">Processing progress and review decisions are saved on the server.</p>
+      <button id="build-refresh" type="button">Refresh jobs</button>
+      <div id="build-job-status" class="build-status" role="status"></div>
+      <div id="build-jobs" class="scan-list"></div>
+    </section>
+  </div>
+  <section id="build-review" class="build-review" aria-label="Build review"></section>`;
 
-const keepBuildDate=(value,min,max,sameRegion)=>sameRegion&&value&&(!min||value>=min)&&value<=max?value:'';
+const form = $('build-form');
+const jobsElement = $('build-jobs');
+const reviewElement = $('build-review');
+const listGate = H.requestGate();
+const reviewGate = H.requestGate();
+const activeJob = job => ['queued', 'running'].includes(job.status);
+const jobPath = id => '/api/knowledge/jobs/' + encodeURIComponent(id);
+const setStatus = message => { $('build-progress').textContent = message; };
+let pollTimer, reviewMap;
 
-const reviewActions=(decision,previewReady)=>({accept:decision==='pending'&&previewReady,reject:decision==='pending'});
+const captureCalendar = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit'
+});
+const calendarParts = Object.fromEntries(captureCalendar.formatToParts(new Date()).map(part => [part.type, part.value]));
+form.elements.date.max = [calendarParts.year, calendarParts.month, calendarParts.day].join('-');
 
-function inputReadinessHTML(rows,E,staticOnly=false){const actions={reuse_processed:'Reusing processed',process_raw:'Process existing raw',download:'Download required'};return '<div class="input-readiness">'+rows.map(r=>`<article class="input-source"><strong>${E(r.kind==='overture'?'Overture buildings':r.kind==='osm'?'OSM obstacles':r.kind==='dem'?'Elevation':r.kind==='landcover'?'Land cover':r.kind==='sentinel'?'Sentinel-2':r.kind)}</strong><span class="input-action">${E(staticOnly&&r.kind!=='sentinel'&&r.action==='download'?'Local baseline missing — scan blocked':actions[r.action]||r.action)}</span><small>Source date: ${E(r.metadata?.observation_date||r.metadata?.source_timestamp?.slice(0,10)||r.metadata?.snapshot_date||r.metadata?.reference_year||'Unknown')}${r.refresh_requested?' · Refresh requested':''}</small><details><summary>Storage & source details</summary><p>Raw destination<br><code>${E(r.raw_directory)}</code></p><p>Processed destination<br><code>${E(r.processed_directory)}</code></p>${(r.access||[]).map(a=>`<p>${E(a.key)}<br><code>${E(a.location)}</code><br><button type="button" data-copy-input="${E(a.location)}">Copy location</button> <button type="button" data-download-input="${E(a.download_url)}" data-input-name="${E(a.location.split(/[\\/]/).pop())}">Download file</button></p>`).join('')}<p>${E(r.metadata?.date_status||r.metadata?.coverage_note||'Required evidence is validated again before the build starts.')}</p></details></article>`).join('')+'</div>';}
+function jobCard(job) {
+  const region = job.region_name || String(job.region_id || '').replace(/^rgb-/, '');
+  const percent = job.progress?.percent;
+  const decision = job.review?.decision;
+  const state = {
+    queued: 'Queued', running: 'Processing', completed: 'Completed', failed: 'Failed'
+  }[job.status];
+  const label = {
+    pending: 'Ready for review', accepted: 'Accepted', rejected: 'Rejected'
+  }[decision] || state;
+  return `<article class="scan-card">
+    <strong>${E(region)} · ${E(job.date)}</strong> <span class="badge">${E(label)}</span>
+    ${job.stage ? `<div>${E(job.stage)}</div>` : ''}
+    ${activeJob(job) && Number.isFinite(percent) ? `<div><progress value="${percent}" max="100" aria-label="Build progress"></progress><small>${percent}%</small></div>` : ''}
+    ${job.error ? `<div class="error">${E(job.error)}</div>` : ''}
+    ${decision === 'pending' ? `<button type="button" data-review-job="${E(job.job_id)}">Review polygons</button>` : ''}
+    ${job.status === 'failed' && job.resumable !== false ? `<button type="button" data-resume-job="${E(job.job_id)}">Retry processing</button>` : ''}
+  </article>`;
+}
 
-const sourceSlots=mode=>mode==='date_only'?[]:['dem','restrictions',...(mode==='acquire'?[]:['spectral','scl','water','industrial','facilities','buildings']),...(mode==='retained'?['retained_seed']:[])];
-const sourceMethodHelp=mode=>mode==='date_only'?'Download only the selected date’s Sentinel imagery. Reuse Bhadra’s validated local boundary, elevation, OSM, buildings, land cover and restriction data. New polygons remain pending until you review and confirm them.':mode==='acquire'?'Recommended for a new scan: reuse valid inputs and download only missing imagery and mapped obstacles.':mode==='import'?'Advanced: use your own date-matched imagery and obstacle files. Required files must be selected below.':'Advanced: keep saved polygon boundaries and recalculate their features. This does not detect new polygons; date-matched observation evidence is still required.';
-function searchWarnings(errors){const quality=errors.filter(e=>e.stage==='scl_quality'),other=[...new Set(errors.filter(e=>e.stage!=='scl_quality').map(e=>e.error))];return [...(quality.length?[`Cloud inspection unavailable for ${quality.length} shortlisted dates. Available dates still show catalog cloud estimates; local cloud cover is unverified.`]:[]),...other];}
-if(typeof module!=='undefined')module.exports={cloud,sourceOptions,keepBuildDate,scanHistory,reviewActions,inputReadinessHTML,sourceSlots,sourceMethodHelp,searchWarnings};
+let renderedJobs;
+async function refreshJobs() {
+  clearTimeout(pollTimer);
+  const token = listGate.begin();
+  const status = $('build-job-status');
+  let pollAgain = false;
+  try {
+    const {jobs} = await H.api('/api/knowledge/rgb/jobs');
+    if (!listGate.current(token)) return;
+    const ordered = [...jobs].sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
+    const html = ordered.map(jobCard).join('');
+    if (html !== renderedJobs) {
+      const focused = root.document.activeElement?.dataset;
+      const focusedKey = focused?.reviewJob || focused?.resumeJob;
+      jobsElement.innerHTML = html;
+      if (focusedKey) {
+        const buttons = [...jobsElement.querySelectorAll('[data-review-job], [data-resume-job]')];
+        buttons.find(button => button.dataset.reviewJob === focusedKey || button.dataset.resumeJob === focusedKey)?.focus();
+      }
+      renderedJobs = html;
+    }
+    status.textContent = jobs.length ? '' : 'No RGB builds yet.';
+    pollAgain = jobs.some(activeJob);
+  } catch (error) {
+    if (!listGate.current(token)) return;
+    status.textContent = 'Could not refresh jobs. ' + error.message;
+    pollAgain = true;
+  } finally {
+    if (pollAgain && listGate.current(token) && !panel.hidden) {
+      pollTimer = setTimeout(refreshJobs, 2000);
+    }
+  }
+}
 
-if(!root.document||!root.HELPS)return;
+async function submitBuild(event) {
+  event.preventDefault();
+  const button = $('build-start');
+  if (button.disabled) return;
+  const body = new FormData(form);
+  if (body.get('boundary').size > 2 * 1024 ** 2) {
+    setStatus('The boundary exceeds 2 MiB.');
+    return;
+  }
+  if (body.get('image').size > 256 * 1024 ** 2) {
+    setStatus('The RGB GeoTIFF exceeds 256 MiB.');
+    return;
+  }
+  if (!body.get('resolution_m')) body.delete('resolution_m');
+  button.disabled = true;
+  setStatus('Uploading and validating the boundary and imagery…');
+  try {
+    await H.api('/api/knowledge/rgb/build', {method: 'POST', body});
+    form.reset();
+    setStatus('Build queued. Follow its progress under Build jobs.');
+    await refreshJobs();
+  } catch (error) {
+    setStatus(error.message);
+  } finally {
+    button.disabled = false;
+  }
+}
 
-const H=root.HELPS,E=H.esc;let region='bhadra',workflow=null,generation=0,job=null,search=null,reviewMap=null,inventoryRequest=null;const reviewGate=H.requestGate(),inputGate=H.requestGate();
+function closeReview() {
+  reviewGate.begin();
+  reviewMap?.destroy();
+  reviewMap = null;
+  reviewElement.replaceChildren();
+}
 
-H.ready.then(async()=>{
+async function showBuildReview(id) {
+  closeReview();
+  const token = reviewGate.begin();
+  const path = jobPath(id);
+  setStatus('Loading the proposed map…');
+  const {proposed, current, decision, validation, source_completeness, temporal_summary, parameters, evidence_note} =
+    await H.api(path + '/preview');
+  if (!reviewGate.current(token)) return;
+  reviewElement.innerHTML = `<div class="panel build-section">
+    <p class="eyebrow">UNPUBLISHED BUILD REVIEW</p>
+    <h2>Inspect the proposed candidate polygons</h2>
+    <div class="review-metrics">
+      <div><strong>${proposed.candidate_count.toLocaleString()}</strong><span>Proposed candidates</span></div>
+      <div><strong>${proposed.slope_zone_count.toLocaleString()}</strong><span>Measured slope subregions</span></div>
+      <div><strong>${(proposed.total_area_m2 / 1e6).toFixed(3)} km²</strong><span>Candidate area</span></div>
+      <div><strong>${E(proposed.date)}</strong><span>Capture date</span></div>
+    </div>
+    <p>${current.date ? `Current observation ${E(current.date)}` : 'This is the first observation for this region.'}${current.counts ? ' · ' + current.counts.terrain.toLocaleString() + ' candidates' : ''}</p>
+    <p class="muted">Proposed dataset <code>${E(proposed.dataset_id)}</code></p>
+    <div class="review-layout">
+      <div>
+        <div id="build-preview-map" class="build-preview-map" aria-label="Proposed candidate polygons"></div>
+        <p id="build-preview-status" role="status">Loading complete polygon boundaries…</p>
+      </div>
+      <div>
+        <h3>Selected candidate</h3>
+        <div id="build-preview-detail" class="review-feature">Select a polygon to inspect its features.</div>
+      </div>
+    </div>
+    <details>
+      <summary>Validation and source details</summary>
+      ${H.featureCard({validation, source_completeness, temporal_summary, parameters, evidence_note})}
+    </details>
+    <div class="review-decisions">
+      <button id="build-accept" type="button" disabled>${current.dataset_id ? 'Confirm replacement' : 'Accept and publish'}</button>
+      <button id="build-reject" type="button" ${reviewActions(decision, false).reject ? '' : 'disabled'}>Reject this build</button>
+      <button id="build-close" type="button">Close review</button>
+      <span id="build-decision-status" role="status"></span>
+    </div>
+  </div>`;
 
- const panel=document.getElementById('build-panel');if(!panel)return;
+  const accept = $('build-accept');
+  const reject = $('build-reject');
+  const previewStatus = $('build-preview-status');
+  const decisionStatus = $('build-decision-status');
+  let previewToken;
+  let deciding = false;
 
- panel.innerHTML=`<div class="section-heading"><p class="eyebrow">OFFLINE KNOWLEDGE</p><h1>Build a clearer picture.</h1><p>Choose a newer observation date for Bhadra. Download Sentinel imagery and rebuild candidates using the saved local baseline.</p></div>
+  async function decide(action) {
+    if (!reviewGate.current(token) || deciding) return;
+    deciding = true;
+    accept.disabled = reject.disabled = true;
+    try {
+      await H.post(path + '/' + action, action === 'accept' ? {preview_token: previewToken} : {});
+    } catch (error) {
+      if (reviewGate.current(token)) {
+        decisionStatus.textContent = error.message + ' Close and reopen the review to try again.';
+      }
+      return;
+    }
+    if (action === 'accept') root.dispatchEvent(new CustomEvent('helps:datasets-changed'));
+    if (reviewGate.current(token)) {
+      closeReview();
+      setStatus(action === 'accept' ? 'Build accepted and published.' : 'Build rejected.');
+    }
+    await refreshJobs();
+  }
 
- <div class="build-grid"><div><section class="panel build-section"><h2>Bhadra · saved region</h2><p class="muted">The boundary and supporting terrain data are already saved. Only the observation date changes.</p><label hidden>Region of interest<select id="build-region"></select></label><details hidden><summary>Add a new region</summary><form id="build-region-form"><label>Region name<input name="name" maxlength="80" required placeholder="A name you recognise"></label><label>Polygon boundary<input name="file" type="file" accept=".geojson,.json,.gpkg" required></label><p class="muted">GeoJSON or GeoPackage with a declared CRS and valid Polygon or MultiPolygon. Maximum 400 km² / 20 MB. GeoPackage files should contain the intended boundary as their default layer.</p><button>Add region</button></form></details></section>
+  reject.onclick = () => decide('reject');
+  $('build-close').onclick = closeReview;
+  if (!panel.hidden) {
+    reviewElement.scrollIntoView({
+      behavior: root.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'start'
+    });
+  }
 
- <section class="panel build-section"><h2>2. Find an observation</h2><p id="build-range"></p><button id="build-search">Search best date each month</button><label class="cloud-check"><input id="build-inspect-clouds" type="checkbox"> Also verify clouds inside the region (slower)</label><p class="muted">Default search ranks actual acquisition dates by catalog cloud estimates. Optional inspection measures the region using scene-classification pixels.</p><details><summary>Import an older historical scan</summary><label>History search from<input id="build-history-start" type="date"></label><button id="build-history-search">Search historical dates</button><p class="muted">Historical imports add dated reference evidence and preserve the current dataset.</p></details><div id="build-search-results"></div></section>
+  try {
+    const collection = await H.api(path + '/preview?format=geojson');
+    if (!reviewGate.current(token)) return;
+    reviewMap = H.mapFactory('build-preview-map', {onCandidate: feature => {
+      reviewMap.focus(feature);
+      $('build-preview-detail').innerHTML = H.featureCard(feature.properties);
+    }});
+    if (collection.boundary) reviewMap.showRegion(collection.boundary);
+    if (collection.features.length) {
+      if (!collection.boundary) reviewMap.showOnly(collection.features[0]);
+      reviewMap.showCandidates(collection);
+      previewStatus.textContent = collection.features.length.toLocaleString() + ' candidate boundaries loaded.';
+    } else {
+      previewStatus.textContent = 'This build found no candidate polygons.';
+    }
+    reviewMap.invalidate();
+    previewToken = collection.preview_token;
+    const latestDecision = collection.decision || decision;
+    if (!deciding) {
+      const actions = reviewActions(latestDecision, Boolean(previewToken));
+      accept.disabled = !actions.accept;
+      reject.disabled = !actions.reject;
+      accept.onclick = () => decide('accept');
+      decisionStatus.textContent = latestDecision === 'pending' ? 'Choose whether to publish this build.' : H.title(latestDecision);
+      setStatus('Review the proposed candidate polygons below.');
+    }
+  } catch (error) {
+    if (reviewGate.current(token)) {
+      previewStatus.textContent = error.message;
+      setStatus('Could not load the proposed polygons.');
+    }
+  }
+}
 
- <section class="panel build-section"><h2>3. Create candidates for a new date</h2><form id="build-form"><div class="field-grid"><label>Observation date<input id="build-date" type="date" required></label><label hidden>Source method<select id="build-mode"><option value="date_only">Bhadra · date-only scan</option><option value="acquire">Automatic preparation (recommended)</option><option value="import">Use my own source files (advanced)</option><option value="retained">Recalculate saved polygons (advanced)</option></select></label></div><p class="muted">The date must be later than the current observation and no later than today. Existing terrain and obstacle sources stay local. All polygon features, slope analysis and scoring inputs are retained. A fresh scan can produce different polygons; review is required before replacement.</p><p id="build-method-help" class="muted"></p><div id="build-sources"></div><p class="muted">Previously rejected polygons remain excluded automatically. These corrections are separate from restriction-area evidence.</p><button id="build-upload-restrictions" type="button" hidden>Upload restriction / exclusion areas</button><section class="input-storage"><h3>Input readiness & storage</h3><p class="muted">Sentinel is the only source this scan can download. Supporting data must already be available locally; a missing or damaged baseline stops the scan.</p><label hidden><input id="build-refresh-obstacles" type="checkbox"> Refresh OSM and Overture snapshots</label><p class="muted">OSM, Overture, elevation and land cover are reused with their recorded source dates.</p><button id="build-check-inputs" type="button">Check local inputs</button><div id="build-input-readiness" role="status">Choose an observation date to inspect local inputs.</div></section><button id="build-start">Start processing</button></form><details id="build-upload-details" hidden><summary>Upload a source file</summary><form id="build-upload"><label>Evidence type<select name="kind"><option value="dem">Elevation (GeoTIFF, metres)</option><option value="spectral">Spectral imagery (GeoTIFF)</option><option value="scl">Sentinel scene classification (GeoTIFF)</option><option value="buildings">Building footprints (GeoJSON / GeoPackage)</option><option value="water">Water polygons</option><option value="industrial">Industrial exclusions</option><option value="facilities">Facility exclusions</option><option value="roads">Roads</option><option value="restriction">Restriction / exclusion areas</option><option value="reviewed_exclusions">Rejected saved polygon IDs (advanced)</option><option value="candidate_seed">Retained candidate polygons</option></select></label><label>Evidence reference date<input name="date" type="date" required></label><label>Evidence file<input name="file" type="file" accept=".tif,.tiff,.geojson,.gpkg,.json" required></label><label>GeoPackage layer (if needed)<input name="layer"></label><p class="muted">Spectral upload band numbers identify blue, green, red and near infrared bands.</p><div class="field-grid">${['blue','green','red','nir'].map((n,i)=>`<label>${n} band<input name="band_${n}" type="number" min="1" value="${i+1}"></label>`).join('')}</div><button>Validate and add source</button></form></details></section></div>
+async function resumeBuild(button) {
+  button.disabled = true;
+  try {
+    await H.post('/api/knowledge/rgb/jobs/' + encodeURIComponent(button.dataset.resumeJob) + '/resume', {});
+    setStatus('Build queued again.');
+    await refreshJobs();
+  } catch (error) {
+    setStatus(error.message);
+  } finally {
+    button.disabled = false;
+  }
+}
 
- <aside><section class="panel build-section"><h2>Current knowledge & scan history</h2><div id="build-inventory"></div></section><section class="panel build-section"><h2>Processing</h2><div id="build-progress" class="build-status" role="status" aria-live="polite">Ready when you are.</div></section><section class="panel build-section"><h2>Provider access</h2><p id="build-credentials-status"></p><form id="build-credentials" autocomplete="off"><label>Copernicus client ID<input name="CDSE_CLIENT_ID" type="password" autocomplete="new-password" placeholder="Leave blank to keep saved value"></label><label>Copernicus client secret<input name="CDSE_CLIENT_SECRET" type="password" autocomplete="new-password" placeholder="Leave blank to keep saved value"></label><p class="muted">Optional if credentials are already saved. Values stay in this computer’s local configuration and are sent only to Copernicus for authentication. Saved values are never displayed. Open-Meteo weather requires no API key.</p><button>Save provider access locally</button></form></section></aside></div><section id="build-review" class="build-review"></section>`;
+form.onsubmit = submitBuild;
+$('build-refresh').onclick = refreshJobs;
+jobsElement.onclick = event => {
+  const button = event.target.closest('button');
+  if (button?.dataset.reviewJob) return showBuildReview(button.dataset.reviewJob).catch(error => setStatus(error.message));
+  if (button?.dataset.resumeJob) return resumeBuild(button);
+};
+root.addEventListener('helps:tab', event => {
+  if (event.detail === 'build') {
+    refreshJobs();
+    reviewMap?.invalidate();
+  } else {
+    clearTimeout(pollTimer);
+  }
+});
+if (!panel.hidden) refreshJobs();
 
- const $=id=>document.getElementById(id),status=message=>{$('build-progress').textContent=message;};
-
- async function guarded(action){try{await action();}catch(error){status(error.message);}}
-
- async function refreshRegions(selected){const data=await H.api('/api/knowledge/regions');$('build-region').innerHTML=data.regions.filter(r=>r.region_id==='bhadra').map(r=>`<option value="${E(r.region_id)}">${E(r.name)}</option>`).join('');$('build-region').value=selected||region;region=$('build-region').value;await inventory();}
-
- function inventory(){if(inventoryRequest)return inventoryRequest;inventoryRequest=loadInventory().finally(()=>{inventoryRequest=null;});return inventoryRequest;}
- function workflowControls(ready){for(const name of ['build-search','build-history-search','build-start','build-check-inputs'])$(name).disabled=!ready;}
- async function ensureWorkflow(){if(!workflow||workflow.region_id!==region)await inventory();if(!workflow||workflow.region_id!==region)throw Error('Observation rules are unavailable. Reload the page and try again.');return workflow;}
- workflowControls(false);
- async function loadInventory(){workflowControls(false);try{const token=++generation,id=region,sameRegion=workflow?.region_id===region,chosenDate=$('build-date').value,chosenSources=Object.fromEntries([...$('build-sources').querySelectorAll('select')].map(s=>[s.dataset.slot,s.value]));$('build-inventory').setAttribute('aria-busy','true');if(!$('build-inventory').textContent)$('build-inventory').textContent='Measuring local scan cloud interference…';const data=await H.api('/api/knowledge/workflow?region_id='+encodeURIComponent(id));if(token!==generation)return;workflow=data;$('build-date').min=data.minimum_new_date||'';$('build-date').max=today();$('build-date').value=keepBuildDate(chosenDate,data.minimum_new_date,today(),sameRegion);$('build-range').textContent=data.current_date?'Search newer observations from '+data.minimum_new_date+' through today.':'No current observation yet. Search the past 12 months, or choose a historical range.';
-
-  $('build-inventory').innerHTML=`<p><strong>${data.current_date?'Current observation · '+E(data.current_date):'No current observation'}</strong><br>${E(cloud({cloud_fraction:data.current_cloud_fraction,cloud_shadow_fraction:data.current_cloud_shadow_fraction,qa_state:data.current_qa_state,coverage_fraction:data.current_coverage_fraction}))}</p><p class="muted">${data.current_dataset_id?'Current dataset: '+E(data.current_dataset_id):'This region needs its first validated build.'}</p>`+(scanHistory(data).length?'<table class="build-inventory"><thead><tr><th>Scan date</th><th>Evidence</th></tr></thead><tbody>'+scanHistory(data).sort((a,b)=>String(b.date).localeCompare(String(a.date))).map(r=>`<tr><td>${E(r.date)}${r.active?' · Current':''}</td><td>${E(cloud(r))}<br><small>${E(r.status||'Validated knowledge')}</small></td></tr>`).join('')+'</tbody></table>':'<p>No historical scans. Earlier evidence will appear here after import.</p>');sources(sameRegion?chosenSources:{});$('build-inventory').removeAttribute('aria-busy');await pendingBuilds(token,id);if(token!==generation)return;if(data.current_dataset_id){const action=document.createElement('div');action.innerHTML='<p class="muted">A saved version preserves its exact polygons. A fresh scan uses the current detection rules and can differ.</p><button id="build-enrich-current">Add historical evidence to current polygons</button>';action.querySelector('button').onclick=()=>guarded(async()=>{const button=action.querySelector('button');button.disabled=true;try{const proposal=await H.post('/api/knowledge/enrich-current',{region_id:id});if(token!==generation||id!==region)return;await pollBuild(proposal.job_id,false,id,token);}finally{button.disabled=false;}});$('build-inventory').append(action);}
-
- }catch(error){workflow=null;throw error;}finally{$('build-inventory').removeAttribute('aria-busy');workflowControls(Boolean(workflow));}}
-
- const descriptions={restrictions:'Restriction / exclusion areas',aoi:'Validated region boundary',dem:'Elevation source (automatic when not selected)',spectral:'Required same-day multispectral imagery for imported observations',scl:'Required same-day Sentinel scene classes for imported observations',water:'Water exclusions required for new candidates',industrial:'Industrial exclusions required for new candidates',facilities:'Facilities exclusions required for new candidates',buildings:'Building footprints required for new candidates',retained_seed:'Retained candidate geometry, only for retained reanalysis',reviewed_exclusions:'Registered rejected sites (applied automatically)'};
-
- function sources(preserved){if(!preserved||preserved instanceof Event)preserved=Object.fromEntries([...$('build-sources').querySelectorAll('select')].map(s=>[s.dataset.slot,s.value]));const mode=$('build-mode').value,slots=sourceSlots(mode);$('build-method-help').textContent=sourceMethodHelp(mode);$('build-sources').innerHTML=slots.map(slot=>{const options=sourceOptions(workflow?.sources||[],slot,$('build-date').value);return `<label>${E(descriptions[slot]||slot)}<select data-slot="${slot}" ${mode!=='acquire'&&['spectral','scl','retained_seed'].includes(slot)?'required':''}><option value="">${slot==='dem'?'Use available elevation automatically':slot==='restrictions'?(options.length?'Use saved restriction areas':'No restriction layer registered — upload if available'):'Choose source evidence'}</option>${options.map(s=>`<option value="${E(s.catalog_id)}">${E(s.label)}${s.date?' · '+E(s.date):['spectral','scl'].includes(slot)?' · Date unknown — verify before building':''}</option>`).join('')}</select></label>`;}).join('');$('build-input-readiness').textContent='Choose Check local inputs to inspect storage for this region and date.';inputGate.begin();$('build-sources').querySelectorAll('select').forEach(select=>{if([...select.options].some(o=>o.value===preserved[select.dataset.slot]))select.value=preserved[select.dataset.slot];else if(select.options.length===2)select.selectedIndex=1;});}
- $('build-upload-restrictions').onclick=()=>{$('build-upload-details').open=true;$('build-upload').elements.kind.value='restriction';if(!$('build-upload').elements.date.value)$('build-upload').elements.date.value=$('build-date').value;$('build-upload-details').scrollIntoView({block:'center',behavior:'smooth'});};
- async function checkInputs(){const token=inputGate.begin(),id=region,day=$('build-date').value;if(!day){$('build-input-readiness').textContent='Choose an observation date to inspect local inputs.';return;}if(!['acquire','date_only'].includes($('build-mode').value)){$('build-input-readiness').textContent='Selected uploaded evidence will be validated for this region and observation date. Uploads are stored under the region raw and processed folders.';return;}$('build-input-readiness').textContent='Checking registered files and integrity…';try{const data=await H.post('/api/knowledge/input-readiness',{region_id:id,date:day,refresh_obstacles:$('build-refresh-obstacles').checked});if(!inputGate.current(token)||id!==region||day!==$('build-date').value)return;$('build-input-readiness').innerHTML=inputReadinessHTML(data.inputs,E,$('build-mode').value==='date_only');$('build-input-readiness').querySelectorAll('[data-copy-input]').forEach(button=>button.onclick=()=>guarded(async()=>{await navigator.clipboard.writeText(button.dataset.copyInput);status('Storage location copied.');}));$('build-input-readiness').querySelectorAll('[data-download-input]').forEach(button=>button.onclick=()=>guarded(async()=>{const response=await root.fetch(button.dataset.downloadInput,{headers:{'X-HELPS-Role':'engineer'}});if(!response.ok)throw Error('Registered file is unavailable or changed. Check inputs again.');const url=URL.createObjectURL(await response.blob()),link=document.createElement('a');link.href=url;link.download=button.dataset.inputName;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}));}catch(error){if(inputGate.current(token))$('build-input-readiness').textContent=error.message;}}
-
- $('build-check-inputs').onclick=()=>guarded(checkInputs);$('build-refresh-obstacles').onchange=()=>guarded(checkInputs);
-
- async function credentials(){const data=await H.api('/api/knowledge/credentials');$('build-credentials-status').textContent=Object.entries(data.credentials).map(([key,value])=>(key.endsWith('SECRET')?'Client secret':'Client ID')+': '+value.masked).join(' · ');}
-
- function closeReview(){reviewGate.begin();reviewMap?.destroy();reviewMap=null;$('build-review').replaceChildren();}
-
- async function pendingBuilds(token,id){const data=await H.api('/api/knowledge/jobs?region_id='+encodeURIComponent(id));if(token!==generation)return;const active=data.jobs.filter(j=>['queued','running'].includes(j.status));for(const running of active){const item=document.createElement('p');item.innerHTML=E(running.date)+' · '+E(running.stage)+' <button>View processing</button>';item.querySelector('button').onclick=()=>guarded(()=>pollBuild(running.job_id,false,id,token));$('build-inventory').append(item);}const rows=data.jobs.filter(j=>j.status==='completed'&&j.review?.decision==='pending').sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));if(rows.length){const box=document.createElement('div');box.innerHTML='<h3>Ready for your review</h3>'+rows.map(j=>'<p>'+E(j.date)+' · '+E(j.result?.counts?.terrain??'?')+' candidates · '+E(j.dataset_id)+' <button data-review-job="'+E(j.job_id)+'">Review polygons</button></p>').join('');$('build-inventory').append(box);box.querySelectorAll('[data-review-job]').forEach(button=>button.onclick=()=>guarded(()=>showBuildReview(button.dataset.reviewJob)));}}
-
- async function showBuildReview(id){closeReview();const token=reviewGate.begin();status('Loading the proposed map; current knowledge is unchanged.');const data=await H.api('/api/knowledge/jobs/'+id+'/preview');if(!reviewGate.current(token))return;const proposed=data.proposed,current=data.current,actions=reviewActions(data.decision,false);$('build-review').innerHTML=`<div class="panel build-section"><div class="eyebrow">UNPUBLISHED BUILD REVIEW</div><h2>Inspect before replacing current knowledge</h2><p>${proposed.refinement_of?'Vision-assisted refinement: obstacles removed and new contracted sites tested. The vision imagery acquisition date is unknown; current knowledge remains active.':proposed.enrichment_of?'Historical enrichment: retained boundaries and measured features are preserved.':'A newly detected candidate map. Your current map remains active.'}</p><div class="review-metrics"><div><strong>${proposed.candidate_count.toLocaleString()}</strong><span>Proposed candidates</span></div><div><strong>${proposed.slope_zone_count.toLocaleString()}</strong><span>Measured slope subregions</span></div><div><strong>${(proposed.total_area_m2/1e6).toFixed(3)} km²</strong><span>Candidate area</span></div><div><strong>${E(proposed.date)}</strong><span>${proposed.refinement_of?'Sentinel context date':'Observation date'}</span></div></div><p>Current: ${E(current.date||'No current observation')}${current.counts?' · '+current.counts.terrain.toLocaleString()+' candidates':''}. Proposed dataset: ${E(proposed.dataset_id)}.</p><div class="review-layout"><div><div id="build-preview-map" class="build-preview-map" aria-label="Proposed candidate polygons"></div><p id="build-preview-status" role="status">Loading complete polygon boundaries…</p></div><div><h3>Selected candidate</h3><div id="build-preview-detail" class="review-feature">Select a polygon to inspect its features.</div></div></div><details><summary>Validation, historical coverage and source details</summary>${H.featureCard({validation:data.validation,source_completeness:data.source_completeness,temporal_summary:data.temporal_summary,parameters:data.parameters,evidence_note:data.evidence_note})}</details><div class="review-decisions"><button id="build-accept" disabled>Confirm replacement</button><button id="build-reject" ${actions.reject?'':'disabled'}>Reject this build</button><span id="build-decision-status">${E(data.decision==='pending'?'Current knowledge remains active until you confirm.':data.decision)}</span></div></div>`;
-
-  $('build-reject').onclick=()=>guarded(async()=>{if(!reviewGate.current(token))return;$('build-reject').disabled=true;await H.post('/api/knowledge/jobs/'+id+'/reject',{});if(!reviewGate.current(token))return;closeReview();await inventory();status('Build rejected. Its artifacts are retained; current knowledge is unchanged.');});
-
-  const collection=await H.api('/api/knowledge/jobs/'+id+'/preview?format=geojson');if(!reviewGate.current(token))return;reviewMap=H.mapFactory('build-preview-map',{onCandidate:feature=>{reviewMap.focus(feature);$('build-preview-detail').innerHTML=H.featureCard(feature.properties);}});if(collection.features.length){reviewMap.showOnly(collection.features[0]);reviewMap.showCandidates(collection);}reviewMap.invalidate();$('build-preview-status').textContent=collection.features.length.toLocaleString()+' complete candidate boundaries loaded. Select a polygon to inspect its evidence.';const ready=reviewActions(data.decision,Boolean(collection.preview_token));$('build-accept').disabled=!ready.accept;
-
-  $('build-accept').onclick=()=>guarded(async()=>{if(!reviewGate.current(token))return;$('build-accept').disabled=true;$('build-reject').disabled=true;try{await H.post('/api/knowledge/jobs/'+id+'/accept',{preview_token:collection.preview_token});if(!reviewGate.current(token))return;closeReview();await H.refresh?.();root.dispatchEvent(new CustomEvent('helps:datasets-changed'));await inventory();status('Confirmed: the reviewed knowledge is now current. The previous version remains preserved.');}catch(error){if(reviewGate.current(token)){$('build-reject').disabled=false;$('build-decision-status').textContent='Current knowledge was not replaced. Reload this review before trying again.';}throw error;}});
-
-  $('build-review').scrollIntoView({behavior:root.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});status('Proposed polygons are ready. Inspect the map, then confirm replacement or reject this build.');
-
- }
-
- async function pollBuild(id,history=false,expectedRegion=region,expectedGeneration=generation){if(expectedRegion!==region||expectedGeneration!==generation)return;job=id;const selectedRegion=expectedRegion;let response;do{response=await H.api('/api/knowledge/jobs/'+id);if(selectedRegion!==region||expectedGeneration!==generation||job!==id)return;const p=response.progress||{};status((p.percent==null?'Working · ':p.percent+'% of stages completed · ')+response.stage);if(['completed','failed'].includes(response.status))break;await new Promise(resolve=>setTimeout(resolve,1200));}while(job===id);if(response.status==='failed')throw Error(response.error||'Build failed; your current dataset is preserved.');if(response.status!=='completed')return;if(history||!response.result?.package_path){status('Historical scan imported. Current knowledge preserved.');await inventory();return;}await showBuildReview(id);}
-
- async function searchDates(historical){await ensureWorkflow();const token=generation,id=region;status('Searching actual Copernicus observations…');const payload={region_id:id,end_date:today(),inspect_quality:$('build-inspect-clouds').checked};if(historical){payload.history_search=true;payload.start_date=$('build-history-start').value;if(!payload.start_date)throw Error('Choose the first historical search date.');}const initial=await H.post('/api/knowledge/imagery-search',payload);search=initial.search_id;let data;do{data=await H.api('/api/knowledge/imagery-search/'+initial.search_id);if(token!==generation||search!==initial.search_id)return;status(data.stage||'Inspecting monthly observations…');if(!['queued','running'].includes(data.status))break;await new Promise(resolve=>setTimeout(resolve,1200));}while(true);if(data.status==='failed')throw Error(data.errors?.[0]?.error||'Imagery search failed. Check provider access.');$('build-search-results').innerHTML='<p class="muted">Each month shows the best available estimate. Catalog cloud estimates and measured regional cloud cover are labelled separately.</p>'+data.months.map(m=>{const best=m.observations.find(r=>r.date===m.recommended_date)||m.observations[0];return `<article class="panel"><strong>${E(m.month)}</strong><p>${best?E(best.date)+' · '+E(cloud(best)):E(m.status)}</p>${best?`<button data-day="${E(best.date)}" data-historical="${historical}">${historical?'Import historical scan':'Use this date'}</button>`:''}<details><summary>Inspected observations</summary>${m.observations.map(r=>`<p>${E(r.date)} · ${E(cloud(r))} <button data-day="${E(r.date)}" data-historical="${historical}">${historical?'Import':'Choose'}</button></p>`).join('')}</details></article>`;}).join('')+searchWarnings(data.errors).map(message=>'<p>'+E(message)+'</p>').join('');$('build-search-results').querySelectorAll('[data-day]').forEach(button=>button.onclick=()=>guarded(async()=>{if(button.dataset.historical==='true'){const result=await H.post('/api/knowledge/history-import',{region_id:id,date:button.dataset.day,search_id:initial.search_id});if(token!==generation||id!==region)return;await pollBuild(result.job_id,true,id,token);}else{const rules=await ensureWorkflow();if(id!==region)return;if(rules.minimum_new_date&&button.dataset.day<rules.minimum_new_date)throw Error('The current observation is already this date. Choose a strictly newer date.');if(button.dataset.day>today())throw Error('Choose an observation no later than today.');$('build-date').value=button.dataset.day;sources();$('build-form').scrollIntoView({block:'start',behavior:'smooth'});$('build-start').focus();status('Observation selected. Start processing to create the proposed polygons.');}}));status('Monthly search finished. Quality and missing evidence are shown with each date.');}
-
- $('build-region').onchange=()=>guarded(async()=>{closeReview();region=$('build-region').value;job=null;search=null;$('build-search-results').replaceChildren();await inventory();});$('build-mode').onchange=()=>{sources();guarded(checkInputs);};$('build-date').onchange=()=>{sources();guarded(checkInputs);};
-
- $('build-region-form').onsubmit=event=>{event.preventDefault();guarded(async()=>{const data=await H.api('/api/knowledge/regions',{method:'POST',body:new FormData(event.target)});await refreshRegions(data.region.region_id);event.target.reset();status('Region boundary validated. Choose an observation date; elevation can be obtained automatically.');});};
-
- $('build-upload').onsubmit=event=>{event.preventDefault();guarded(async()=>{const data=new FormData(event.target);data.set('units','m');data.set('region_id',region);await H.api('/api/knowledge/sources',{method:'POST',body:data});status('Upload completed. Refreshing available sources…');await inventory();status('Upload completed. Sources ready; valid date and selections preserved.');});};
-
- $('build-credentials').onsubmit=event=>{event.preventDefault();guarded(async()=>{const data=Object.fromEntries(new FormData(event.target));await H.post('/api/knowledge/credentials',data);event.target.reset();await credentials();status('Provider access saved locally.');});};
-
- $('build-search').onclick=()=>guarded(()=>searchDates(false));$('build-history-search').onclick=()=>guarded(()=>searchDates(true));
-
- $('build-form').onsubmit=event=>{event.preventDefault();guarded(async()=>{await ensureWorkflow();const buildRegion=region,buildGeneration=generation;const choices={};$('build-sources').querySelectorAll('select').forEach(s=>{if(s.value)choices[s.dataset.slot]=s.value;else if(s.dataset.slot==='dem')choices.dem='automatic';});$('build-start').disabled=true;try{closeReview();const result=await H.post('/api/knowledge/build',$('build-mode').value==='date_only'?{source_mode:'date_only',date:$('build-date').value}:{region_id:region,date:$('build-date').value,source_mode:$('build-mode').value,source_choices:choices,refresh_obstacles:$('build-refresh-obstacles').checked});if(buildGeneration!==generation||buildRegion!==region)return;await pollBuild(result.job_id,false,buildRegion,buildGeneration);}finally{$('build-start').disabled=false;}});};
-
- await Promise.all([refreshRegions(),credentials()]);
-
-}).catch(error=>{const progress=document.getElementById('build-progress');if(progress)progress.textContent='Build workspace could not load: '+error.message+'. Reload the page to retry.';});
-
-})(typeof window!=='undefined'?window:globalThis);
-
+})(typeof window !== 'undefined' ? window : globalThis);

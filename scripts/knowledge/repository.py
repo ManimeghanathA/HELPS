@@ -327,6 +327,8 @@ def _register_dataset(dataset_id,package_path,registry_path,require_forward):
         validate_registry_date(registry,report['metadata']['region_id'],report['metadata'].get('date'))
         _require_current_history(registry,report['metadata']['region_id'],package_path,report['metadata'].get('date'))
     entry={'package_path':str(Path(package_path).resolve()),'region_id':report['metadata']['region_id'],'date':report['metadata'].get('date'),'validation':{'valid':True,'errors':[]},'package_sha256':hashlib.sha256(Path(package_path).read_bytes()).hexdigest(),'observation_source':report['metadata'].get('observation_source'),'temporal_summary':report['metadata'].get('temporal_summary')}
+    region_name=report['metadata'].get('build_spec',{}).get('parameters',{}).get('region_name')
+    if region_name:entry['region_name']=region_name
     previous=registry['datasets'].get(dataset_id)
     if previous and previous.get('package_sha256')!=entry['package_sha256']: raise ValueError('registered dataset ID is immutable')
     registry['datasets'][dataset_id]=entry
@@ -374,6 +376,16 @@ class KnowledgeRepository:
         return connection
 
     def get_metadata(self): return json_safe(self.metadata)
+
+    def boundary_feature(self):
+        with closing(self._connect()) as db:
+            row=db.execute('SELECT record_json FROM aois WHERE region_id=?',(self.region_id,)).fetchone()
+        if not row:return None
+        record=json.loads(row[0])
+        if 'geometry' not in record or 'crs' not in record:return None
+        transform=Transformer.from_crs(record['crs'],4326,always_xy=True).transform
+        geometry=transform_geometry(transform,shape(record['geometry']))
+        return {'type':'Feature','geometry':mapping(geometry),'properties':{'region_id':self.region_id}}
 
     def temporal_observations(self,entity_type,entity_id):
         if entity_type not in ('terrain','zones'):raise ValueError('Unknown temporal entity type')

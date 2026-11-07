@@ -6,11 +6,12 @@ from urllib.parse import urlparse
 from threading import RLock
 from flask import Blueprint, jsonify, request, send_file
 from .jobs import JobManager
+from .rgb_jobs import RgbJobs
 
 KINDS={'aoi','dem','spectral','scl','osm','buildings','landcover','restriction','candidate_seed','reviewed_exclusions','water','industrial','facilities','roads'}
 
 def register_api(app, root):
-    bp=Blueprint('knowledge_ui',__name__); repository_cache={};terrain_cache={};repository_lock=RLock();root=Path(root).resolve(); managed=root/'data/knowledge'; assets=managed/'sources'; jobs=JobManager(storage_dir=managed/'jobs')
+    bp=Blueprint('knowledge_ui',__name__); repository_cache={};terrain_cache={};repository_lock=RLock();root=Path(root).resolve(); managed=root/'data/knowledge'; assets=managed/'sources'; rgb_jobs=RgbJobs(root); jobs=JobManager(storage_dir=managed/'jobs',external=rgb_jobs)
     from scripts.knowledge.review import BuildReview
     reviews=BuildReview(managed,jobs)
     def registry():
@@ -531,6 +532,38 @@ def register_api(app, root):
         j=jobs.get(job_id)
         if not j:raise LookupError('Unknown build job')
         return jsonify(j)
+
+    @bp.post('/api/knowledge/rgb/build')
+    def submit_rgb():
+        denied=guard()
+        if denied:return denied
+        from scripts.knowledge.rgb_ingestion import MAX_BOUNDARY_BYTES, MAX_IMAGE_BYTES
+        if request.content_length and request.content_length > MAX_BOUNDARY_BYTES+MAX_IMAGE_BYTES+65536:
+            raise ValueError('The GeoJSON must be at most 2 MiB and RGB GeoTIFF at most 256 MiB.')
+        boundary=request.files.get('boundary'); image=request.files.get('image')
+        if not boundary or Path(boundary.filename).suffix.lower() not in ('.geojson','.json'):
+            raise ValueError('Choose the GeoJSON boundary file.')
+        if not image or Path(image.filename).suffix.lower() not in ('.tif','.tiff'):
+            raise ValueError('Choose the RGB GeoTIFF.')
+        resolution=request.form.get('resolution_m')
+        if resolution:
+            try:resolution=float(resolution)
+            except ValueError:raise ValueError('Enter a resolution in metres.') from None
+        return jsonify(rgb_jobs.submit(request.form.get('name'),request.form.get('date'),
+                                       boundary,image,resolution if resolution is not None and resolution != "" else None)),202
+
+    @bp.get('/api/knowledge/rgb/jobs')
+    def list_rgb():
+        denied=guard()
+        if denied:return denied
+        return jsonify(jobs=rgb_jobs.list())
+
+    @bp.post('/api/knowledge/rgb/jobs/<job_id>/resume')
+    def resume_rgb(job_id):
+        denied=guard()
+        if denied:return denied
+        return jsonify(rgb_jobs.resume(job_id)),202
+
     @bp.post('/api/knowledge/jobs/<job_id>/publish')
     def publish(job_id):
         denied=guard()

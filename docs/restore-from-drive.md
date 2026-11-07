@@ -142,7 +142,7 @@ If your source backup came from a different root, change `old` to that exact roo
 
 ## 6. Configure private credentials locally
 
-Create `.env` from `.env.example` only if it does not already exist, then enter your own Copernicus credentials for new acquisitions. Viewing the restored map does not require a Sentinel download. Open-Meteo weather requires network access but no API key. The Drive sharing link is not a Copernicus credential and is not entered into the application provider form.
+Viewing the restored map does not require an imagery download. For new builds, use the [dated RGB ingestion setup](rgb-ingestion.md). Open-Meteo weather requires network access but no API key. The Drive link is for historical project assets.
 
 ## 7. Start and verify the restored application
 
@@ -154,8 +154,8 @@ Open [http://127.0.0.1:5000](http://127.0.0.1:5000), select Bhadra and check:
 
 - Current dataset `bhadra-cv-20260601-313234b7`: **4,474 candidates**, **25,931 slope subregions**.
 - Candidate features, slope shading and recommendation inputs/results load.
-- Build knowledge shows current June 1 context and local source readiness. Use read-only **Check local inputs** before attempting a new scan.
-- The separate vision folder is available for refinement/audit; ordinary Sentinel scans do not automatically run the teammate's model.
+- The active dataset shows the June 1 historical observation. **Build knowledge** accepts a new boundary and dated RGB image through the [RGB workflow](rgb-ingestion.md).
+- The separate vision folder preserves the historical refinement inputs and audit evidence.
 
 Detailed map payloads and initial package validation can take time. A count or a successful page load is not sufficient if geometry/features/slope fail to load. Inspect the error, missing path and source checksum rather than creating substitute data.
 

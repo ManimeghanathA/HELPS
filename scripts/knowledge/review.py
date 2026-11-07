@@ -62,6 +62,8 @@ class BuildReview:
                 review={**review,'decision':'pending','preview_token':uuid4().hex,'reviewed_sha256':digest,'expected_current':current}
                 self.jobs.update_review(job_id,review)
             collection=repo.to_geojson(repo.list_terrain())
+            if job.get('producer')=='rgb':
+                collection['boundary']=repo.boundary_feature()
             collection.update(preview_token=review.get('preview_token') if review.get('decision')=='pending' else None,decision=review.get('decision'))
             return collection
 
